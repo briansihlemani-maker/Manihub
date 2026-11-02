@@ -70,7 +70,12 @@ form{display:grid;gap:11px}.field{display:grid;gap:5px}.field label{font-size:12
    <input id="authEmail" type="email" placeholder="Email address" autocomplete="email" style="border:1px solid #d9e2da;border-radius:10px;padding:10px">
    <input id="authPassword" type="password" placeholder="Password (min. 6 characters)" autocomplete="current-password" style="border:1px solid #d9e2da;border-radius:10px;padding:10px">
   </div>
-  <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="primary" onclick="signUpUser()">Create account</button><button class="secondary" onclick="signInUser()">Sign in</button><button class="secondary" onclick="signOutUser()">Sign out</button></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="primary" onclick="signUpUser()">Create account</button>
+<button class="secondary" onclick="signInUser()">Sign in</button>
+<button class="secondary" onclick="forgotPassword()">Forgot password?</button>
+<button class="secondary" onclick="signOutUser()">Sign out</button>
+  </div>
   <div class="meta">Use your own email and password. Never share your password with anyone.</div>
  </div>
 </section>
