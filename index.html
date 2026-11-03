@@ -222,7 +222,7 @@ async function signUpUser(){
   if(!supabaseClient){alert("ManiHub's connection service has not loaded. Refresh the page and try again.");return;}
   const name=byId("authName").value.trim(),identifier=byId("authIdentifier").value.trim(),password=byId("authPassword").value;
   if(!name||!identifier||password.length<6){alert("Enter your name, cellphone number or email address, and a password of at least 6 characters.");return;}
-  const isEmail=/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(identifier);
+  const isEmail=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier);
   const phone=normalizeSouthAfricanPhone(identifier);
   if(!isEmail&&!phone){alert("Enter a valid email address or South African cellphone number (for example 082 123 4567 or +27 82 123 4567).");return;}
   try{
@@ -233,10 +233,10 @@ async function signUpUser(){
   }catch(error){alert("Could not create account: "+(error.message||error));}
 }
 function normalizeSouthAfricanPhone(value){
-  let digits=String(value||"").replace(/[\\s().-]/g,"");
-  if(/^0[6-8]\\d{8}$/.test(digits))digits="+27"+digits.slice(1);
-  else if(/^27[6-8]\\d{8}$/.test(digits))digits="+"+digits;
-  else if(/^\\+27[6-8]\\d{8}$/.test(digits)){}
+  let digits=String(value||"").replace(/[\s().-]/g,"");
+  if(/^0[6-8]\d{8}$/.test(digits))digits="+27"+digits.slice(1);
+  else if(/^27[6-8]\d{8}$/.test(digits))digits="+"+digits;
+  else if(/^\\+27[6-8]\d{8}$/.test(digits)){}
   else return null;
   return digits;
 }
@@ -254,7 +254,7 @@ async function forgotPassword(){
   if(!supabaseClient){alert("Account service is not ready.");return;}
   const identifier=byId("authIdentifier").value.trim();
   if(!identifier){alert("Enter your email address first.");return;}
-  if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(identifier)){alert("Email password recovery is currently available. SMS password recovery needs a verified SMS recovery flow to be configured for ManiHub.");return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier)){alert("Email password recovery is currently available. SMS password recovery needs a verified SMS recovery flow to be configured for ManiHub.");return;}
   try{const {error}=await supabaseClient.auth.resetPasswordForEmail(identifier,{redirectTo:window.location.origin+window.location.pathname});if(error)throw error;alert("Password reset requested. Check your email.");}
   catch(error){alert("Password reset failed: "+error.message);}
 }
@@ -283,7 +283,7 @@ async function forgotPassword(){
   if(!identifier||!password){alert("Enter your cellphone number or email address and password.");return;}
   try{
     let credentials;
-    if(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(identifier))credentials={email:identifier,password};
+    if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier))credentials={email:identifier,password};
     else{const phone=normalizeSouthAfricanPhone(identifier);if(!phone){alert("Enter a valid email address or South African cellphone number.");return;}credentials={phone,password};}
     const {data,error}=await supabaseClient.auth.signInWithPassword(credentials);if(error)throw error;
     currentUser=data.user;await refreshAuth();alert("You are signed in to ManiHub.");
