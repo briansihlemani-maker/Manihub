@@ -192,7 +192,7 @@ footer{color:#6b7a70;padding-top:25px}
   <div class="toolbar"><span id="count">Showing listings</span><select id="province" onchange="render()"><option value="">All provinces</option><option>Eastern Cape</option><option>Free State</option><option>Gauteng</option><option>KwaZulu-Natal</option><option>Limpopo</option><option>Mpumalanga</option><option>Northern Cape</option><option>North West</option><option>Western Cape</option></select></div>
   <section class="grid" id="listings"></section>
 </main>
-<footer><b>ManiHub beta</b> · Shared listings and account sign-in use Supabase. Payments and photo uploads are not enabled yet.</footer>
+<footer><b>ManiHub beta</b> · Shared listings and account sign-in use Supabase. Payments are not connected yet.</footer>
 
 <div class="modal" id="detailsModal" role="dialog" aria-modal="true" aria-labelledby="detailsTitle">
  <div class="dialog detail-dialog">
@@ -213,9 +213,9 @@ footer{color:#6b7a70;padding-top:25px}
    <div class="field"><label for="town">Town or area</label><input id="town" maxlength="60" placeholder="e.g. Khayelitsha"></div>
    <div class="field"><label for="phone">WhatsApp number with country code *</label><input id="phone" required inputmode="tel" placeholder="e.g. 27821234567"></div>
    <div class="field"><label for="description">Description</label><textarea id="description" maxlength="350" placeholder="Describe the item, condition, delivery or service..."></textarea></div>
-   <div class="field"><label for="photo">Photo (optional)</label><input id="photo" type="file" accept="image/*"></div>
-   <div class="note">Do not enter sensitive information. Listings are saved to the shared ManiHub database. Photo uploads are not enabled yet.</div>
-   <button class="primary" type="submit">Publish demo listing</button>
+   <div class="field"><label for="photo">Product photo (optional)</label><input id="photo" type="file" accept="image/jpeg,image/png,image/webp"><small class="meta">JPG, PNG or WebP · Maximum 5 MB</small><img id="photoPreview" class="detail-photo" alt="Selected product photo preview" hidden></div>
+   <div class="note">Your advert will be visible on the public ManiHub marketplace. Only upload photos you have permission to share.</div>
+   <button class="primary" id="publishButton" type="submit">Publish advert</button>
   </form>
  </div>
 </div>
@@ -344,10 +344,44 @@ async function forgotPassword(){
   }catch(error){alert("Could not sign in: "+(error.message||error));}
 }
 async function signOutUser(){if(!supabaseClient){alert("ManiHub's connection service has not loaded. Refresh the page and try again.");return;}try{const {error}=await supabaseClient.auth.signOut();if(error)throw error;currentUser=null;await refreshAuth();alert("You have signed out.");}catch(error){alert("Could not sign out: "+(error.message||error));}}
-async function publishListing(e){e.preventDefault();if(!supabaseClient){alert("ManiHub's connection service has not loaded. Refresh the page and try again.");return;}if(!currentUser){alert("Please sign in first.");return;}const file=byId("photo").files[0];if(file){alert("Photo uploads are not connected yet. Remove the photo and try again.");return;}const kind=byId("kind").value;const row={owner_id:currentUser.id,title:byId("item").value.trim(),price:Number(byId("price").value),category:byId("category").value,seller_type:kind==="Registered business"?"business":"individual",seller_name:byId("seller").value.trim(),province:byId("provinceInput").value,town:byId("town").value.trim()||null,whatsapp:byId("phone").value.trim(),description:byId("description").value.trim(),status:"active"};try{const {error}=await supabaseClient.from("listings").insert(row);if(error)throw error;e.target.reset();closeForm();byId("province").value="";active="All";await refreshListings();alert("Your advert is now published to the shared ManiHub marketplace.");}catch(error){alert("Could not publish advert: "+(error.message||error));}}
+async function publishListing(e){
+  e.preventDefault();
+  if(!supabaseClient){alert("ManiHub's connection service has not loaded. Refresh the page and try again.");return;}
+  if(!currentUser){alert("Please sign in first.");return;}
+  const file=byId("photo").files[0];
+  if(file && !["image/jpeg","image/png","image/webp"].includes(file.type)){alert("Please choose a JPG, PNG or WebP image.");return;}
+  if(file && file.size>5*1024*1024){alert("Your photo must be 5 MB or smaller.");return;}
+  const button=byId("publishButton");if(button){button.disabled=true;button.textContent="Publishing…";}
+  let uploadedPath=null;
+  try{
+    let photoUrl=null;
+    if(file){
+      const ext=({ "image/jpeg":"jpg","image/png":"png","image/webp":"webp" })[file.type];
+      uploadedPath=currentUser.id+"/"+crypto.randomUUID()+"."+ext;
+      const {error:uploadError}=await supabaseClient.storage.from("listing-photos").upload(uploadedPath,file,{cacheControl:"3600",upsert:false,contentType:file.type});
+      if(uploadError)throw new Error("Photo upload failed: "+uploadError.message+". Check that the listing-photos storage bucket and upload policy have been created.");
+      const {data:urlData}=supabaseClient.storage.from("listing-photos").getPublicUrl(uploadedPath);
+      photoUrl=urlData.publicUrl;
+    }
+    const kind=byId("kind").value;
+    const row={owner_id:currentUser.id,title:byId("item").value.trim(),price:Number(byId("price").value),category:byId("category").value,seller_type:kind==="Registered business"?"business":"individual",seller_name:byId("seller").value.trim(),province:byId("provinceInput").value,town:byId("town").value.trim()||null,whatsapp:byId("phone").value.trim(),description:byId("description").value.trim(),photo_url:photoUrl,status:"active"};
+    const {error}=await supabaseClient.from("listings").insert(row);if(error)throw error;
+    e.target.reset();const preview=byId("photoPreview");if(preview){preview.src="";preview.hidden=true;}
+    closeForm();byId("province").value="";active="All";await refreshListings();alert("Your advert has been published to ManiHub.");
+  }catch(error){
+    if(uploadedPath){try{await supabaseClient.storage.from("listing-photos").remove([uploadedPath]);}catch(cleanupError){}}
+    alert("Could not publish advert: "+(error.message||error));
+  }finally{if(button){button.disabled=false;button.textContent="Publish advert";}}
+}
+function previewListingPhoto(){
+  const input=byId("photo"),preview=byId("photoPreview");if(!input||!preview)return;
+  const file=input.files&&input.files[0];if(!file){preview.hidden=true;preview.removeAttribute("src");return;}
+  if(!["image/jpeg","image/png","image/webp"].includes(file.type)||file.size>5*1024*1024){preview.hidden=true;preview.removeAttribute("src");return;}
+  preview.src=URL.createObjectURL(file);preview.hidden=false;
+}
 function bindButtons(){
   document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeAuth();closeForm();closeDetails();}});
-  byId("search")?.addEventListener("input",render);byId("province")?.addEventListener("change",render);byId("listingForm")?.addEventListener("submit",publishListing);
+  byId("search")?.addEventListener("input",render);byId("province")?.addEventListener("change",render);byId("listingForm")?.addEventListener("submit",publishListing);byId("photo")?.addEventListener("change",previewListingPhoto);
   byId("categories")?.addEventListener("click",e=>{const b=e.target.closest("[data-category]");if(b)setCat(b.dataset.category);});
   byId("listings")?.addEventListener("click",e=>{const d=e.target.closest("[data-details]");if(d)showDetails(d.dataset.details);const f=e.target.closest("[data-open-form]");if(f)openForm();});
   byId("modal")?.addEventListener("click",e=>{if(e.target.id==="modal")closeForm();});
