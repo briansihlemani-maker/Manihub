@@ -43,7 +43,7 @@ select{border:1px solid var(--line);border-radius:10px;padding:9px;background:wh
 .cardactions button{background:#eef3ef;color:var(--green);padding:9px 10px}
 .empty{background:white;border:1px dashed #bdcabe;border-radius:16px;padding:30px;text-align:center;color:var(--muted);grid-column:1/-1}
 footer{max-width:1120px;margin:30px auto 0;padding:20px 16px 35px;color:var(--muted);font-size:12px}
-.modal{display:none;position:fixed;inset:0;background:#0b211bcc;z-index:10;overflow:auto;padding:18px}
+.modal{display:none;position:fixed;inset:0;background:#0b211bcc;z-index:1000;overflow:auto;padding:18px}
 .modal.open{display:flex;align-items:flex-start;justify-content:center}
 .dialog{background:white;border-radius:20px;padding:20px;width:min(100%,560px);margin:auto}
 .dialoghead{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
@@ -370,7 +370,7 @@ function validateListingForm(){
     error.textContent="Price cannot be negative.";error.hidden=false;price.setAttribute("aria-invalid","true");
     if(!firstInvalid)firstInvalid=price;
   }
-  if(firstInvalid){firstInvalid.scrollIntoView({behavior:"smooth",block:"center"});firstInvalid.focus({preventScroll:true});return false;}
+  if(firstInvalid){const target=firstInvalid.closest(".field")||firstInvalid;target.scrollIntoView({behavior:"auto",block:"center"});firstInvalid.focus({preventScroll:true});return false;}
   return true;
 }
 async function publishListing(e){
