@@ -213,7 +213,7 @@ footer{color:#6b7a70;padding-top:25px}
    <div class="field"><label for="town">Town or area</label><input id="town" maxlength="60" placeholder="e.g. Khayelitsha"></div>
    <div class="field"><label for="phone">WhatsApp number with country code *</label><input id="phone" required inputmode="tel" placeholder="e.g. 27821234567"></div>
    <div class="field"><label for="description">Description</label><textarea id="description" maxlength="350" placeholder="Describe the item, condition, delivery or service..."></textarea></div>
-   <div class="field"><label for="photo">Product photo (optional)</label><input id="photo" type="file" accept="image/jpeg,image/png,image/webp"><small class="meta">JPG, PNG or WebP · Maximum 5 MB</small><img id="photoPreview" class="detail-photo" alt="Selected product photo preview" hidden></div>
+   <div class="field"><label for="photo">Product photo (optional)</label><input id="photo" type="file" accept="image/jpeg,image/png,image/webp"><small class="meta">JPG, PNG or WebP · Maximum 15 MB</small><img id="photoPreview" class="detail-photo" alt="Selected product photo preview" hidden></div>
    <div class="note">Your advert will be visible on the public ManiHub marketplace. Only upload photos you have permission to share.</div>
    <button class="primary" id="publishButton" type="submit">Publish advert</button>
   </form>
@@ -350,7 +350,7 @@ async function publishListing(e){
   if(!currentUser){alert("Please sign in first.");return;}
   const file=byId("photo").files[0];
   if(file && !["image/jpeg","image/png","image/webp"].includes(file.type)){alert("Please choose a JPG, PNG or WebP image.");return;}
-  if(file && file.size>5*1024*1024){alert("Your photo must be 5 MB or smaller.");return;}
+  if(file && file.size>15*1024*1024){alert("Your photo must be 5 MB or smaller.");return;}
   const button=byId("publishButton");if(button){button.disabled=true;button.textContent="Publishing…";}
   let uploadedPath=null;
   try{
