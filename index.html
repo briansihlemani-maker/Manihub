@@ -77,6 +77,11 @@ form{display:grid;gap:11px}.field{display:grid;gap:5px}.field label{font-size:12
 <button class="secondary" onclick="forgotPassword()">Forgot password?</button>
 <button class="secondary" onclick="signOutUser()">Sign out</button>
   </div>
+   <div id="passwordRecovery" style="display:grid;gap:8px;border-top:1px solid #e2e9e3;padding-top:10px">
+  <b>Choose a new password after opening your reset email</b>
+  <input id="newPassword" type="password" autocomplete="new-password" placeholder="New password (at least 6 characters)" style="border:1px solid #d9e2da;border-radius:10px;padding:10px">
+  <button class="primary" onclick="saveNewPassword()">Save new password</button>
+</div>
   <div class="meta">Use your own email and password. Never share your password with anyone.</div>
  </div>
 </section>
@@ -179,6 +184,25 @@ async function forgotPassword(){
     alert("Password reset failed: "+error.message);
   }
       }
+ async function saveNewPassword(){
+  if(!supabaseClient){
+    alert("Account service is not ready.");
+    return;
+  }
+  const password=byId("newPassword").value;
+  if(password.length<6){
+    alert("Your new password must be at least 6 characters.");
+    return;
+  }
+  try{
+    const {error}=await supabaseClient.auth.updateUser({password:password});
+    if(error) throw error;
+    byId("newPassword").value="";
+    alert("Your ManiHub password has been updated. You can now sign in with your new password.");
+  }catch(error){
+    alert("Could not update password: "+error.message);
+  }
+        } 
   async function signInUser(){if(!supabaseClient){alert("ManiHub's connection service has not loaded. Refresh the page and try again.");return;}const email=byId("authEmail").value.trim(),password=byId("authPassword").value;if(!email||!password){alert("Enter your email and password first.");return;}try{const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});if(error)throw error;currentUser=data.user;await refreshAuth();alert("You are signed in to ManiHub.");}catch(error){alert("Could not sign in: "+(error.message||error));}}
 async function signOutUser(){if(!supabaseClient){alert("ManiHub's connection service has not loaded. Refresh the page and try again.");return;}try{const {error}=await supabaseClient.auth.signOut();if(error)throw error;currentUser=null;await refreshAuth();alert("You have signed out.");}catch(error){alert("Could not sign out: "+(error.message||error));}}
 async function publishListing(e){e.preventDefault();if(!supabaseClient){alert("ManiHub's connection service has not loaded. Refresh the page and try again.");return;}if(!currentUser){alert("Please sign in first.");return;}const file=byId("photo").files[0];if(file){alert("Photo uploads are not connected yet. Remove the photo and try again.");return;}const kind=byId("kind").value;const row={owner_id:currentUser.id,title:byId("item").value.trim(),price:Number(byId("price").value),category:byId("category").value,seller_type:kind==="Registered business"?"business":"individual",seller_name:byId("seller").value.trim(),province:byId("provinceInput").value,town:byId("town").value.trim()||null,whatsapp:byId("phone").value.trim(),description:byId("description").value.trim(),status:"active"};try{const {error}=await supabaseClient.from("listings").insert(row);if(error)throw error;e.target.reset();closeForm();byId("province").value="";active="All";await refreshListings();alert("Your advert is now published to the shared ManiHub marketplace.");}catch(error){alert("Could not publish advert: "+(error.message||error));}}
