@@ -102,6 +102,40 @@ form{display:grid;gap:11px}.field{display:grid;gap:5px}.field label{font-size:12
 body #accountSection.auth-open{display:flex!important;position:fixed;inset:0;z-index:1000;overflow-y:auto}
 @media(max-width:480px){.auth-screen{padding:22px 15px!important}.auth-logo{width:min(250px,80vw);height:auto}.auth-panel{border-radius:21px;padding:23px 19px}.auth-heading h1{font-size:27px}}
 
+
+/* Homepage refresh; existing sign-in screen artwork and layout are preserved. */
+html,body{background:#f4f7f4!important}body{background:#f4f7f4!important}
+header{position:sticky;top:0;z-index:20;padding-top:5px;padding-bottom:5px;box-shadow:0 5px 22px #153b2c0a}
+main{margin:0 auto;padding-top:26px;padding-bottom:14px}
+.hero{position:relative;isolation:isolate;overflow:hidden;grid-template-columns:1.15fr .85fr;min-height:350px;padding:clamp(25px,5vw,48px);border-radius:27px;background:radial-gradient(circle at 82% 18%,#4a9870 0,transparent 35%),linear-gradient(118deg,#0d392e,#175a43 58%,#267b58);box-shadow:0 18px 45px #103d2c20}
+.hero:after{content:"";position:absolute;z-index:-1;width:420px;height:420px;border:1px solid #ffffff20;border-radius:50%;right:-120px;bottom:-300px;box-shadow:0 0 0 35px #ffffff08,0 0 0 75px #ffffff06}
+.hero-copy{position:relative;z-index:2}.hero-kicker{display:flex;align-items:center;gap:9px;margin-bottom:17px;color:#d8edc0;font-size:10px;font-weight:850;letter-spacing:2px}
+.hero-kicker-dot{width:8px;height:8px;border-radius:50%;background:#d6f36a;box-shadow:0 0 0 5px #d6f36a22}
+.hero h1{font-size:clamp(35px,5.2vw,57px);line-height:.99;letter-spacing:-2.2px;margin:0 0 15px;font-weight:900}.hero h1 span{color:#d6f36a}
+.hero p{font-size:15px;line-height:1.65;color:#e0eee7;margin:0 0 22px;max-width:490px}
+.searchrow{align-items:center;max-width:590px;min-height:58px;padding:6px 7px 6px 15px;border-radius:15px;box-shadow:0 8px 24px #06271b25}
+.search-icon{font-size:25px;line-height:1;color:#678276}.searchrow input{padding:10px 8px;font-size:14px}.searchrow input::placeholder{color:#89968e}
+.searchrow button{min-height:44px;padding:10px 20px;border-radius:11px;background:#d6f36a;color:#183729}
+.hero-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:17px}.hero-sell{background:#ffffff18;color:white;border:1px solid #ffffff55;padding:10px 14px;border-radius:11px}.hero-note{font-size:11px;color:#d8e8df}
+.hero-showcase{position:relative;min-height:240px;display:flex;align-items:center;justify-content:center}.showcase-glow{position:absolute;width:220px;height:220px;border-radius:50%;background:#d6f36a18;filter:blur(3px)}
+.showcase-orbit{position:absolute;border:1px solid #ffffff25;border-radius:50%;transform:rotate(-25deg)}.orbit-one{width:270px;height:175px}.orbit-two{width:205px;height:280px;transform:rotate(35deg)}
+.showcase-main-icon{position:relative;z-index:1;width:148px;height:148px;border-radius:42px;display:grid;place-items:center;font-size:75px;background:linear-gradient(145deg,#ffffff30,#ffffff0b);border:1px solid #ffffff50;box-shadow:0 24px 55px #06291e55;backdrop-filter:blur(8px);transform:rotate(-7deg)}
+.showcase-float{position:absolute;z-index:2;display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;border:1px solid #ffffffaa;border-radius:14px;box-shadow:0 12px 30px #06291e35;color:#183b2d;min-width:174px}
+.showcase-float>span{width:34px;height:34px;display:grid;place-items:center;background:#edf5e8;border-radius:10px;font-size:17px}
+.showcase-float b,.showcase-float small{display:block}.showcase-float b{font-size:11px}.showcase-float small{font-size:10px;color:#738078;margin-top:2px}
+.float-top{top:25px;right:0}.float-bottom{bottom:20px;left:0}.showcase-spark{position:absolute;color:#d6f36a;font-size:28px}.spark-one{top:12px;left:18%}.spark-two{bottom:28px;right:16%}
+.hero-bottomline{grid-column:1/-1;display:flex;gap:20px;flex-wrap:wrap;padding-top:15px;margin-top:4px;border-top:1px solid #ffffff25;color:#e1eee7;font-size:11px}
+.sectionhead{margin:30px 0 13px}.sectionhead h2{font-size:22px;color:#173b2e}
+.categories{gap:9px;padding:2px 0 7px}.chip{padding:10px 16px;font-size:12px;font-weight:700;transition:background .18s,border-color .18s,transform .18s}
+.chip:hover{transform:translateY(-1px);border-color:#9bb5a1}.chip.active{background:#174b3d;border-color:#174b3d;box-shadow:0 5px 12px #174b3d20}
+.toolbar{padding:13px 15px;background:#fff;border:1px solid #e5ece5;border-radius:14px;margin:13px 0 14px}.toolbar select{min-width:150px}
+.grid{gap:16px}.card{border-color:#e6ece6;border-radius:18px;box-shadow:0 5px 18px #173b2d08;transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-3px);box-shadow:0 13px 28px #173b2d14}.photo{height:175px;background:linear-gradient(145deg,#edf4ed,#e2ece4)}
+.cardbody{padding:15px}.cardactions a{background:#174b3d}.cardactions button{border:1px solid #e1e9e2}.empty{border-radius:18px;background:#fff}
+footer{color:#6b7a70;padding-top:25px}
+@media(max-width:760px){main{padding-top:16px}.hero{grid-template-columns:1fr;min-height:0;padding:25px 21px 18px;gap:8px}.hero-showcase{min-height:180px;margin:0 0 2px}.showcase-main-icon{width:112px;height:112px;font-size:58px;border-radius:32px}.showcase-glow{width:170px;height:170px}.orbit-one{width:220px;height:140px}.orbit-two{width:160px;height:220px}.float-top{top:7px;right:0}.float-bottom{bottom:7px;left:0}.hero-bottomline{gap:9px 16px}.hero-bottomline span{font-size:10px}}
+@media(max-width:430px){.hero h1{font-size:39px}.hero p{font-size:13px}.searchrow{min-height:54px;padding-left:10px}.searchrow input{font-size:12px}.searchrow button{padding:9px 12px;font-size:12px}.hero-showcase{min-height:165px}.showcase-float{min-width:150px;padding:9px 10px}.showcase-float b{font-size:10px}.showcase-float small{font-size:9px}.sectionhead h2{font-size:19px}.photo{height:118px}}
+
 </style>
 </head>
 <body>
@@ -135,13 +169,21 @@ body #accountSection.auth-open{display:flex!important;position:fixed;inset:0;z-i
 </section>
 <main>
   <section class="hero">
-    <div>
-      <h1>South Africa's local marketplace starts here.</h1>
-      <p>Discover products, find local services and connect directly with the people behind the businesses.</p>
-      <div class="searchrow"><input id="search" placeholder="Search phones, clothing, services..." aria-label="Search listings"><button class="primary" onclick="render()">Search</button></div>
-      <div class="stats"><span>🇿🇦 All nine provinces</span><span>• Individuals & businesses</span><span>• Free demo listings</span></div>
+    <div class="hero-copy">
+      <div class="hero-kicker"><span class="hero-kicker-dot"></span> YOUR COMMUNITY MARKETPLACE</div>
+      <h1>Good finds.<br><span>Great connections.</span></h1>
+      <p>Buy, sell and discover what’s happening around your corner of South Africa. Connect directly with local people and businesses.</p>
+      <div class="searchrow"><span class="search-icon" aria-hidden="true">⌕</span><input id="search" placeholder="What are you looking for today?" aria-label="Search listings"><button class="primary" onclick="render()">Search</button></div>
+      <div class="hero-actions"><button class="hero-sell" onclick="openForm()">＋ Start selling</button><span class="hero-note">Free to browse · Local connections</span></div>
     </div>
-    <div class="hero-art" aria-hidden="true">🛍️</div>
+    <div class="hero-showcase" aria-hidden="true">
+      <div class="showcase-glow"></div><div class="showcase-orbit orbit-one"></div><div class="showcase-orbit orbit-two"></div>
+      <div class="showcase-main-icon">🛍️</div>
+      <div class="showcase-float float-top"><span>📍</span><div><b>Right around you</b><small>Discover local sellers</small></div></div>
+      <div class="showcase-float float-bottom"><span>🤝</span><div><b>People first</b><small>Connect directly</small></div></div>
+      <div class="showcase-spark spark-one">✦</div><div class="showcase-spark spark-two">✧</div>
+    </div>
+    <div class="hero-bottomline"><span>🇿🇦 Made for South Africa</span><span>All 9 provinces</span><span>Individuals & businesses</span></div>
   </section>
 
   <div class="sectionhead"><h2>Explore categories</h2></div>
