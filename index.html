@@ -55,7 +55,7 @@ footer{max-width:1120px;margin:30px auto 0;padding:20px 16px 35px;color:var(--mu
 .detail-contact{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
 .detail-contact a{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;background:#eaf2ec;color:#174b3d;padding:12px 15px;border-radius:12px;font-weight:800}
 .detail-contact a.whatsapp{background:#174b3d;color:#fff}
-form{display:grid;gap:11px}.field{display:grid;gap:5px}.field label{font-size:12px;font-weight:750;color:#4d5d54}
+form{display:grid;gap:11px}.field{display:grid;gap:5px}.field label{font-size:12px;font-weight:750;color:#4d5d54}.field input[aria-invalid="true"],.field select[aria-invalid="true"]{border-color:#c43d3d;box-shadow:0 0 0 2px #c43d3d18}.field-error{color:#b42318;font-size:12px;font-weight:700}
 .field input,.field select,.field textarea{width:100%;border:1px solid #d9e2da;border-radius:10px;padding:11px;background:white}
 .field textarea{min-height:75px;resize:vertical}
 .note{font-size:12px;color:var(--muted);background:#f0f5f0;border-radius:10px;padding:10px}
@@ -203,7 +203,7 @@ footer{color:#6b7a70;padding-top:25px}
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="formTitle">
  <div class="dialog">
   <div class="dialoghead"><h2 id="formTitle">Post a free advertisement</h2><button class="close" onclick="closeForm()">✕</button></div>
-  <form id="listingForm">
+  <form id="listingForm" novalidate>
    <div class="field"><label for="item">Product or service name *</label><input id="item" required maxlength="70" placeholder="e.g. Handmade beaded bracelets"></div>
    <div class="field"><label for="price">Price in rand (R) *</label><input id="price" type="number" min="0" step="0.01" required placeholder="e.g. 150"></div>
    <div class="field"><label for="category">Category *</label><select id="category" required><option value="">Choose a category</option><option>Electronics</option><option>Clothing</option><option>Home & Furniture</option><option>Food</option><option>Beauty</option><option>Vehicles</option><option>Services</option><option>Other</option></select></div>
@@ -344,13 +344,43 @@ async function forgotPassword(){
   }catch(error){alert("Could not sign in: "+(error.message||error));}
 }
 async function signOutUser(){if(!supabaseClient){alert("ManiHub's connection service has not loaded. Refresh the page and try again.");return;}try{const {error}=await supabaseClient.auth.signOut();if(error)throw error;currentUser=null;await refreshAuth();alert("You have signed out.");}catch(error){alert("Could not sign out: "+(error.message||error));}}
+function validateListingForm(){
+  const checks=[
+    ["item","Enter your product or service name."],
+    ["price","Enter the price in rand."],
+    ["category","Choose a category."],
+    ["seller","Enter your name or business name."],
+    ["provinceInput","Choose your province."],
+    ["phone","Enter your WhatsApp number with country code."]
+  ];
+  let firstInvalid=null;
+  checks.forEach(([id,message])=>{
+    const input=byId(id),field=input?.closest(".field");
+    if(!input||!field)return;
+    let error=field.querySelector(".field-error");
+    if(!error){error=document.createElement("small");error.className="field-error";error.id=id+"Error";error.setAttribute("role","alert");field.appendChild(error);}
+    const invalid=!String(input.value||"").trim();
+    input.setAttribute("aria-invalid",invalid?"true":"false");
+    error.textContent=invalid?message:"";error.hidden=!invalid;
+    if(invalid&&!firstInvalid)firstInvalid=input;
+  });
+  const price=byId("price");
+  if(price&&price.value.trim()&&Number(price.value)<0){
+    const field=price.closest(".field"),error=field.querySelector(".field-error");
+    error.textContent="Price cannot be negative.";error.hidden=false;price.setAttribute("aria-invalid","true");
+    if(!firstInvalid)firstInvalid=price;
+  }
+  if(firstInvalid){firstInvalid.scrollIntoView({behavior:"smooth",block:"center"});firstInvalid.focus({preventScroll:true});return false;}
+  return true;
+}
 async function publishListing(e){
   e.preventDefault();
+  if(!validateListingForm())return;
   if(!supabaseClient){alert("ManiHub's connection service has not loaded. Refresh the page and try again.");return;}
   if(!currentUser){alert("Please sign in first.");return;}
   const file=byId("photo").files[0];
   if(file && !["image/jpeg","image/png","image/webp"].includes(file.type)){alert("Please choose a JPG, PNG or WebP image.");return;}
-  if(file && file.size>15*1024*1024){alert("Your photo must be 5 MB or smaller.");return;}
+  if(file && file.size>15*1024*1024){alert("Your photo must be 15 MB or smaller.");return;}
   const button=byId("publishButton");if(button){button.disabled=true;button.textContent="Publishing…";}
   let uploadedPath=null;
   try{
@@ -376,12 +406,17 @@ async function publishListing(e){
 function previewListingPhoto(){
   const input=byId("photo"),preview=byId("photoPreview");if(!input||!preview)return;
   const file=input.files&&input.files[0];if(!file){preview.hidden=true;preview.removeAttribute("src");return;}
-  if(!["image/jpeg","image/png","image/webp"].includes(file.type)||file.size>5*1024*1024){preview.hidden=true;preview.removeAttribute("src");return;}
+  if(!["image/jpeg","image/png","image/webp"].includes(file.type)||file.size>15*1024*1024){preview.hidden=true;preview.removeAttribute("src");return;}
   preview.src=URL.createObjectURL(file);preview.hidden=false;
 }
 function bindButtons(){
   document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeAuth();closeForm();closeDetails();}});
   byId("search")?.addEventListener("input",render);byId("province")?.addEventListener("change",render);byId("listingForm")?.addEventListener("submit",publishListing);byId("photo")?.addEventListener("change",previewListingPhoto);
+  ["item","price","category","seller","provinceInput","phone"].forEach(id=>{
+    const input=byId(id);if(!input)return;
+    const clear=()=>{input.setAttribute("aria-invalid","false");const error=input.closest(".field")?.querySelector(".field-error");if(error){error.hidden=true;error.textContent="";}};
+    input.addEventListener("input",clear);input.addEventListener("change",clear);
+  });
   byId("categories")?.addEventListener("click",e=>{const b=e.target.closest("[data-category]");if(b)setCat(b.dataset.category);});
   byId("listings")?.addEventListener("click",e=>{const d=e.target.closest("[data-details]");if(d)showDetails(d.dataset.details);const f=e.target.closest("[data-open-form]");if(f)openForm();});
   byId("modal")?.addEventListener("click",e=>{if(e.target.id==="modal")closeForm();});
