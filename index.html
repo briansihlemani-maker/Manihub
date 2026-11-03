@@ -60,27 +60,6 @@ body:not(.authenticated) footer {
   display: none !important;
 }
 
-body:not(.authenticated) #accountSection {
-  min-height: 100vh;
-  max-width: none !important;
-  margin: 0 !important;
-  padding: 24px !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #123c32;
-}
-
-body:not(.authenticated) #accountSection > div {
-  width: 100%;
-  max-width: 430px;
-  box-sizing: border-box;
-}
-
-body.authenticated #accountSection {
-  display: none !important;
-  }
-
 /* ManiHub welcome and sign-in screen */
 .auth-screen{position:relative;isolation:isolate;overflow:hidden;min-height:100svh;width:100%;max-width:none!important;margin:0!important;padding:28px 18px!important;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 15% 8%,#1d5845 0%,transparent 42%),linear-gradient(145deg,#092d25,#123c32 55%,#092820);color:#17221e}
 .auth-screen:before,.auth-screen:after{content:"";position:absolute;z-index:-1;width:360px;height:360px;border:9px solid #d6f36a;border-radius:48% 52% 60% 40%;opacity:.9;transform:rotate(-28deg);pointer-events:none}
