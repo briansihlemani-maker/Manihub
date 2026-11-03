@@ -48,6 +48,13 @@ footer{max-width:1120px;margin:30px auto 0;padding:20px 16px 35px;color:var(--mu
 .dialog{background:white;border-radius:20px;padding:20px;width:min(100%,560px);margin:auto}
 .dialoghead{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
 .dialog h2{font-size:22px}.close{background:#eef2ee;color:#34443b;padding:7px 11px}
+.detail-photo{width:100%;max-height:320px;object-fit:contain;border-radius:14px;background:#f2f5f2;margin-bottom:14px}
+.detail-price{font-size:26px;font-weight:900;color:#174b3d;margin:8px 0}
+.detail-meta{color:#64736a;font-size:13px;margin:6px 0}
+.detail-description{line-height:1.55;white-space:pre-wrap;color:#34443b;margin:14px 0}
+.detail-contact{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+.detail-contact a{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;background:#eaf2ec;color:#174b3d;padding:12px 15px;border-radius:12px;font-weight:800}
+.detail-contact a.whatsapp{background:#174b3d;color:#fff}
 form{display:grid;gap:11px}.field{display:grid;gap:5px}.field label{font-size:12px;font-weight:750;color:#4d5d54}
 .field input,.field select,.field textarea{width:100%;border:1px solid #d9e2da;border-radius:10px;padding:11px;background:white}
 .field textarea{min-height:75px;resize:vertical}
@@ -145,6 +152,12 @@ body #accountSection.auth-open{display:flex!important;position:fixed;inset:0;z-i
 </main>
 <footer><b>ManiHub beta</b> · Shared listings and account sign-in use Supabase. Payments and photo uploads are not enabled yet.</footer>
 
+<div class="modal" id="detailsModal" role="dialog" aria-modal="true" aria-labelledby="detailsTitle">
+ <div class="dialog detail-dialog">
+  <div class="dialoghead"><h2 id="detailsTitle">Listing details</h2><button class="close" type="button" onclick="closeDetails()" aria-label="Close listing details">✕</button></div>
+  <div id="detailsContent"></div>
+ </div>
+</div>
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="formTitle">
  <div class="dialog">
   <div class="dialoghead"><h2 id="formTitle">Post a free advertisement</h2><button class="close" onclick="closeForm()">✕</button></div>
@@ -184,7 +197,22 @@ function render(){
   byId("count").textContent=`${shown.length} listing${shown.length===1?"":"s"} found`;
   target.innerHTML=shown.length?shown.map(x=>{const wa=String(x.phone||"").replace(/\D/g,"");const msg=encodeURIComponent(`Hi ${x.seller}, I saw your "${x.item}" advert on ManiHub. Is it still available?`);return `<article class="card"><div class="photo">${x.photo?`<img src="${esc(x.photo)}" alt="${esc(x.item)}">`:esc(x.emoji)}</div><div class="cardbody"><div class="meta">${esc(x.category)} · ${esc(x.kind)}</div><div class="title">${esc(x.item)}</div><div class="price">R${Number(x.price).toLocaleString("en-ZA",{maximumFractionDigits:2})}</div><div class="seller">${esc(x.seller)}</div><div class="meta">📍 ${esc(x.town?x.town+", ":"")}${esc(x.province)}</div><div class="cardactions">${wa?`<a href="https://wa.me/${wa}?text=${msg}" target="_blank" rel="noopener">WhatsApp seller</a>`:`<span class="meta">No contact supplied</span>`}<button type="button" data-details="${esc(x.id)}">Details</button></div></div></article>`}).join(""):`<div class="empty"><div style="font-size:35px">🔎</div><b>No listings found</b><p>${supabaseClient?"There are no matching live adverts yet. Create an account and post the first one.":"Marketplace connection is not ready. Please refresh the page and try again."}</p><button type="button" class="secondary" data-open-form>Post an advert</button></div>`;
 }
-function showDetails(id){const x=listings.find(a=>String(a.id)===String(id));if(x)alert(`${x.item}\nR${x.price}\n${x.description||"No extra description."}\nSeller: ${x.seller}\nLocation: ${x.town?x.town+", ":""}${x.province}`);}
+function showDetails(id){
+  const x=listings.find(a=>String(a.id)===String(id));if(!x)return;
+  const wa=String(x.phone||"").replace(/\D/g,"");
+  const message=encodeURIComponent("Hi "+x.seller+", I saw your \""+x.item+"\" advert on ManiHub. Is it still available?");
+  const content=byId("detailsContent");
+  content.innerHTML=(x.photo?'<img class="detail-photo" src="'+esc(x.photo)+'" alt="'+esc(x.item)+'">':"")
+    +'<div class="meta">'+esc(x.category)+' · '+esc(x.kind)+'</div>'
+    +'<h3>'+esc(x.item)+'</h3>'
+    +'<div class="detail-price">R'+Number(x.price).toLocaleString("en-ZA",{maximumFractionDigits:2})+'</div>'
+    +'<div class="detail-meta">Seller: <b>'+esc(x.seller)+'</b></div>'
+    +'<div class="detail-meta">Location: '+esc(x.town?x.town+", ":"")+esc(x.province)+'</div>'
+    +'<div class="detail-description">'+esc(x.description||"The seller has not added a description yet.")+'</div>'
+    +'<div class="detail-contact">'+(wa?'<a class="whatsapp" href="https://wa.me/'+wa+'?text='+message+'" target="_blank" rel="noopener">Message seller on WhatsApp</a>':"")+'<button type="button" class="secondary" onclick="closeDetails()">Close</button></div>';
+  byId("detailsModal")?.classList.add("open");
+}
+function closeDetails(){byId("detailsModal")?.classList.remove("open");}
 function openAuth(){byId("accountSection")?.classList.add("auth-open");document.body.style.overflow="hidden";byId("authIdentifier")?.focus();}
 function closeAuth(){byId("accountSection")?.classList.remove("auth-open");document.body.style.overflow="";}
 function syncHeaderActions(){const signIn=byId("headerSignIn"),signOut=byId("headerSignOut");if(signIn)signIn.hidden=!!currentUser;if(signOut)signOut.hidden=!currentUser;}
@@ -276,11 +304,12 @@ async function forgotPassword(){
 async function signOutUser(){if(!supabaseClient){alert("ManiHub's connection service has not loaded. Refresh the page and try again.");return;}try{const {error}=await supabaseClient.auth.signOut();if(error)throw error;currentUser=null;await refreshAuth();alert("You have signed out.");}catch(error){alert("Could not sign out: "+(error.message||error));}}
 async function publishListing(e){e.preventDefault();if(!supabaseClient){alert("ManiHub's connection service has not loaded. Refresh the page and try again.");return;}if(!currentUser){alert("Please sign in first.");return;}const file=byId("photo").files[0];if(file){alert("Photo uploads are not connected yet. Remove the photo and try again.");return;}const kind=byId("kind").value;const row={owner_id:currentUser.id,title:byId("item").value.trim(),price:Number(byId("price").value),category:byId("category").value,seller_type:kind==="Registered business"?"business":"individual",seller_name:byId("seller").value.trim(),province:byId("provinceInput").value,town:byId("town").value.trim()||null,whatsapp:byId("phone").value.trim(),description:byId("description").value.trim(),status:"active"};try{const {error}=await supabaseClient.from("listings").insert(row);if(error)throw error;e.target.reset();closeForm();byId("province").value="";active="All";await refreshListings();alert("Your advert is now published to the shared ManiHub marketplace.");}catch(error){alert("Could not publish advert: "+(error.message||error));}}
 function bindButtons(){
-  document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeAuth();closeForm();}});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeAuth();closeForm();closeDetails();}});
   byId("search")?.addEventListener("input",render);byId("province")?.addEventListener("change",render);byId("listingForm")?.addEventListener("submit",publishListing);
   byId("categories")?.addEventListener("click",e=>{const b=e.target.closest("[data-category]");if(b)setCat(b.dataset.category);});
   byId("listings")?.addEventListener("click",e=>{const d=e.target.closest("[data-details]");if(d)showDetails(d.dataset.details);const f=e.target.closest("[data-open-form]");if(f)openForm();});
   byId("modal")?.addEventListener("click",e=>{if(e.target.id==="modal")closeForm();});
+  byId("detailsModal")?.addEventListener("click",e=>{if(e.target.id==="detailsModal")closeDetails();});
 }
 function loadSupabaseFallback(){return new Promise(resolve=>{if(window.supabase?.createClient){resolve(true);return;}const s=document.createElement("script");s.src="https://unpkg.com/@supabase/supabase-js@2";s.onload=()=>resolve(!!window.supabase?.createClient);s.onerror=()=>resolve(false);document.head.appendChild(s);});}
 async function initManiHub(){
@@ -291,7 +320,7 @@ async function initManiHub(){
     await refreshAuth();await refreshListings();
   }catch(error){setStatus("ManiHub connection could not start: "+(error.message||error));const target=byId("listings");if(target)target.innerHTML=`<div class="empty">${esc(error.message||error)}</div>`;}
 }
-window.signUpUser=signUpUser;window.signInUser=signInUser;window.openAuth=openAuth;window.closeAuth=closeAuth;window.toggleAuthMode=toggleAuthMode;window.togglePasswordVisibility=togglePasswordVisibility;window.signOutUser=signOutUser;window.render=render;window.openForm=openForm;window.closeForm=closeForm;window.setCat=setCat;window.showDetails=showDetails;
+window.signUpUser=signUpUser;window.signInUser=signInUser;window.openAuth=openAuth;window.closeAuth=closeAuth;window.closeDetails=closeDetails;window.toggleAuthMode=toggleAuthMode;window.togglePasswordVisibility=togglePasswordVisibility;window.signOutUser=signOutUser;window.render=render;window.openForm=openForm;window.closeForm=closeForm;window.setCat=setCat;window.showDetails=showDetails;
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",initManiHub,{once:true});else initManiHub();
 
 </script>
