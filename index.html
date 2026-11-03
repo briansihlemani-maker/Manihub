@@ -7,7 +7,7 @@
 <title>ManiHub — Buy. Sell. Grow.</title>
 <style>
 :root{--green:#123c32;--green2:#1c604d;--lime:#d6f36a;--ink:#17221e;--muted:#66736d;--bg:#f4f7f4;--line:#e2e9e3;--white:#fff}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#092d25!important;border:0}body{color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
 header{background:#fff;color:var(--green);padding:8px max(18px,calc((100% - 1120px)/2));border-bottom:1px solid var(--line);}
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:1120px;margin:auto}
 .brand{font-weight:900;font-size:23px;letter-spacing:-.7px}.brand span{color:#62bd00}.brand-logo{display:block;width:230px;height:150px;object-fit:contain}.brand-wrap{display:flex;align-items:center;gap:10px;min-width:0}.brand-copy{font-weight:900;font-size:22px;letter-spacing:-.7px;color:var(--green)}.brand-copy span{color:#62bd00}
@@ -61,13 +61,13 @@ body:not(.authenticated) footer {
 }
 
 /* ManiHub welcome and sign-in screen */
-.auth-screen{position:relative;isolation:isolate;overflow:hidden;min-height:100svh;width:100%;max-width:none!important;margin:0!important;padding:28px 18px!important;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 15% 8%,#1d5845 0%,transparent 42%),linear-gradient(145deg,#092d25,#123c32 55%,#092820);color:#17221e}
+.auth-screen{position:relative;isolation:isolate;overflow:hidden;min-height:100svh;width:100%;max-width:none!important;margin:0!important;margin-top:-1px!important;padding:28px 18px!important;border:0!important;outline:0!important;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 15% 8%,#1d5845 0%,transparent 42%),linear-gradient(145deg,#092d25,#123c32 55%,#092820);color:#17221e}
 .auth-screen:before,.auth-screen:after{content:"";position:absolute;z-index:-1;width:360px;height:360px;border:9px solid #d6f36a;border-radius:48% 52% 60% 40%;opacity:.9;transform:rotate(-28deg);pointer-events:none}
 .auth-screen:before{top:-255px;left:-155px;box-shadow:0 0 0 9px #c69b43}
 .auth-screen:after{right:-235px;bottom:-260px;border-color:#c69b43;box-shadow:0 0 0 9px #d6f36a}
 .auth-shell{width:min(100%,470px);position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:18px}
 .auth-brand{text-align:center;color:#fff;display:flex;flex-direction:column;align-items:center;gap:0}
-.auth-logo{display:block;width:190px;height:112px;object-fit:contain;mix-blend-mode:multiply;filter:drop-shadow(0 8px 18px #001b14aa)}
+.auth-logo{display:block;width:min(250px,80vw);height:auto;object-fit:contain;background:transparent!important;mix-blend-mode:multiply!important;filter:none!important}
 .auth-tagline{font-size:14px;font-weight:750;letter-spacing:1.5px;color:#e6f2df;margin-top:-3px}
 .auth-panel{width:100%;background:#fff;border-radius:25px;padding:clamp(23px,6vw,38px);box-shadow:0 24px 65px #001b1455;display:flex;flex-direction:column;gap:15px}
 .auth-heading{text-align:center;margin-bottom:2px}
@@ -95,7 +95,7 @@ body:not(.authenticated) footer {
 body:not(.authenticated) header,body:not(.authenticated) main,body:not(.authenticated) footer{display:none!important}
 body:not(.authenticated) #accountSection{display:flex!important}
 body.authenticated #accountSection{display:none!important}
-@media(max-width:480px){.auth-screen{padding:22px 15px!important}.auth-logo{width:165px;height:95px}.auth-panel{border-radius:21px;padding:23px 19px}.auth-heading h1{font-size:27px}}
+@media(max-width:480px){.auth-screen{padding:22px 15px!important}.auth-logo{width:min(250px,80vw);height:auto}.auth-panel{border-radius:21px;padding:23px 19px}.auth-heading h1{font-size:27px}}
 
 </style>
 </head>
