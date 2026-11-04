@@ -973,22 +973,46 @@ function renderHotProducts(){
   const fresh=[...listings].sort((a,b)=>getListingScore(b)-getListingScore(a)||new Date(b.created_at||0)-new Date(a.created_at||0)).slice(0,8);
   target.innerHTML=fresh.length?fresh.map(x=>productCardMarkup(x,true)).join(""):'<div class="hot-empty">New products will appear here as soon as sellers publish adverts. <button type="button" class="secondary" onclick="openForm()">Be the first to sell</button></div>';
 }
-function openExplorePage(){
+function showExploreView(reset=true){
   closeManiMenu();
-  ["hotNowSection",""].forEach(()=>{});
-  const mainSections=document.querySelectorAll("main > section");
-  mainSections.forEach(section=>{if(section.id!=="explorePage")section.hidden=true;});
+  document.querySelectorAll("main > section").forEach(section=>{section.hidden=section.id!=="explorePage";});
   byId("explorePage").hidden=false;
   document.body.classList.add("exploring");
-  exploreCategory="All";byId("exploreSearch").value="";
-  document.querySelectorAll("[data-explore-category]").forEach(b=>b.classList.toggle("active",b.dataset.exploreCategory==="All"));
-  renderExploreListings();setExploreMode("products");window.scrollTo({top:0,behavior:"smooth"});
+  if(reset){exploreCategory="All";byId("exploreSearch").value="";
+    document.querySelectorAll("[data-explore-category]").forEach(b=>b.classList.toggle("active",b.dataset.exploreCategory==="All"));
+    setExploreMode("products");
+  }
+  renderExploreListings();
+  window.scrollTo({top:0,behavior:"instant"});
+}
+function openExplorePage(){
+  if(location.hash!=="#explore"){
+    history.pushState({manihubView:"explore"},"",location.pathname+location.search+"#explore");
+  }
+  showExploreView(true);
 }
 function closeExplorePage(){
-  byId("explorePage").hidden=true;
-  document.querySelectorAll("main > section").forEach(section=>{if(section.id!=="explorePage")section.hidden=false;});
-  document.body.classList.remove("exploring");window.scrollTo({top:0,behavior:"smooth"});
+  if(location.hash==="#explore"&&history.state?.manihubView==="explore"){
+    history.back();
+    return;
+  }
+  history.replaceState({manihubView:"home"},"",location.pathname+location.search);
+  showHomeView();
 }
+function showHomeView(){
+  byId("explorePage").hidden=true;
+  document.querySelectorAll("main > section").forEach(section=>{section.hidden=false;});
+  document.body.classList.remove("exploring");
+  window.scrollTo({top:0,behavior:"instant"});
+}
+function restorePageFromUrl(){
+  if(location.hash==="#explore")showExploreView(false);
+  else showHomeView();
+}
+window.addEventListener("popstate",()=>{
+  if(location.hash==="#explore")showExploreView(false);
+  else showHomeView();
+});
 function setExploreCategory(category){
   exploreCategory=category;
   document.querySelectorAll("[data-explore-category]").forEach(b=>b.classList.toggle("active",b.dataset.exploreCategory===category));
@@ -1290,7 +1314,7 @@ function bindButtons(){
 }
 function loadSupabaseFallback(){return new Promise(resolve=>{if(window.supabase?.createClient){resolve(true);return;}const s=document.createElement("script");s.src="https://unpkg.com/@supabase/supabase-js@2";s.onload=()=>resolve(!!window.supabase?.createClient);s.onerror=()=>resolve(false);document.head.appendChild(s);});}
 async function initManiHub(){
-  bindButtons();render();setStatus("Starting ManiHub account connection…");
+  bindButtons();render();restorePageFromUrl();setStatus("Starting ManiHub account connection…");
   try{if(!window.supabase?.createClient){const loaded=await loadSupabaseFallback();if(!loaded)throw new Error("The Supabase library could not load. Check your internet connection.");}
     supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
     supabaseClient.auth.onAuthStateChange((_event,session)=>{currentUser=session?.user||null;syncHeaderActions();setStatus(currentUser?`Signed in as ${currentUser.email}. You can publish adverts.`:"Sign in or create an account to publish adverts to the shared marketplace.");});
@@ -1305,5 +1329,8 @@ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",
 </html>
 
 
-/* Explore view: enforce the hidden attribute even where homepage section styles set display. */
+/* Explore is a separate page: never show homepage hero, promo banners or footer sections here. */
 main > section[hidden]{display:none!important}
+body.exploring main > section:not(#explorePage){display:none!important}
+body.exploring main{padding-top:16px}
+body.exploring #explorePage{display:block!important}
