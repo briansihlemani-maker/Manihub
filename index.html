@@ -251,9 +251,12 @@ footer{color:#6b7a70;padding-top:25px}
   <div class="help-note"><b>Welcome to ManiHub Help.</b><br>Our built-in assistant is being connected to ManiHub's verified help information. It will help with shopping, selling, shops, orders, delivery and account questions.</div>
   <ul><li>Get help using ManiHub</li><li>Find the right department or service</li><li>Connect to the ManiHub support team</li></ul>
  </div>
- <form class="help-compose" onsubmit="submitHelpMessage(event)">
-  <input id="helpInput" type="text" maxlength="1000" placeholder="Messaging will be available soon…" disabled aria-label="Write a message">
-  <button type="submit" disabled>Send</button>
+ <div id="helpStatus" class="help-note" role="status">Sign in to use private ManiHub messages.</div>
+ <div id="helpConversationList" class="help-content" style="padding-top:0"></div>
+ <div id="helpMessageList" class="help-content" style="padding-top:0;display:none"></div>
+ <form class="help-compose" id="helpCompose" onsubmit="submitHelpMessage(event)">
+  <input id="helpInput" type="text" maxlength="10000" placeholder="Write a message…" disabled aria-label="Write a message">
+  <button id="helpSend" type="submit" disabled>Send</button>
  </form>
 </div>
 
@@ -496,23 +499,90 @@ function previewListingPhoto(){
   preview.src=URL.createObjectURL(file);preview.hidden=false;
 }
 
-let helpMode="ai";
+let helpMode="ai",activeHelpConversation=null,helpRealtime=null;
 function openHelp(mode="ai"){
   const panel=byId("helpPanel");if(!panel)return;
   panel.classList.add("open");switchHelpTab(mode);
 }
 function closeHelp(){byId("helpPanel")?.classList.remove("open");}
+function helpStatus(message){const el=byId("helpStatus");if(el)el.textContent=message;}
 function switchHelpTab(mode){
   helpMode=mode==="messages"?"messages":"ai";
   byId("helpAiTab")?.classList.toggle("active",helpMode==="ai");
   byId("helpMessagesTab")?.classList.toggle("active",helpMode==="messages");
   byId("helpTitle").textContent=helpMode==="ai"?"ManiHub AI assistant":"ManiHub Messages";
-  byId("helpContent").innerHTML=helpMode==="ai"
-   ?'<div class="help-note"><b>Your ManiHub assistant is being set up.</b><br>It will answer questions using ManiHub-approved information and guide you through shopping, selling, shops, orders, bookings and delivery. It will hand complicated issues to a human support agent.</div><ul><li>Answers about using ManiHub</li><li>Help finding products and services</li><li>Step-by-step seller guidance</li></ul>'
-   :'<div class="help-note"><b>ManiHub messaging is being set up.</b><br>This space will connect customers with sellers and the ManiHub support team. Conversations will be private to their participants.</div><ul><li>Customer ↔ seller conversations</li><li>Customer ↔ ManiHub support</li><li>Seller ↔ ManiHub support</li><li>Photos, attachments and notifications</li></ul>';
+  const ai=byId("helpContent"),list=byId("helpConversationList"),messages=byId("helpMessageList"),compose=byId("helpCompose");
+  if(ai)ai.style.display=helpMode==="ai"?"block":"none";
+  if(list)list.style.display=helpMode==="messages"?"block":"none";
+  if(messages)messages.style.display=helpMode==="messages"?"block":"none";
+  if(compose)compose.style.display=helpMode==="messages"?"flex":"none";
+  if(helpMode==="ai"){
+    ai.innerHTML='<div class="help-note"><b>ManiHub AI assistant is not connected yet.</b><br>We are preparing a secure AI service. It will answer general ManiHub questions and only show private order or account details after secure account checks.</div><ul><li>Help using ManiHub</li><li>Finding products and services</li><li>Guidance for sellers</li><li>Human support hand-off</li></ul>';
+  }else{loadHelpConversations();}
 }
-function submitHelpMessage(event){event.preventDefault();}
-window.openHelp=openHelp;window.closeHelp=closeHelp;window.switchHelpTab=switchHelpTab;
+function helpEscape(value){return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+async function loadHelpConversations(){
+  const list=byId("helpConversationList"),input=byId("helpInput"),send=byId("helpSend");
+  if(!currentUser||!supabaseClient){helpStatus("Please sign in to start a private support conversation.");if(input)input.disabled=true;if(send)send.disabled=true;if(list)list.innerHTML='<p class="meta">Sign in to view your conversations.</p>';return;}
+  helpStatus("Your private ManiHub support conversations.");
+  if(input)input.disabled=!activeHelpConversation;if(send)send.disabled=!activeHelpConversation;
+  try{
+    const {data:parts,error}=await supabaseClient.from("manihub_conversation_participants").select("conversation_id").eq("user_id",currentUser.id);
+    if(error)throw error;
+    const ids=[...new Set((parts||[]).map(p=>p.conversation_id))];
+    if(!ids.length){list.innerHTML='<p class="meta">No conversations yet. Start a support conversation below.</p>';return;}
+    const {data:conversations,error:convError}=await supabaseClient.from("manihub_conversations").select("id,subject,conversation_type,status,updated_at").in("id",ids).order("updated_at",{ascending:false});
+    if(convError)throw convError;
+    list.innerHTML='<button type="button" class="primary" onclick="startHelpConversation()">＋ New support conversation</button>'+((conversations||[]).map(c=>'<button type="button" class="secondary" style="display:block;width:100%;text-align:left;margin-top:7px" onclick="openHelpConversation(\''+helpEscape(c.id)+'\')">'+helpEscape(c.subject||"ManiHub support")+' · '+helpEscape(c.status)+'</button>').join(""));
+  }catch(error){helpStatus("Could not load conversations: "+(error.message||error));}
+}
+async function startHelpConversation(){
+  if(!currentUser||!supabaseClient){openAuth();return;}
+  try{
+    const {data:conversation,error}=await supabaseClient.from("manihub_conversations").insert({conversation_type:"support",subject:"ManiHub support",created_by:currentUser.id}).select("id").single();
+    if(error)throw error;
+    const {error:participantError}=await supabaseClient.from("manihub_conversation_participants").insert({conversation_id:conversation.id,user_id:currentUser.id,participant_role:"member"});
+    if(participantError)throw participantError;
+    activeHelpConversation=conversation.id;
+    await loadHelpConversations();await openHelpConversation(conversation.id);
+  }catch(error){helpStatus("Could not start conversation: "+(error.message||error));}
+}
+async function openHelpConversation(id){
+  if(!currentUser||!supabaseClient)return;
+  activeHelpConversation=id;
+  const list=byId("helpConversationList"),messages=byId("helpMessageList"),input=byId("helpInput"),send=byId("helpSend");
+  if(list)list.style.display="none";if(messages)messages.style.display="block";
+  if(input)input.disabled=false;if(send)send.disabled=false;
+  if(helpRealtime){supabaseClient.removeChannel(helpRealtime);helpRealtime=null;}
+  await refreshHelpMessages();
+  helpRealtime=supabaseClient.channel("manihub-chat-"+id).on("postgres_changes",{event:"INSERT",schema:"public",table:"manihub_messages",filter:"conversation_id=eq."+id},payload=>appendHelpMessage(payload.new)).subscribe();
+  helpStatus("Conversation opened. Messages are private to its participants.");
+}
+function appendHelpMessage(m){
+  const box=byId("helpMessageList");if(!box||!m)return;
+  if(box.querySelector('[data-message-id="'+helpEscape(m.id)+'"]'))return;
+  const row=document.createElement("div");row.dataset.messageId=m.id;row.style.cssText="padding:9px 11px;margin:7px 0;border-radius:12px;background:"+(m.sender_id===currentUser?.id?"#eaf4e7":"#f1f4f1")+";font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere";
+  row.innerHTML='<small style="display:block;color:#66736d;margin-bottom:3px">'+(m.sender_id===currentUser?.id?"You":"ManiHub support")+'</small>'+helpEscape(m.body);
+  box.appendChild(row);box.scrollTop=box.scrollHeight;
+}
+async function refreshHelpMessages(){
+  const box=byId("helpMessageList");if(!box||!activeHelpConversation)return;
+  try{const {data,error}=await supabaseClient.from("manihub_messages").select("id,sender_id,body,created_at").eq("conversation_id",activeHelpConversation).order("created_at",{ascending:true}).limit(200);if(error)throw error;box.innerHTML="";(data||[]).forEach(appendHelpMessage);}
+  catch(error){helpStatus("Could not load messages: "+(error.message||error));}
+}
+async function submitHelpMessage(event){
+  event.preventDefault();
+  const input=byId("helpInput"),send=byId("helpSend"),body=input?.value.trim();
+  if(!body||!activeHelpConversation||!currentUser)return;
+  send.disabled=true;
+  try{
+    const {error}=await supabaseClient.from("manihub_messages").insert({conversation_id:activeHelpConversation,sender_id:currentUser.id,body});
+    if(error)throw error;
+    input.value="";
+  }catch(error){helpStatus("Message could not be sent: "+(error.message||error));}
+  finally{send.disabled=false;input.focus();}
+}
+window.openHelp=openHelp;window.closeHelp=closeHelp;window.switchHelpTab=switchHelpTab;window.startHelpConversation=startHelpConversation;window.openHelpConversation=openHelpConversation;
 
 function bindButtons(){
   document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeAuth();closeForm();closeDetails();closeHelp();}});
