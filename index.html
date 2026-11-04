@@ -539,12 +539,13 @@ async function loadHelpConversations(){
 async function startHelpConversation(){
   if(!currentUser||!supabaseClient){openAuth();return;}
   try{
-    const {data:conversation,error}=await supabaseClient.from("manihub_conversations").insert({conversation_type:"support",subject:"ManiHub support",created_by:currentUser.id}).select("id").single();
+    const conversationId=crypto.randomUUID();
+    const {error}=await supabaseClient.from("manihub_conversations").insert({id:conversationId,conversation_type:"support",subject:"ManiHub support",created_by:currentUser.id});
     if(error)throw error;
-    const {error:participantError}=await supabaseClient.from("manihub_conversation_participants").insert({conversation_id:conversation.id,user_id:currentUser.id,participant_role:"member"});
+    const {error:participantError}=await supabaseClient.from("manihub_conversation_participants").insert({conversation_id:conversationId,user_id:currentUser.id,participant_role:"member"});
     if(participantError)throw participantError;
-    activeHelpConversation=conversation.id;
-    await loadHelpConversations();await openHelpConversation(conversation.id);
+    activeHelpConversation=conversationId;
+    await loadHelpConversations();await openHelpConversation(conversationId);
   }catch(error){helpStatus("Could not start conversation: "+(error.message||error));}
 }
 async function openHelpConversation(id){
