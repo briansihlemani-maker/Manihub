@@ -2,11 +2,11 @@
 -- Additive migration. Apply after 202611040007_manihub_catalogue_orders_reviews.sql.
 -- Supports both individual sellers and registered businesses.
 alter table public.manihub_stores add column if not exists seller_type text not null default 'business';
-do $ begin
+do $$ begin
   if not exists (select 1 from pg_constraint where conname = 'manihub_stores_seller_type_check') then
     alter table public.manihub_stores add constraint manihub_stores_seller_type_check check (seller_type in ('individual','business'));
   end if;
-end $;
+end $$;
 
 -- No service-role key is exposed to the browser. Payment collection remains disabled
 -- until a payment provider and signed webhook are configured.
