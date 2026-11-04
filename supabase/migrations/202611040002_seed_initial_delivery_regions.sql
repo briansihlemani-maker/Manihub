@@ -20,7 +20,13 @@ from public.manihub_delivery_regions r
 cross join (values ('motorcycle'),('car'),('van')) as v(vehicle_type)
 cross join (values ('petrol'),('diesel')) as f(fuel_type)
 where r.region_key in ('humansdorp','jeffreys-bay')
-on conflict (region_id, vehicle_type, fuel_type, effective_from) do nothing;
+  and not exists (
+    select 1
+    from public.manihub_vehicle_rates existing
+    where existing.region_id = r.id
+      and existing.vehicle_type = v.vehicle_type
+      and existing.fuel_type = f.fuel_type
+  );
 
 -- Rates are deliberately provisional. Add vehicle consumption and current diesel
 -- prices in the admin pricing controls before enabling live delivery quotes.
