@@ -784,17 +784,73 @@ function render(){
   target.innerHTML=shown.length?shown.map(x=>{const wa=String(x.phone||"").replace(/\D/g,"");const msg=encodeURIComponent(`Hi ${x.seller}, I saw your "${x.item}" advert on ManiHub. Is it still available?`);return `<article class="card"><div class="photo">${x.photo?`<img src="${esc(x.photo)}" alt="${esc(x.item)}">`:esc(x.emoji)}</div><div class="cardbody"><div class="meta">${esc(x.category)} · ${esc(x.kind)}</div><div class="title">${esc(x.item)}</div><div class="price">R${Number(x.price).toLocaleString("en-ZA",{maximumFractionDigits:2})}</div><div class="seller">${esc(x.seller)}</div><div class="meta">📍 ${esc(x.town?x.town+", ":"")}${esc(x.province)}</div><div class="cardactions">${wa?`<a href="https://wa.me/${wa}?text=${msg}" target="_blank" rel="noopener">WhatsApp seller</a>`:`<span class="meta">No contact supplied</span>`}<button type="button" data-details="${esc(x.id)}">Details</button></div></div></article>`}).join(""):`<div class="empty"><div style="font-size:35px">🔎</div><b>No listings found</b><p>${supabaseClient?"There are no matching live adverts yet. Create an account and post the first one.":"Marketplace connection is not ready. Please refresh the page and try again."}</p><button type="button" class="secondary" data-open-form>Post an advert</button></div>`;
 }
 
+
+let listingPopularity={};
+let maniVisitorId=null;
+function getManiVisitorId(){
+  try{
+    maniVisitorId=localStorage.getItem("manihub_visitor_id");
+    if(!maniVisitorId){maniVisitorId=crypto.randomUUID();localStorage.setItem("manihub_visitor_id",maniVisitorId);}
+  }catch(e){maniVisitorId=crypto.randomUUID();}
+  return maniVisitorId;
+}
+async function recordListingEvent(listingId,eventType){
+  if(!supabaseClient||!listingId)return;
+  try{
+    const {error}=await supabaseClient.rpc("manihub_record_listing_engagement",{
+      p_listing_id:String(listingId),p_event_type:eventType,p_visitor_id:getManiVisitorId()
+    });
+    if(error)throw error;
+    await refreshListingPopularity();
+  }catch(error){console.info("ManiHub engagement tracking is awaiting its database migration.",error.message||error);}
+}
+async function refreshListingPopularity(){
+  if(!supabaseClient)return;
+  try{
+    const {data,error}=await supabaseClient.rpc("manihub_get_listing_popularity");
+    if(error)throw error;
+    listingPopularity={};
+    (data||[]).forEach(row=>{listingPopularity[String(row.listing_id)]={
+      views:Number(row.views_30d||0),saves:Number(row.saves_30d||0),
+      enquiries:Number(row.enquiries_30d||0),sales:Number(row.sales_30d||0),
+      score:Number(row.popularity_score||0)
+    };});
+    renderHotProducts();
+    if(!byId("explorePage")?.hidden)renderExploreListings();
+  }catch(error){console.info("ManiHub popularity stats are not connected yet.",error.message||error);}
+}
+function getListingScore(x){return listingPopularity[String(x.id)]?.score||0;}
+function getListingBadge(x){
+  const stats=listingPopularity[String(x.id)]||{};
+  if(stats.sales>0)return "🏆 Best seller";
+  if(stats.enquiries>=3||stats.saves>=3)return "🔥 Trending";
+  if(stats.score>0)return "⭐ Popular";
+  return "✦ Just added";
+}
+function isListingSaved(id){
+  try{return JSON.parse(localStorage.getItem("manihub_saved_listings")||"[]").includes(String(id));}catch(e){return false;}
+}
+async function toggleListingSave(id){
+  let saved=[];try{saved=JSON.parse(localStorage.getItem("manihub_saved_listings")||"[]");}catch(e){}
+  const key=String(id),already=saved.includes(key);
+  if(already)saved=saved.filter(x=>x!==key);else saved.push(key);
+  try{localStorage.setItem("manihub_saved_listings",JSON.stringify(saved));}catch(e){}
+  if(!already)await recordListingEvent(id,"save");
+  const button=byId("saveListingButton");
+  if(button){button.textContent=already?"♡ Save":"♥ Saved";button.classList.toggle("saved",!already);}
+}
+
 let exploreCategory="All";
 function productCardMarkup(x,compact=false){
   const image=x.photo?'<img src="'+esc(x.photo)+'" alt="'+esc(x.item)+'" loading="lazy">':"🛍️";
   const location=(x.town?x.town+", ":"")+x.province;
   const price="R"+Number(x.price).toLocaleString("en-ZA",{maximumFractionDigits:2});
-  if(compact)return '<article class="hot-product" role="button" tabindex="0" onclick="showDetails(\''+esc(x.id)+'\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();showDetails(\''+esc(x.id)+'\')}"><div class="hot-product-photo">'+image+'</div><div class="hot-product-body"><span class="hot-product-badge">✦ Fresh find</span><div class="hot-product-title">'+esc(x.item)+'</div><div class="hot-product-price">'+price+'</div><div class="hot-product-location">📍 '+esc(location)+'</div></div></article>';
+  if(compact)return '<article class="hot-product" role="button" tabindex="0" onclick="showDetails(\''+esc(x.id)+'\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();showDetails(\''+esc(x.id)+'\')}"><div class="hot-product-photo">'+image+'</div><div class="hot-product-body"><span class="hot-product-badge">'+getListingBadge(x)+'</span><div class="hot-product-title">'+esc(x.item)+'</div><div class="hot-product-price">'+price+'</div><div class="hot-product-location">📍 '+esc(location)+'</div></div></article>';
   return '<article class="explore-product" role="button" tabindex="0" onclick="showDetails(\''+esc(x.id)+'\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();showDetails(\''+esc(x.id)+'\')}"><div class="explore-product-photo">'+image+'</div><div class="explore-product-body"><small>'+esc(x.category)+' · '+esc(location)+'</small><b>'+esc(x.item)+'</b><strong>'+price+'</strong><small>Seller: '+esc(x.seller)+'</small></div></article>';
 }
 function renderHotProducts(){
   const target=byId("hotProducts");if(!target)return;
-  const fresh=[...listings].sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0)).slice(0,8);
+  const fresh=[...listings].sort((a,b)=>getListingScore(b)-getListingScore(a)||new Date(b.created_at||0)-new Date(a.created_at||0)).slice(0,8);
   target.innerHTML=fresh.length?fresh.map(x=>productCardMarkup(x,true)).join(""):'<div class="hot-empty">New products will appear here as soon as sellers publish adverts. <button type="button" class="secondary" onclick="openForm()">Be the first to sell</button></div>';
 }
 function openExplorePage(){
@@ -829,6 +885,7 @@ function renderExploreListings(){
 
 function showDetails(id){
   const x=listings.find(a=>String(a.id)===String(id));if(!x)return;
+  recordListingEvent(id,"view");
   const wa=String(x.phone||"").replace(/\D/g,"");
   const message=encodeURIComponent("Hi "+x.seller+", I saw your \""+x.item+"\" advert on ManiHub. Is it still available?");
   const content=byId("detailsContent");
@@ -838,8 +895,8 @@ function showDetails(id){
     +'<div class="detail-price">R'+Number(x.price).toLocaleString("en-ZA",{maximumFractionDigits:2})+'</div>'
     +'<div class="detail-meta">Seller: <b>'+esc(x.seller)+'</b></div>'
     +'<div class="detail-meta">Location: '+esc(x.town?x.town+", ":"")+esc(x.province)+'</div>'
-    +'<div class="detail-description">'+esc(x.description||"The seller has not added a description yet.")+'</div>'
-    +'<div class="detail-contact">'+(wa?'<a class="whatsapp" href="https://wa.me/'+wa+'?text='+message+'" target="_blank" rel="noopener">Message seller on WhatsApp</a>':"")+'<button type="button" class="secondary" onclick="closeDetails()">Close</button></div>';
+     +'<div class="detail-description">'+esc(x.description||"The seller has not added a description yet.")+'</div>'
+    +'<div class="detail-contact"><button type="button" id="saveListingButton" class="secondary '+(isListingSaved(id)?'saved':'')+'" onclick="toggleListingSave(\''+esc(id)+'\')">'+(isListingSaved(id)?'♥ Saved':'♡ Save')+'</button>'+(wa?'<a class="whatsapp" href="https://wa.me/'+wa+'?text='+message+'" target="_blank" rel="noopener" onclick="recordListingEvent(\''+esc(id)+'\',\'enquiry\')">Message seller on WhatsApp</a>':"")+'<button type="button" class="secondary" onclick="closeDetails()">Close</button></div>';
   byId("detailsModal")?.classList.add("open");
 }
 function closeDetails(){byId("detailsModal")?.classList.remove("open");}
@@ -1116,10 +1173,10 @@ async function initManiHub(){
   try{if(!window.supabase?.createClient){const loaded=await loadSupabaseFallback();if(!loaded)throw new Error("The Supabase library could not load. Check your internet connection.");}
     supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
     supabaseClient.auth.onAuthStateChange((_event,session)=>{currentUser=session?.user||null;syncHeaderActions();setStatus(currentUser?`Signed in as ${currentUser.email}. You can publish adverts.`:"Sign in or create an account to publish adverts to the shared marketplace.");});
-    await refreshAuth();await refreshListings();
+    await refreshAuth();await refreshListings();await refreshListingPopularity();
   }catch(error){setStatus("ManiHub connection could not start: "+(error.message||error));const target=byId("listings");if(target)target.innerHTML=`<div class="empty">${esc(error.message||error)}</div>`;}
 }
-window.signUpUser=signUpUser;window.signInUser=signInUser;window.openAuth=openAuth;window.closeAuth=closeAuth;window.closeDetails=closeDetails;window.toggleAuthMode=toggleAuthMode;window.togglePasswordVisibility=togglePasswordVisibility;window.signOutUser=signOutUser;window.render=render;window.openForm=openForm;window.closeForm=closeForm;window.setCat=setCat;window.showDetails=showDetails;window.setDepartment=setDepartment;window.openExplorePage=openExplorePage;window.closeExplorePage=closeExplorePage;window.setExploreCategory=setExploreCategory;window.renderExploreListings=renderExploreListings;
+window.signUpUser=signUpUser;window.signInUser=signInUser;window.openAuth=openAuth;window.closeAuth=closeAuth;window.closeDetails=closeDetails;window.toggleAuthMode=toggleAuthMode;window.togglePasswordVisibility=togglePasswordVisibility;window.signOutUser=signOutUser;window.render=render;window.openForm=openForm;window.closeForm=closeForm;window.setCat=setCat;window.showDetails=showDetails;window.setDepartment=setDepartment;window.openExplorePage=openExplorePage;window.toggleListingSave=toggleListingSave;window.closeExplorePage=closeExplorePage;window.setExploreCategory=setExploreCategory;window.renderExploreListings=renderExploreListings;
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",initManiHub,{once:true});else initManiHub();
 
 </script>
