@@ -923,7 +923,13 @@ async function loadManiHubStores(){
 function renderExploreStores(){
   const target=byId("exploreStores");if(!target)return;
   const q=(byId("exploreSearch")?.value||"").trim().toLowerCase();
-  const found=manihubStores.filter(x=>[x.store_name,x.description,x.category,x.town,x.province].join(" ").toLowerCase().includes(q));
+  const categoryMatch=x=>{
+    if(exploreCategory==="All")return true;
+    const aliases={"Clothing":["fashion"],"Food":["food","restaurant","grocery"],"Home & Furniture":["home"],"Services":["service"],"Beauty":["beauty"],"Healthcare":["health"],"Legal services":["legal"],"Vehicles":["vehicle"],"Electronics":["electronic"],"Other":["other"]};
+    const terms=aliases[exploreCategory]||[exploreCategory.toLowerCase()];
+    return terms.some(term=>String(x.category||"").toLowerCase().includes(term));
+  };
+  const found=manihubStores.filter(x=>categoryMatch(x)&&[x.store_name,x.description,x.category,x.town,x.province].join(" ").toLowerCase().includes(q));
   target.innerHTML=found.length?found.map(x=>'<article class="store-card" role="button" tabindex="0" onclick="openStoreDetails(\''+esc(x.id)+'\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openStoreDetails(\''+esc(x.id)+'\')}"><div class="store-card-top"><span class="store-avatar">'+(x.logo_url?'<img src="'+esc(x.logo_url)+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:15px">':'🏬')+'</span><b>'+esc(x.store_name)+'</b></div><div class="store-card-body"><span class="store-card-meta">'+esc(x.category)+' · '+esc(x.town?x.town+", ":"")+esc(x.province)+'</span><p>'+esc(x.description||"Discover this local ManiHub business.")+'</p><span class="store-open-label">View storefront →</span></div></article>').join(""):'<div class="hot-empty">No stores have opened on ManiHub yet. Be the first business to create a store.</div>';
 }
 async function openStoreDetails(id){
@@ -986,7 +992,7 @@ function closeExplorePage(){
 function setExploreCategory(category){
   exploreCategory=category;
   document.querySelectorAll("[data-explore-category]").forEach(b=>b.classList.toggle("active",b.dataset.exploreCategory===category));
-  renderExploreListings();
+  renderExploreListings();if(exploreMode==="stores")renderExploreStores();
 }
 function renderExploreListings(){
   const target=byId("exploreProducts");if(!target)return;
