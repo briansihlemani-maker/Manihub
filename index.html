@@ -631,6 +631,13 @@ main{max-width:980px;margin:16px auto 0;padding:0 12px}
 .explore-create-store{display:none!important}
 @media(max-width:760px){.explore-heading{grid-template-columns:1fr;gap:12px;padding:14px 2px 16px}.explore-heading h1{font-size:25px}.explore-heading p{font-size:12px}.explore-search{width:100%}}
 
+
+/* Keep homepage-only content out of the separate Explorer view. */
+main > section[hidden]{display:none!important}
+body.exploring main > section:not(#explorePage){display:none!important}
+body.exploring main{padding-top:16px}
+body.exploring #explorePage{display:block!important}
+
 </style>
 </head>
 <body>
