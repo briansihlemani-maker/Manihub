@@ -120,6 +120,8 @@ body #accountSection.auth-open{display:flex!important;position:fixed;inset:0;z-i
   .brand-logo{width:140px;height:92px}
   .header-actions button{font-size:12px;padding:8px 5px}
 }
+/* Keep utility shortcuts at the very bottom, after marketplace content */
+.quick-actions{margin:28px auto 18px;padding-top:18px;border-top:1px solid #e1e9e2}
 /* Clean header and contextual marketplace shortcuts */
 header .top{justify-content:center}
 header .brand-wrap{justify-content:center;width:100%}
@@ -246,12 +248,7 @@ footer{color:#6b7a70;padding-top:25px}
     <div class="hero-bottomline"><span>🇿🇦 Made for South Africa</span><span>All 9 provinces</span><span>Individuals & businesses</span></div>
   </section>
 
-  <nav class="quick-actions" aria-label="ManiHub shortcuts">
-    <button class="quick-action" type="button" onclick="openHelp('messages')"><span class="quick-action-icon">💬</span><span><b>Messages</b><small>Chat with sellers and support</small></span><span class="quick-arrow">›</span></button>
-    <button class="quick-action" type="button" onclick="openHelp('ai')"><span class="quick-action-icon">✦</span><span><b>Ask ManiHub</b><small>Get help and answers</small></span><span class="quick-arrow">›</span></button>
-    <button class="quick-action quick-account" id="headerSignIn" type="button" onclick="openAuth()"><span class="quick-action-icon">👤</span><span><b>Sign in / Join</b><small>Your ManiHub account</small></span><span class="quick-arrow">›</span></button>
-    <button class="quick-action quick-account" id="headerSignOut" type="button" onclick="signOutUser()" hidden><span class="quick-action-icon">↪</span><span><b>Sign out</b><small>Leave your account</small></span><span class="quick-arrow">›</span></button>
-  </nav>
+
 
   <section class="department-intro">
     <h2>One hub. Everything you need.</h2>
@@ -275,6 +272,12 @@ footer{color:#6b7a70;padding-top:25px}
   <section class="grid" id="listings"></section>
 </main>
 <footer><b>ManiHub beta</b> · Shared listings and account sign-in use Supabase. Help & Messages workspace is being connected.</footer>
+  <nav class="quick-actions" aria-label="ManiHub shortcuts">
+    <button class="quick-action" type="button" onclick="openHelp('messages')"><span class="quick-action-icon">💬</span><span><b>Messages</b><small>Chat with sellers and support</small></span><span class="quick-arrow">›</span></button>
+    <button class="quick-action" type="button" onclick="openHelp('ai')"><span class="quick-action-icon">✦</span><span><b>Ask ManiHub</b><small>Get help and answers</small></span><span class="quick-arrow">›</span></button>
+    <button class="quick-action quick-account" id="headerSignIn" type="button" onclick="openAuth()"><span class="quick-action-icon">👤</span><span><b>Sign in / Join</b><small>Your ManiHub account</small></span><span class="quick-arrow">›</span></button>
+    <button class="quick-action quick-account" id="headerSignOut" type="button" onclick="signOutUser()" hidden><span class="quick-action-icon">↪</span><span><b>Sign out</b><small>Leave your account</small></span><span class="quick-arrow">›</span></button>
+  </nav>
 
 
 <div class="help-panel" id="helpPanel" role="dialog" aria-modal="false" aria-label="ManiHub help and messages">
