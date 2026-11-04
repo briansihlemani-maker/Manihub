@@ -54,7 +54,7 @@ create policy "Participants can view participant lists"
 on public.manihub_conversation_participants for select to authenticated
 using (exists (
   select 1 from public.manihub_conversation_participants mine
-  where mine.conversation_id = conversation_id and mine.user_id = (select auth.uid())
+  where mine.conversation_id = public.manihub_conversation_participants.conversation_id and mine.user_id = (select auth.uid())
 ));
 
 drop policy if exists "Conversation creator can add participants" on public.manihub_conversation_participants;
@@ -64,13 +64,6 @@ with check (
   exists (
     select 1 from public.manihub_conversations c
     where c.id = conversation_id and c.created_by = (select auth.uid())
-  )
-  and (
-    user_id = (select auth.uid())
-    or exists (
-      select 1 from public.manihub_conversation_participants p
-      where p.conversation_id = conversation_id and p.user_id = (select auth.uid())
-    )
   )
 );
 
@@ -93,23 +86,5 @@ with check (
   )
 );
 
-drop policy if exists "Users can mark received messages read" on public.manihub_messages;
-create policy "Users can mark received messages read"
-on public.manihub_messages for update to authenticated
-using (
-  sender_id <> (select auth.uid())
-  and exists (
-    select 1 from public.manihub_conversation_participants p
-    where p.conversation_id = conversation_id and p.user_id = (select auth.uid())
-  )
-)
-with check (
-  sender_id <> (select auth.uid())
-  and exists (
-    select 1 from public.manihub_conversation_participants p
-    where p.conversation_id = conversation_id and p.user_id = (select auth.uid())
-  )
-);
-
--- Intentionally no public access, no anonymous messaging, no client-side AI secrets,
--- and no attachment bucket until a separate private-storage policy is reviewed.
+-- Read receipts will be added through a narrowly scoped server function so
+-- a client cannot rewrite message content or sender identity.
