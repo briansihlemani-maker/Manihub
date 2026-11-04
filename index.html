@@ -103,6 +103,23 @@ body #accountSection.auth-open{display:flex!important;position:fixed;inset:0;z-i
 @media(max-width:480px){.auth-screen{padding:22px 15px!important}.auth-logo{width:min(250px,80vw);height:auto}.auth-panel{border-radius:21px;padding:23px 19px}.auth-heading h1{font-size:27px}}
 
 
+/* Cleaner compact marketplace header */
+.top{align-items:center;gap:14px}
+.brand-logo{width:190px;height:124px}
+.header-actions{flex:1;display:flex;align-items:center;justify-content:flex-end;gap:9px;flex-wrap:nowrap}
+.header-actions button{white-space:nowrap}
+@media(max-width:1000px){
+  header{padding:7px 16px 11px}
+  .top{display:flex;flex-direction:column;align-items:center;gap:7px}
+  .brand-wrap{justify-content:center;width:100%}
+  .brand-logo{width:158px;height:103px}
+  .header-actions{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+  .header-actions button{width:100%;min-height:42px;padding:9px 8px;font-size:13px}
+}
+@media(max-width:380px){
+  .brand-logo{width:140px;height:92px}
+  .header-actions button{font-size:12px;padding:8px 5px}
+}
 /* Homepage refresh; existing sign-in screen artwork and layout are preserved. */
 html,body{background:#f4f7f4!important}body{background:#f4f7f4!important}
 header{position:sticky;top:0;z-index:20;padding-top:5px;padding-bottom:5px;box-shadow:0 5px 22px #153b2c0a}
