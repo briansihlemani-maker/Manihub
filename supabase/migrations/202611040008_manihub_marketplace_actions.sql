@@ -1,5 +1,13 @@
 -- ManiHub secure marketplace actions
 -- Additive migration. Apply after 202611040007_manihub_catalogue_orders_reviews.sql.
+-- Supports both individual sellers and registered businesses.
+alter table public.manihub_stores add column if not exists seller_type text not null default 'business';
+do $ begin
+  if not exists (select 1 from pg_constraint where conname = 'manihub_stores_seller_type_check') then
+    alter table public.manihub_stores add constraint manihub_stores_seller_type_check check (seller_type in ('individual','business'));
+  end if;
+end $;
+
 -- No service-role key is exposed to the browser. Payment collection remains disabled
 -- until a payment provider and signed webhook are configured.
 
@@ -108,7 +116,7 @@ begin
     from jsonb_to_recordset(p_items) as x(product_id uuid, quantity integer)
     group by x.product_id
   loop
-    if v_line.product_id is null or v_line.quantity < 1 or v_line.quantity > 100 then
+    if v_line.product_id is null or v_line.quantity is null or v_line.quantity < 1 or v_line.quantity > 100 then
       raise exception 'Invalid product or quantity in basket';
     end if;
 
