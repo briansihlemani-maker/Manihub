@@ -136,6 +136,17 @@ footer{color:#6b7a70;padding-top:25px}
 @media(max-width:760px){main{padding-top:16px}.hero{grid-template-columns:1fr;min-height:0;padding:25px 21px 18px;gap:8px}.hero-showcase{min-height:180px;margin:0 0 2px}.showcase-main-icon{width:112px;height:112px;font-size:58px;border-radius:32px}.showcase-glow{width:170px;height:170px}.orbit-one{width:220px;height:140px}.orbit-two{width:160px;height:220px}.float-top{top:7px;right:0}.float-bottom{bottom:7px;left:0}.hero-bottomline{gap:9px 16px}.hero-bottomline span{font-size:10px}}
 @media(max-width:430px){.hero h1{font-size:39px}.hero p{font-size:13px}.searchrow{min-height:54px;padding-left:10px}.searchrow input{font-size:12px}.searchrow button{padding:9px 12px;font-size:12px}.hero-showcase{min-height:165px}.showcase-float{min-width:150px;padding:9px 10px}.showcase-float b{font-size:10px}.showcase-float small{font-size:9px}.sectionhead h2{font-size:19px}.photo{height:118px}}
 
+
+/* ManiHub all-in-one department hub */
+.department-intro{margin:30px 0 12px}.department-intro h2{font-size:22px;color:#173b2e;margin:0 0 5px}.department-intro p{margin:0;color:#6b7a70;font-size:13px}
+.department-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:14px 0 28px}
+.department-card{display:flex;align-items:center;gap:12px;min-height:90px;padding:15px;background:#fff;border:1px solid #e4ebe4;border-radius:17px;text-align:left;color:#183b2d;box-shadow:0 5px 18px #173b2d08;transition:transform .18s,border-color .18s,box-shadow .18s}
+.department-card:hover,.department-card.active{transform:translateY(-2px);border-color:#8eaf92;box-shadow:0 10px 24px #173b2d12}.department-card.active{background:#edf5e8;outline:2px solid #c5dfb4}
+.department-icon{width:46px;height:46px;flex:0 0 46px;display:grid;place-items:center;border-radius:14px;background:#edf5e8;font-size:24px}
+.department-card b,.department-card small{display:block}.department-card b{font-size:13px}.department-card small{font-size:10px;color:#738078;margin-top:3px;line-height:1.35}
+.department-status{font-size:12px;color:#66736d;min-height:18px;margin:-14px 0 12px}
+@media(max-width:760px){.department-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.department-card{min-height:82px;padding:11px;gap:9px}.department-icon{width:40px;height:40px;flex-basis:40px;font-size:21px}}
+
 </style>
 </head>
 <body>
@@ -173,7 +184,7 @@ footer{color:#6b7a70;padding-top:25px}
       <div class="hero-kicker"><span class="hero-kicker-dot"></span> YOUR COMMUNITY MARKETPLACE</div>
       <h1>Good finds.<br><span>Great connections.</span></h1>
       <p>Buy, sell and discover what’s happening around your corner of South Africa. Connect directly with local people and businesses.</p>
-      <div class="searchrow"><span class="search-icon" aria-hidden="true">⌕</span><input id="search" placeholder="What are you looking for today?" aria-label="Search listings"><button class="primary" onclick="render()">Search</button></div>
+      <div class="searchrow"><span class="search-icon" aria-hidden="true">⌕</span><input id="search" placeholder="Search products, shops, groceries, doctors, lawyers or services..." aria-label="Search across ManiHub departments"><button class="primary" onclick="render()">Search</button></div>
       <div class="hero-actions"><button class="hero-sell" onclick="openForm()">＋ Start selling</button><span class="hero-note">Free to browse · Local connections</span></div>
     </div>
     <div class="hero-showcase" aria-hidden="true">
@@ -186,7 +197,22 @@ footer{color:#6b7a70;padding-top:25px}
     <div class="hero-bottomline"><span>🇿🇦 Made for South Africa</span><span>All 9 provinces</span><span>Individuals & businesses</span></div>
   </section>
 
-  <div class="sectionhead"><h2>Explore categories</h2></div>
+  <section class="department-intro">
+    <h2>One hub. Everything you need.</h2>
+    <p>Discover shops, products and services from people and businesses across South Africa.</p>
+  </section>
+  <section class="department-grid" id="departments" aria-label="ManiHub departments">
+    <button class="department-card" type="button" data-department="shopping"><span class="department-icon">🛒</span><span><b>Shopping & groceries</b><small>Food, fresh produce, household and electronics</small></span></button>
+    <button class="department-card" type="button" data-department="health"><span class="department-icon">🩺</span><span><b>Healthcare</b><small>Doctors, dentists, clinics and appointments</small></span></button>
+    <button class="department-card" type="button" data-department="legal"><span class="department-icon">⚖️</span><span><b>Legal services</b><small>Lawyers, law firms and consultations</small></span></button>
+    <button class="department-card" type="button" data-department="fashion"><span class="department-icon">👗</span><span><b>Fashion & clothing</b><small>Clothing, designers, tailors and boutiques</small></span></button>
+    <button class="department-card" type="button" data-department="local"><span class="department-icon">🧰</span><span><b>Local services</b><small>Repairs, beauty, cleaning and mechanics</small></span></button>
+    <button class="department-card" type="button" data-department="restaurants"><span class="department-icon">🍽️</span><span><b>Restaurants & takeaways</b><small>Menus, meals and local food businesses</small></span></button>
+    <button class="department-card" type="button" data-department="delivery"><span class="department-icon">🚚</span><span><b>ManiHub delivery</b><small>Delivery options across supported departments</small></span></button>
+    <button class="department-card" type="button" data-department="all"><span class="department-icon">✨</span><span><b>Explore everything</b><small>Browse all available ManiHub listings</small></span></button>
+  </section>
+  <div class="department-status" id="departmentStatus" aria-live="polite">Choose a department or search across ManiHub.</div>
+  <div class="sectionhead"><h2>Browse listing categories</h2></div>
   <div class="categories" id="categories"></div>
   <div class="sectionhead"><h2>Discover listings</h2><button class="secondary" onclick="openForm()">＋ Sell something</button></div>
   <div class="toolbar"><span id="count">Showing listings</span><select id="province" onchange="render()"><option value="">All provinces</option><option>Eastern Cape</option><option>Free State</option><option>Gauteng</option><option>KwaZulu-Natal</option><option>Limpopo</option><option>Mpumalanga</option><option>Northern Cape</option><option>North West</option><option>Western Cape</option></select></div>
@@ -225,17 +251,40 @@ let supabaseClient = null;
 const SUPABASE_URL = "https://oochtzrlpylesoqvtikg.supabase.co";
 const SUPABASE_KEY = "sb_publishable_0l4I1Ypz8cVOL6d-GP0O5Q_airms5jD";
 const cats = ["All","Electronics","Clothing","Home & Furniture","Food","Beauty","Vehicles","Services","Other"];
-let active = "All", listings = [], currentUser = null;
+const departmentFilters = {
+  shopping:["Electronics","Home & Furniture","Food","Other"],
+  health:[], legal:[], fashion:["Clothing"], local:["Services","Beauty","Vehicles"],
+  restaurants:["Food"], delivery:null, all:null
+};
+let active = "All", activeDepartment = "all", listings = [], currentUser = null;
 function byId(id){ return document.getElementById(id); }
 function setStatus(message){ const el=byId("authStatus"); if(el) el.textContent=message; }
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function mapListing(x){return {id:x.id,item:x.title,price:Number(x.price),category:x.category,kind:x.seller_type==="business"?"Registered business":"Individual seller",seller:x.seller_name,province:x.province,town:x.town||"",phone:x.whatsapp||"",description:x.description||"",photo:x.photo_url||"",emoji:"🛍️"};}
 function renderCats(){const el=byId("categories"); if(!el)return; el.innerHTML=cats.map(c=>`<button type="button" class="chip ${active===c?'active':''}" data-category="${esc(c)}">${esc(c)}</button>`).join("");}
-function setCat(c){active=c;render();}
+function setCat(c){active=c;activeDepartment="all";render();}
+function setDepartment(department){
+  activeDepartment=department;
+  active="All";
+  const messages={
+    shopping:"Shopping & groceries selected. Browse available food, household and electronics listings.",
+    health:"Healthcare is part of the ManiHub all-in-one plan. Professional profiles and appointment booking are coming in a future build.",
+    legal:"Legal services are part of the ManiHub all-in-one plan. Verified professional profiles and consultations are coming in a future build.",
+    fashion:"Fashion & clothing selected. Browse clothing listings and discover local makers.",
+    local:"Local services selected. Browse service, beauty and vehicle-related listings.",
+    restaurants:"Restaurants & takeaways selected. Browse available food listings; restaurant menus and ordering are a future build.",
+    delivery:"ManiHub delivery will connect to eligible orders. Delivery checkout and live distance quotes are a future build.",
+    all:"Showing all available ManiHub listings."
+  };
+  const status=byId("departmentStatus");if(status)status.textContent=messages[department]||messages.all;
+  document.querySelectorAll("[data-department]").forEach(b=>b.classList.toggle("active",b.dataset.department===department));
+  render();
+}
 function render(){
   renderCats(); const search=byId("search"),province=byId("province"),target=byId("listings"); if(!search||!province||!target)return;
   const q=search.value.trim().toLowerCase(),p=province.value;
-  const shown=listings.filter(x=>(active==="All"||x.category===active)&&(!p||x.province===p)&&(!q||[x.item,x.category,x.seller,x.town,x.province,x.description].join(" ").toLowerCase().includes(q)));
+  const deptFilter=departmentFilters[activeDepartment];
+  const shown=listings.filter(x=>(active==="All"||x.category===active)&&(!deptFilter||deptFilter.includes(x.category))&&(!p||x.province===p)&&(!q||[x.item,x.category,x.seller,x.town,x.province,x.description].join(" ").toLowerCase().includes(q)));
   byId("count").textContent=`${shown.length} listing${shown.length===1?"":"s"} found`;
   target.innerHTML=shown.length?shown.map(x=>{const wa=String(x.phone||"").replace(/\D/g,"");const msg=encodeURIComponent(`Hi ${x.seller}, I saw your "${x.item}" advert on ManiHub. Is it still available?`);return `<article class="card"><div class="photo">${x.photo?`<img src="${esc(x.photo)}" alt="${esc(x.item)}">`:esc(x.emoji)}</div><div class="cardbody"><div class="meta">${esc(x.category)} · ${esc(x.kind)}</div><div class="title">${esc(x.item)}</div><div class="price">R${Number(x.price).toLocaleString("en-ZA",{maximumFractionDigits:2})}</div><div class="seller">${esc(x.seller)}</div><div class="meta">📍 ${esc(x.town?x.town+", ":"")}${esc(x.province)}</div><div class="cardactions">${wa?`<a href="https://wa.me/${wa}?text=${msg}" target="_blank" rel="noopener">WhatsApp seller</a>`:`<span class="meta">No contact supplied</span>`}<button type="button" data-details="${esc(x.id)}">Details</button></div></div></article>`}).join(""):`<div class="empty"><div style="font-size:35px">🔎</div><b>No listings found</b><p>${supabaseClient?"There are no matching live adverts yet. Create an account and post the first one.":"Marketplace connection is not ready. Please refresh the page and try again."}</p><button type="button" class="secondary" data-open-form>Post an advert</button></div>`;
 }
@@ -411,6 +460,7 @@ function previewListingPhoto(){
 }
 function bindButtons(){
   document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeAuth();closeForm();closeDetails();}});
+  byId("departments")?.addEventListener("click",e=>{const b=e.target.closest("[data-department]");if(b)setDepartment(b.dataset.department);});
   byId("search")?.addEventListener("input",render);byId("province")?.addEventListener("change",render);byId("listingForm")?.addEventListener("submit",publishListing);byId("photo")?.addEventListener("change",previewListingPhoto);
   ["item","price","category","seller","provinceInput","phone"].forEach(id=>{
     const input=byId(id);if(!input)return;
@@ -431,7 +481,7 @@ async function initManiHub(){
     await refreshAuth();await refreshListings();
   }catch(error){setStatus("ManiHub connection could not start: "+(error.message||error));const target=byId("listings");if(target)target.innerHTML=`<div class="empty">${esc(error.message||error)}</div>`;}
 }
-window.signUpUser=signUpUser;window.signInUser=signInUser;window.openAuth=openAuth;window.closeAuth=closeAuth;window.closeDetails=closeDetails;window.toggleAuthMode=toggleAuthMode;window.togglePasswordVisibility=togglePasswordVisibility;window.signOutUser=signOutUser;window.render=render;window.openForm=openForm;window.closeForm=closeForm;window.setCat=setCat;window.showDetails=showDetails;
+window.signUpUser=signUpUser;window.signInUser=signInUser;window.openAuth=openAuth;window.closeAuth=closeAuth;window.closeDetails=closeDetails;window.toggleAuthMode=toggleAuthMode;window.togglePasswordVisibility=togglePasswordVisibility;window.signOutUser=signOutUser;window.render=render;window.openForm=openForm;window.closeForm=closeForm;window.setCat=setCat;window.showDetails=showDetails;window.setDepartment=setDepartment;
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",initManiHub,{once:true});else initManiHub();
 
 </script>
