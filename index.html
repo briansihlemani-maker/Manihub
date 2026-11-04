@@ -974,10 +974,14 @@ function renderHotProducts(){
   target.innerHTML=fresh.length?fresh.map(x=>productCardMarkup(x,true)).join(""):'<div class="hot-empty">New products will appear here as soon as sellers publish adverts. <button type="button" class="secondary" onclick="openForm()">Be the first to sell</button></div>';
 }
 function showExploreView(reset=true){
+  const main=document.querySelector("main");
+  const explore=byId("explorePage");
+  if(main&&explore&&main.firstElementChild!==explore)main.insertBefore(explore,main.firstElementChild);
+  document.body.classList.add("exploring");
+  closeManiMenu();
   closeManiMenu();
   document.querySelectorAll("main > section").forEach(section=>{section.hidden=section.id!=="explorePage";});
   byId("explorePage").hidden=false;
-  document.body.classList.add("exploring");
   if(reset){exploreCategory="All";byId("exploreSearch").value="";
     document.querySelectorAll("[data-explore-category]").forEach(b=>b.classList.toggle("active",b.dataset.exploreCategory==="All"));
     setExploreMode("products");
@@ -1332,5 +1336,11 @@ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",
 /* Explore is a separate page: never show homepage hero, promo banners or footer sections here. */
 main > section[hidden]{display:none!important}
 body.exploring main > section:not(#explorePage){display:none!important}
+body.exploring main > .hero,
+body.exploring main > .concept-one-ad,
+body.exploring main > .ad-opportunities,
+body.exploring main > .hot-now-section,
+body.exploring main > .listing-discovery,
+body.exploring main > .concept-one-footer-banner{display:none!important}
 body.exploring main{padding-top:16px}
 body.exploring #explorePage{display:block!important}
