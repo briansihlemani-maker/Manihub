@@ -147,6 +147,27 @@ footer{color:#6b7a70;padding-top:25px}
 .department-status{font-size:12px;color:#66736d;min-height:18px;margin:-14px 0 12px}
 @media(max-width:760px){.department-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.department-card{min-height:82px;padding:11px;gap:9px}.department-icon{width:40px;height:40px;flex-basis:40px;font-size:21px}}
 
+
+/* ManiHub Help & Messages workspace */
+.help-launchers{display:flex;gap:8px;flex-wrap:wrap}
+.help-launchers button{border-radius:999px;padding:9px 13px;font-size:12px}
+.help-panel{position:fixed;right:16px;bottom:16px;z-index:900;width:min(390px,calc(100vw - 24px));max-height:min(650px,calc(100svh - 32px));background:#fff;border:1px solid #dce7dd;border-radius:20px;box-shadow:0 20px 65px #082c2050;display:none;flex-direction:column;overflow:hidden}
+.help-panel.open{display:flex}
+.help-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:15px;background:linear-gradient(120deg,#123c32,#26745a);color:#fff}
+.help-head strong{display:block;font-size:15px}.help-head small{display:block;color:#dcece2;font-size:11px;margin-top:2px}
+.help-close{background:#ffffff20;color:white;padding:7px 10px}
+.help-tabs{display:flex;gap:6px;padding:10px;border-bottom:1px solid #e8eee8}
+.help-tab{flex:1;background:#f0f5f0;color:#315344;padding:9px;border-radius:10px;font-size:12px}
+.help-tab.active{background:#174b3d;color:#fff}
+.help-content{padding:15px;overflow:auto;min-height:180px}
+.help-note{padding:12px;border-radius:12px;background:#f1f6ef;color:#40564a;font-size:12px;line-height:1.5}
+.help-content ul{padding-left:18px;color:#506259;font-size:12px;line-height:1.8}
+.help-compose{border-top:1px solid #e8eee8;padding:10px;display:flex;gap:7px}
+.help-compose input{flex:1;min-width:0;border:1px solid #dce5dd;border-radius:11px;padding:11px;font-size:13px}
+.help-compose button{background:#d6f36a;color:#183729}
+.help-compose button:disabled,.help-compose input:disabled{opacity:.55;cursor:not-allowed}
+@media(max-width:480px){.help-panel{right:8px;bottom:8px;width:calc(100vw - 16px);max-height:75svh}}
+
 </style>
 </head>
 <body>
@@ -156,6 +177,8 @@ footer{color:#6b7a70;padding-top:25px}
   <div class="header-actions">
     <button class="primary" onclick="openForm()">＋ Post an ad</button>
     <button class="secondary" id="headerSignIn" onclick="openAuth()">Sign in / Join</button>
+    <button class="secondary" onclick="openHelp('messages')">Messages</button>
+    <button class="secondary" onclick="openHelp('ai')">Ask ManiHub</button>
     <button class="secondary" id="headerSignOut" onclick="signOutUser()" hidden>Sign out</button>
   </div>
 </div></header>
@@ -218,7 +241,21 @@ footer{color:#6b7a70;padding-top:25px}
   <div class="toolbar"><span id="count">Showing listings</span><select id="province" onchange="render()"><option value="">All provinces</option><option>Eastern Cape</option><option>Free State</option><option>Gauteng</option><option>KwaZulu-Natal</option><option>Limpopo</option><option>Mpumalanga</option><option>Northern Cape</option><option>North West</option><option>Western Cape</option></select></div>
   <section class="grid" id="listings"></section>
 </main>
-<footer><b>ManiHub beta</b> · Shared listings and account sign-in use Supabase. Payments are not connected yet.</footer>
+<footer><b>ManiHub beta</b> · Shared listings and account sign-in use Supabase. Help & Messages workspace is being connected.</footer>
+
+
+<div class="help-panel" id="helpPanel" role="dialog" aria-modal="false" aria-label="ManiHub help and messages">
+ <div class="help-head"><div><strong id="helpTitle">ManiHub Help</strong><small>AI assistance and customer support</small></div><button class="help-close" type="button" onclick="closeHelp()" aria-label="Close help">✕</button></div>
+ <div class="help-tabs"><button class="help-tab active" id="helpAiTab" onclick="switchHelpTab('ai')">AI assistant</button><button class="help-tab" id="helpMessagesTab" onclick="switchHelpTab('messages')">Messages</button></div>
+ <div class="help-content" id="helpContent">
+  <div class="help-note"><b>Welcome to ManiHub Help.</b><br>Our built-in assistant is being connected to ManiHub's verified help information. It will help with shopping, selling, shops, orders, delivery and account questions.</div>
+  <ul><li>Get help using ManiHub</li><li>Find the right department or service</li><li>Connect to the ManiHub support team</li></ul>
+ </div>
+ <form class="help-compose" onsubmit="submitHelpMessage(event)">
+  <input id="helpInput" type="text" maxlength="1000" placeholder="Messaging will be available soon…" disabled aria-label="Write a message">
+  <button type="submit" disabled>Send</button>
+ </form>
+</div>
 
 <div class="modal" id="detailsModal" role="dialog" aria-modal="true" aria-labelledby="detailsTitle">
  <div class="dialog detail-dialog">
@@ -458,8 +495,27 @@ function previewListingPhoto(){
   if(!["image/jpeg","image/png","image/webp"].includes(file.type)||file.size>15*1024*1024){preview.hidden=true;preview.removeAttribute("src");return;}
   preview.src=URL.createObjectURL(file);preview.hidden=false;
 }
+
+let helpMode="ai";
+function openHelp(mode="ai"){
+  const panel=byId("helpPanel");if(!panel)return;
+  panel.classList.add("open");switchHelpTab(mode);
+}
+function closeHelp(){byId("helpPanel")?.classList.remove("open");}
+function switchHelpTab(mode){
+  helpMode=mode==="messages"?"messages":"ai";
+  byId("helpAiTab")?.classList.toggle("active",helpMode==="ai");
+  byId("helpMessagesTab")?.classList.toggle("active",helpMode==="messages");
+  byId("helpTitle").textContent=helpMode==="ai"?"ManiHub AI assistant":"ManiHub Messages";
+  byId("helpContent").innerHTML=helpMode==="ai"
+   ?'<div class="help-note"><b>Your ManiHub assistant is being set up.</b><br>It will answer questions using ManiHub-approved information and guide you through shopping, selling, shops, orders, bookings and delivery. It will hand complicated issues to a human support agent.</div><ul><li>Answers about using ManiHub</li><li>Help finding products and services</li><li>Step-by-step seller guidance</li></ul>'
+   :'<div class="help-note"><b>ManiHub messaging is being set up.</b><br>This space will connect customers with sellers and the ManiHub support team. Conversations will be private to their participants.</div><ul><li>Customer ↔ seller conversations</li><li>Customer ↔ ManiHub support</li><li>Seller ↔ ManiHub support</li><li>Photos, attachments and notifications</li></ul>';
+}
+function submitHelpMessage(event){event.preventDefault();}
+window.openHelp=openHelp;window.closeHelp=closeHelp;window.switchHelpTab=switchHelpTab;
+
 function bindButtons(){
-  document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeAuth();closeForm();closeDetails();}});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeAuth();closeForm();closeDetails();closeHelp();}});
   byId("departments")?.addEventListener("click",e=>{const b=e.target.closest("[data-department]");if(b)setDepartment(b.dataset.department);});
   byId("search")?.addEventListener("input",render);byId("province")?.addEventListener("change",render);byId("listingForm")?.addEventListener("submit",publishListing);byId("photo")?.addEventListener("change",previewListingPhoto);
   ["item","price","category","seller","provinceInput","phone"].forEach(id=>{
