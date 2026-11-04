@@ -187,3 +187,69 @@ grant execute on function public.manihub_create_order(jsonb,text,jsonb) to authe
 
 comment on function public.manihub_create_order(jsonb,text,jsonb) is
   'Creates a pending unpaid order using database prices and locked stock. Does not collect payment or calculate delivery fees.';
+
+
+create or replace function public.manihub_seller_update_order_status(
+  p_order_id uuid,
+  p_new_status text
+)
+returns boolean
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+declare
+  v_user uuid := auth.uid();
+  v_order public.manihub_orders%rowtype;
+  v_allowed boolean := false;
+begin
+  if v_user is null then
+    raise exception 'Sign in to manage seller orders';
+  end if;
+
+  if p_new_status not in ('accepted','preparing','ready_for_collection','out_for_delivery','completed') then
+    raise exception 'Unsupported seller order status';
+  end if;
+
+  select * into v_order
+  from public.manihub_orders
+  where id = p_order_id
+    and exists (
+      select 1 from public.manihub_order_items oi
+      where oi.order_id = p_order_id and oi.seller_id = v_user
+    )
+  for update;
+
+  if not found then
+    raise exception 'Order not found for this seller';
+  end if;
+
+  if v_order.payment_status not in ('paid','partially_refunded') then
+    raise exception 'This order cannot be processed until payment is confirmed';
+  end if;
+
+  v_allowed := case
+    when v_order.status = 'paid' and p_new_status = 'accepted' then true
+    when v_order.status = 'accepted' and p_new_status = 'preparing' then true
+    when v_order.status = 'preparing' and p_new_status in ('ready_for_collection','out_for_delivery') then true
+    when v_order.status in ('ready_for_collection','out_for_delivery') and p_new_status = 'completed' then true
+    else false
+  end;
+
+  if not v_allowed then
+    raise exception 'That order status change is not allowed';
+  end if;
+
+  update public.manihub_orders
+  set status = p_new_status, updated_at = now()
+  where id = p_order_id;
+
+  insert into public.manihub_order_events(order_id, actor_id, event_type, note)
+  values (p_order_id, v_user, 'seller_status_updated', p_new_status);
+
+  return true;
+end;
+$$;
+
+revoke all on function public.manihub_seller_update_order_status(uuid,text) from public;
+grant execute on function public.manihub_seller_update_order_status(uuid,text) to authenticated;
