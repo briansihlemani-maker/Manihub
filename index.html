@@ -530,7 +530,7 @@ async function loadHelpConversations(){
     const {data:parts,error}=await supabaseClient.from("manihub_conversation_participants").select("conversation_id").eq("user_id",currentUser.id);
     if(error)throw error;
     const ids=[...new Set((parts||[]).map(p=>p.conversation_id))];
-    if(!ids.length){list.innerHTML='<p class="meta">No conversations yet. Start a support conversation below.</p>';return;}
+    if(!ids.length){list.innerHTML='<p class="meta">No conversations yet. Start a private support conversation.</p><button type="button" class="primary" onclick="startHelpConversation()">＋ New support conversation</button>';return;}
     const {data:conversations,error:convError}=await supabaseClient.from("manihub_conversations").select("id,subject,conversation_type,status,updated_at").in("id",ids).order("updated_at",{ascending:false});
     if(convError)throw convError;
     list.innerHTML='<button type="button" class="primary" onclick="startHelpConversation()">＋ New support conversation</button>'+((conversations||[]).map(c=>'<button type="button" class="secondary" style="display:block;width:100%;text-align:left;margin-top:7px" onclick="openHelpConversation(\''+helpEscape(c.id)+'\')">'+helpEscape(c.subject||"ManiHub support")+' · '+helpEscape(c.status)+'</button>').join(""));
