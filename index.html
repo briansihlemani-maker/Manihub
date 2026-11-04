@@ -573,6 +573,52 @@ main{max-width:980px;margin:16px auto 0;padding:0 12px}
 .store-profile-meta{font-size:12px;color:#6e7b73;margin:12px 0}
 @media(max-width:760px){.store-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.store-card-top{padding:12px;gap:8px}.store-avatar{width:40px;height:40px;flex-basis:40px}.store-card-top b{font-size:12px}.store-card-body{padding:10px}.store-directory-head{align-items:flex-start;flex-direction:column}.store-create-button{width:100%}}
 @media(max-width:380px){.store-grid{grid-template-columns:1fr}.explore-mode{font-size:10px}}
+
+/* Reference-inspired Explorer marketplace layout */
+.explore-page{padding:0 0 24px;max-width:1180px;margin:0 auto}
+.explore-reference-head{margin:0 0 12px;background:#fff}
+.explore-reference-top{min-height:76px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;padding:8px 5px}
+.explore-reference-top .explore-back{margin:0;border:0;border-radius:999px;background:#087c45;color:#fff;font-weight:800;padding:12px 18px;justify-self:start}
+.explore-mark{font-size:24px;font-weight:950;letter-spacing:-1px;color:#07513a;text-align:center}
+.explore-account{justify-self:end;width:42px;height:42px;border-radius:50%;background:#07513a;color:#fff;font-size:23px}
+.explore-reference-hero{position:relative;overflow:hidden;border-radius:20px;padding:25px 24px 18px;background:radial-gradient(circle at 85% 15%,#168c5c 0,transparent 38%),linear-gradient(115deg,#064632,#087a4d 72%,#0b563b);color:#fff;min-height:220px}
+.explore-reference-hero .hot-now-kicker{color:#f7df79;font-weight:900;letter-spacing:2px}
+.explore-reference-hero h1{font-size:clamp(30px,5vw,44px);font-weight:950;line-height:1.05;margin:8px 0}
+.explore-reference-hero h1 em{font-style:normal;color:#f2dc55}
+.explore-reference-hero p{max-width:760px;color:#e8f4ed;font-size:14px;margin:8px 0 17px}
+.explore-hero-art{position:absolute;right:25px;top:24px;font-size:clamp(35px,7vw,65px);filter:drop-shadow(0 8px 10px #001b1233)}
+.explore-search{position:relative;z-index:1;display:flex;align-items:center;gap:8px;background:#fff;border:3px solid #f4f5ef;border-radius:999px;padding:5px 6px 5px 15px;color:#597466}
+.explore-search span{font-size:25px}.explore-search input{min-width:0;flex:1;border:0;outline:0;padding:10px 4px;color:#173b2e;background:transparent}
+.explore-search button{background:#07804a;color:#fff;border-radius:999px;padding:12px 22px;font-weight:850}
+.explore-categories{display:flex;align-items:stretch;gap:9px;overflow-x:auto;padding:2px 0 13px;scrollbar-width:thin}
+.explore-category{flex:0 0 94px;min-height:92px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border:1px solid #e4ebe5;background:#fff;color:#1b392d;border-radius:19px;padding:9px 7px;font-size:11px;font-weight:800;line-height:1.15;box-shadow:0 4px 13px #173b2d0c;text-align:center}
+.explore-category span{font-size:26px;line-height:1.1}.explore-category.active{background:#e7f6e9;border:2px solid #13824f;color:#08633e}
+.explore-more{background:#f5f7f5}.explore-extra-categories{display:flex;gap:8px;align-items:stretch}.explore-extra-categories[hidden]{display:none}
+.explore-mode-tabs{display:flex;gap:10px;margin:4px 0 14px;padding:0;background:transparent;border-radius:999px}
+.explore-mode{flex:1;border-radius:999px;padding:13px 10px;background:#e9ebed;color:#253447;font-size:14px;font-weight:850;box-shadow:none}
+.explore-mode.active{background:linear-gradient(100deg,#087b45,#07563b);color:#fff;box-shadow:0 5px 14px #07563b20}
+.explore-results-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:13px 2px}
+.explore-results-head h2,.store-directory-head h2{font-size:22px;color:#08633e;font-weight:900;margin:0}
+.explore-view-all{background:transparent;color:#087b45;font-weight:850;padding:8px 0}
+.explore-products{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.explore-product{position:relative;background:#fff;border:1px solid #e2eae2;border-radius:17px;overflow:hidden;box-shadow:0 5px 16px #173b2d0b;cursor:pointer;min-width:0}
+.explore-product-photo{height:clamp(115px,17vw,175px);background:#edf3ed;display:grid;place-items:center;font-size:40px;overflow:hidden}
+.explore-product-photo img{width:100%;height:100%;object-fit:cover}
+.explore-product-body{padding:10px}.explore-product-body small{font-size:10px;color:#748078}.explore-product-body b{display:block;font-size:13px;line-height:1.3;margin:5px 0;color:#21392d}.explore-product-body strong{display:block;font-size:18px;color:#14583d;margin-bottom:4px}
+.explore-product-badge{position:absolute;top:8px;left:8px;border-radius:99px;padding:5px 8px;background:#07834c;color:white;font-size:10px;font-weight:850;max-width:calc(100% - 55px)}
+.explore-save{position:absolute;right:8px;top:8px;width:31px;height:31px;border-radius:50%;background:#fff;color:#24352d;box-shadow:0 2px 8px #0002;font-size:19px}
+.store-directory-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:15px 0}
+.store-directory-head h2{font-size:22px;color:#08633e}.store-directory-head p{margin:4px 0 0;color:#758078;font-size:12px}
+.store-create-button{background:#d9f36b;color:#173b2e;border-radius:999px;padding:11px 15px;font-size:12px;font-weight:850;white-space:nowrap}
+.store-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.store-card{overflow:hidden;border:1px solid #e2eae2;border-radius:17px;background:#fff;box-shadow:0 6px 18px #173b2d0b;cursor:pointer;min-width:0}
+.store-card-top{min-height:95px;padding:12px;background:linear-gradient(125deg,#073e30,#138358);color:white;display:flex;align-items:center;gap:10px}
+.store-avatar{width:48px;height:48px;flex:0 0 48px;border-radius:13px;background:#ffffff22;display:grid;place-items:center;font-size:25px;overflow:hidden}
+.store-card-top b{font-size:14px;line-height:1.25}.store-card-body{padding:11px}.store-card-body p{font-size:11px;color:#6c7a70;margin:6px 0 9px;min-height:30px}.store-card-meta{font-size:10px;color:#738078}.store-open-label{display:inline-block;margin-top:5px;padding:6px 10px;border-radius:99px;border:1px solid #13824f;color:#087344;font-size:10px;font-weight:850}
+.explore-create-store{width:100%;display:flex;align-items:center;gap:15px;margin:18px 0 0;padding:18px 22px;border-radius:18px;background:linear-gradient(110deg,#064632,#087c4b);color:#fff;text-align:left;box-shadow:0 7px 18px #06463220}
+.explore-create-store>span:first-child{font-size:42px}.explore-create-store>span:nth-child(2){flex:1;display:flex;flex-direction:column;gap:4px}.explore-create-store b{font-size:clamp(17px,3vw,25px)}.explore-create-store small{font-size:12px;color:#e1f1e6}.explore-create-store strong{background:#f3d522;color:#163b2d;border-radius:999px;padding:13px 18px;white-space:nowrap}
+@media(max-width:760px){.explore-reference-top{min-height:68px}.explore-reference-hero{padding:21px 17px 15px;min-height:205px}.explore-reference-hero p{max-width:80%;font-size:12px}.explore-hero-art{right:14px;top:20px;font-size:34px}.explore-category{flex-basis:88px;min-height:88px}.explore-mode{font-size:12px;padding:12px 7px}.explore-products{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.explore-product-photo{height:130px}.store-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.store-directory-head{align-items:flex-start;flex-direction:column}.store-create-button{width:100%}.explore-create-store{padding:14px;gap:10px}.explore-create-store>span:first-child{font-size:32px}.explore-create-store strong{padding:10px 12px;font-size:11px}}
+@media(max-width:390px){.explore-reference-top .explore-back{padding:10px 12px;font-size:11px}.explore-mark{font-size:20px}.explore-account{width:36px;height:36px}.explore-mode{font-size:10px}.explore-create-store{flex-wrap:wrap}.explore-create-store strong{margin-left:auto}}
 </style>
 </head>
 <body>
@@ -651,39 +697,45 @@ main{max-width:980px;margin:16px auto 0;padding:0 12px}
     </div>
     <div class="ad-cta"><div><b>Want to advertise on ManiHub?</b><span>We're preparing self-service advertising for businesses and individuals.</span></div><button type="button" onclick="openForm()">Create a listing</button></div>
   </section>
-  <section class="explore-page" id="explorePage" hidden aria-label="Browse all ManiHub products and services">
-    <div class="explore-page-head">
-      <button type="button" class="explore-back" onclick="closeExplorePage()">← Back to home</button>
-      <span class="hot-now-kicker">THE MANIHUB MARKETPLACE</span>
-      <h1>Explore everything</h1>
-      <p>Browse products and services from people and businesses across South Africa.</p>
-      <div class="explore-search"><span>⌕</span><input id="exploreSearch" type="search" placeholder="What are you looking for?" aria-label="Search all listings"><button type="button" onclick="renderExploreListings()">Search</button></div>
+  <section class="explore-page" id="explorePage" hidden aria-label="Browse ManiHub products and businesses">
+    <div class="explore-reference-head">
+      <div class="explore-reference-top"><button type="button" class="explore-back" onclick="closeExplorePage()">← Back to home</button><span class="explore-mark">ManiHub</span><button type="button" class="explore-account" onclick="openAuth()" aria-label="Account">♟</button></div>
+      <div class="explore-reference-hero">
+        <div><span class="hot-now-kicker">THE MANIHUB MARKETPLACE</span><h1>Explore <em>Everything</em></h1><p>Browse products and services from people and businesses across South Africa.</p></div>
+        <div class="explore-hero-art" aria-hidden="true">🛒 🇿🇦</div>
+        <div class="explore-search"><span>⌕</span><input id="exploreSearch" type="search" placeholder="What are you looking for?" aria-label="Search products and businesses" oninput="handleExploreSearch()"><button type="button" onclick="renderCurrentExplore()">Search</button></div>
+      </div>
     </div>
     <div class="explore-categories" id="exploreCategories" aria-label="Browse by category">
-      <button type="button" class="explore-category active" data-explore-category="All" onclick="setExploreCategory('All')">All</button>
-      <button type="button" class="explore-category" data-explore-category="Electronics" onclick="setExploreCategory('Electronics')">Electronics</button>
-      <button type="button" class="explore-category" data-explore-category="Clothing" onclick="setExploreCategory('Clothing')">Fashion & clothing</button>
-      <button type="button" class="explore-category" data-explore-category="Home & Furniture" onclick="setExploreCategory('Home & Furniture')">Home & furniture</button>
-      <button type="button" class="explore-category" data-explore-category="Food" onclick="setExploreCategory('Food')">Food & groceries</button>
-      <button type="button" class="explore-category" data-explore-category="Beauty" onclick="setExploreCategory('Beauty')">Beauty</button>
-      <button type="button" class="explore-category" data-explore-category="Vehicles" onclick="setExploreCategory('Vehicles')">Vehicles</button>
-      <button type="button" class="explore-category" data-explore-category="Services" onclick="setExploreCategory('Services')">Local services</button>
-      <button type="button" class="explore-category" data-explore-category="Healthcare" onclick="setExploreCategory('Healthcare')">Healthcare</button>
-      <button type="button" class="explore-category" data-explore-category="Legal services" onclick="setExploreCategory('Legal services')">Legal services</button>
-      <button type="button" class="explore-category" data-explore-category="Other" onclick="setExploreCategory('Other')">Other</button>
+      <button type="button" class="explore-category active" data-explore-category="All" onclick="setExploreCategory('All')"><span>▦</span>All</button>
+      <button type="button" class="explore-category" data-explore-category="Shopping & groceries" onclick="setExploreCategory('Shopping & groceries')"><span>🛒</span>Shopping<br>& Groceries</button>
+      <button type="button" class="explore-category" data-explore-category="Electronics" onclick="setExploreCategory('Electronics')"><span>💻</span>Electronics</button>
+      <button type="button" class="explore-category" data-explore-category="Clothing" onclick="setExploreCategory('Clothing')"><span>👕</span>Fashion &<br>Clothing</button>
+      <button type="button" class="explore-category" data-explore-category="Home & Furniture" onclick="setExploreCategory('Home & Furniture')"><span>🛋️</span>Home &<br>Furniture</button>
+      <button type="button" class="explore-category" data-explore-category="Food" onclick="setExploreCategory('Food')"><span>🍴</span>Food &<br>Restaurants</button>
+      <button type="button" class="explore-category" data-explore-category="Healthcare" onclick="setExploreCategory('Healthcare')"><span>✚</span>Health &<br>Beauty</button>
+      <button type="button" class="explore-category" data-explore-category="Vehicles" onclick="setExploreCategory('Vehicles')"><span>🚘</span>Vehicles</button>
+      <button type="button" class="explore-category" data-explore-category="Legal services" onclick="setExploreCategory('Legal services')"><span>⚖️</span>Legal<br>Services</button>
+      <button type="button" class="explore-category explore-more" id="exploreMoreCategories" onclick="toggleExploreMore()" aria-expanded="false"><span>＋</span>More</button>
+      <div class="explore-extra-categories" id="exploreExtraCategories" hidden>
+        <button type="button" class="explore-category" data-explore-category="Beauty" onclick="setExploreCategory('Beauty')"><span>💄</span>Beauty</button>
+        <button type="button" class="explore-category" data-explore-category="Services" onclick="setExploreCategory('Services')"><span>🧰</span>Local services</button>
+        <button type="button" class="explore-category" data-explore-category="Other" onclick="setExploreCategory('Other')"><span>✦</span>Other</button>
+      </div>
     </div>
     <div class="explore-mode-tabs" role="tablist" aria-label="Explore marketplace">
-      <button type="button" class="explore-mode active" id="productsMode" role="tab" aria-selected="true" onclick="setExploreMode('products')">🛍️ Products & listings</button>
-      <button type="button" class="explore-mode" id="storesMode" role="tab" aria-selected="false" onclick="setExploreMode('stores')">🏬 Businesses & stores</button>
+      <button type="button" class="explore-mode active" id="productsMode" role="tab" aria-selected="true" aria-controls="exploreProductsPanel" onclick="setExploreMode('products')">🛍️ Products & Listings</button>
+      <button type="button" class="explore-mode" id="storesMode" role="tab" aria-selected="false" aria-controls="exploreStoresPanel" onclick="setExploreMode('stores')">▣ Businesses & Stores</button>
     </div>
-    <div id="exploreProductsPanel">
-      <div class="explore-results-head"><h2 id="exploreResultsTitle">All listings</h2><span id="exploreCount">Loading…</span></div>
+    <div id="exploreProductsPanel" role="tabpanel" aria-labelledby="productsMode">
+      <div class="explore-results-head"><h2 id="exploreResultsTitle">Popular Products</h2><button type="button" class="explore-view-all" onclick="viewAllExploreProducts()">View all products →</button></div>
       <div class="explore-products" id="exploreProducts"></div>
     </div>
-    <div id="exploreStoresPanel" hidden>
-      <div class="store-directory-head"><div><h2>Discover local stores</h2><p>Explore businesses and the people behind them.</p></div><button type="button" class="store-create-button" onclick="openStoreForm()">＋ Create your store</button></div>
+    <div id="exploreStoresPanel" role="tabpanel" aria-labelledby="storesMode" hidden>
+      <div class="store-directory-head"><div><h2>Top Businesses & Stores</h2><p>Discover businesses and the people behind them.</p></div><button type="button" class="store-create-button" onclick="openStoreForm()">＋ Create your store</button></div>
       <div class="store-grid" id="exploreStores"><div class="hot-empty">Loading ManiHub stores…</div></div>
     </div>
+    <button type="button" class="explore-create-store" onclick="openStoreForm()"><span>▣</span><span><b>Create Your Own Store</b><small>Showcase your business on ManiHub today!</small></span><strong>Get Started →</strong></button>
   </section>
 
   <section class="listing-discovery" aria-label="Discover listings">
@@ -899,7 +951,7 @@ function setExploreMode(mode){
   byId("storesMode")?.setAttribute("aria-selected",String(!products));
   byId("exploreProductsPanel").hidden=!products;
   byId("exploreStoresPanel").hidden=products;
-  if(!products)loadManiHubStores();
+  if(!products)loadManiHubStores();else renderExploreListings();
 }
 function openStoreForm(){
   if(!currentUser){openAuth();return;}
@@ -929,7 +981,7 @@ function renderExploreStores(){
     const terms=aliases[exploreCategory]||[exploreCategory.toLowerCase()];
     return terms.some(term=>String(x.category||"").toLowerCase().includes(term));
   };
-  const found=manihubStores.filter(x=>categoryMatch(x)&&[x.store_name,x.description,x.category,x.town,x.province].join(" ").toLowerCase().includes(q));
+  const found=manihubStores.filter(x=>exploreCategoryMatches(x.category,exploreCategory)&&[x.store_name,x.description,x.category,x.town,x.province].join(" ").toLowerCase().includes(q));
   target.innerHTML=found.length?found.map(x=>'<article class="store-card" role="button" tabindex="0" onclick="openStoreDetails(\''+esc(x.id)+'\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openStoreDetails(\''+esc(x.id)+'\')}"><div class="store-card-top"><span class="store-avatar">'+(x.logo_url?'<img src="'+esc(x.logo_url)+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:15px">':'🏬')+'</span><b>'+esc(x.store_name)+'</b></div><div class="store-card-body"><span class="store-card-meta">'+esc(x.category)+' · '+esc(x.town?x.town+", ":"")+esc(x.province)+'</span><p>'+esc(x.description||"Discover this local ManiHub business.")+'</p><span class="store-open-label">View storefront →</span></div></article>').join(""):'<div class="hot-empty">No stores have opened on ManiHub yet. Be the first business to create a store.</div>';
 }
 async function openStoreDetails(id){
@@ -979,7 +1031,6 @@ function showExploreView(reset=true){
   if(main&&explore&&main.firstElementChild!==explore)main.insertBefore(explore,main.firstElementChild);
   document.body.classList.add("exploring");
   closeManiMenu();
-  closeManiMenu();
   document.querySelectorAll("main > section").forEach(section=>{section.hidden=section.id!=="explorePage";});
   byId("explorePage").hidden=false;
   if(reset){exploreCategory="All";byId("exploreSearch").value="";
@@ -1017,18 +1068,54 @@ window.addEventListener("popstate",()=>{
   if(location.hash==="#explore")showExploreView(false);
   else showHomeView();
 });
+function exploreCategoryMatches(value,category){
+  if(category==="All")return true;
+  const groups={
+    "Shopping & groceries":["food","grocery","shopping","household","home"],
+    "Electronics":["electronic","computer","phone","appliance"],
+    "Clothing":["clothing","fashion","apparel"],
+    "Home & Furniture":["home","furniture","decor"],
+    "Food":["food","restaurant","grocery"],
+    "Healthcare":["health","medical","beauty"],
+    "Beauty":["beauty","personal care"],
+    "Vehicles":["vehicle","car","motor"],
+    "Legal services":["legal","law"],
+    "Services":["service","repair","plumb","electric"],
+    "Other":["other"]
+  };
+  const terms=groups[category]||[category.toLowerCase()];
+  return terms.some(term=>String(value||"").toLowerCase().includes(term));
+}
 function setExploreCategory(category){
   exploreCategory=category;
   document.querySelectorAll("[data-explore-category]").forEach(b=>b.classList.toggle("active",b.dataset.exploreCategory===category));
-  renderExploreListings();if(exploreMode==="stores")renderExploreStores();
+  if(category!=="All"&&["Beauty","Services","Other"].includes(category)){
+    byId("exploreExtraCategories").hidden=false;byId("exploreMoreCategories").setAttribute("aria-expanded","true");
+  }
+  renderCurrentExplore();
 }
+function toggleExploreMore(){
+  const panel=byId("exploreExtraCategories"),button=byId("exploreMoreCategories");
+  panel.hidden=!panel.hidden;button.setAttribute("aria-expanded",String(!panel.hidden));
+}
+function handleExploreSearch(){renderCurrentExplore();}
+function renderCurrentExplore(){if(exploreMode==="stores")renderExploreStores();else renderExploreListings();}
+function viewAllExploreProducts(){setExploreMode("products");setExploreCategory("All");byId("exploreSearch").value="";renderExploreListings();}
 function renderExploreListings(){
   const target=byId("exploreProducts");if(!target)return;
   const q=(byId("exploreSearch")?.value||"").trim().toLowerCase();
-  const found=listings.filter(x=>(exploreCategory==="All"||x.category===exploreCategory)&&(!q||[x.item,x.category,x.seller,x.town,x.province,x.description].join(" ").toLowerCase().includes(q)));
-  byId("exploreResultsTitle").textContent=exploreCategory==="All"?"All listings":exploreCategory;
+  const found=listings.filter(x=>exploreCategoryMatches(x.category,exploreCategory)&&(!q||[x.item,x.category,x.seller,x.town,x.province,x.description].join(" ").toLowerCase().includes(q)));
+  found.sort((a,b)=>getListingScore(b)-getListingScore(a)||new Date(b.created_at||0)-new Date(a.created_at||0));
+  byId("exploreResultsTitle").textContent=exploreCategory==="All"?"Popular Products":exploreCategory;
   byId("exploreCount").textContent=found.length+" listing"+(found.length===1?"":"s");
-  target.innerHTML=found.length?found.map(x=>productCardMarkup(x,false)).join(""):'<div class="hot-empty">No live adverts in this category yet. Try another category or check back soon.</div>';
+  target.innerHTML=found.length?found.map(x=>{
+    const badge=getListingBadge(x),saved=isListingSaved(x.id);
+    return '<article class="explore-product" role="button" tabindex="0" onclick="showDetails(\''+esc(x.id)+'\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();showDetails(\''+esc(x.id)+'\')}"><div class="explore-product-photo">'+(x.photo?'<img src="'+esc(x.photo)+'" alt="'+esc(x.item)+'" loading="lazy">':'🛍️')+'</div><span class="explore-product-badge">'+esc(badge)+'</span><button class="explore-save" type="button" aria-label="'+(saved?'Remove saved item':'Save item')+'" onclick="event.stopPropagation();toggleExploreSave(\''+esc(x.id)+'\',this)">'+(saved?'♥':'♡')+'</button><div class="explore-product-body"><small>'+esc(x.category)+' · '+esc((x.town?x.town+', ':'')+x.province)+'</small><b>'+esc(x.item)+'</b><strong>R'+Number(x.price).toLocaleString("en-ZA",{maximumFractionDigits:2})+'</strong><small>Seller: '+esc(x.seller)+'</small></div></article>';
+  }).join(""):'<div class="hot-empty">No live adverts in this category yet. Try another category or check back soon.</div>';
+}
+async function toggleExploreSave(id,button){
+  await toggleListingSave(id);
+  const saved=isListingSaved(id);button.textContent=saved?"♥":"♡";button.setAttribute("aria-label",saved?"Remove saved item":"Save item");
 }
 
 function showDetails(id){
