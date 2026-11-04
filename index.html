@@ -619,6 +619,18 @@ main{max-width:980px;margin:16px auto 0;padding:0 12px}
 .explore-create-store>span:first-child{font-size:42px}.explore-create-store>span:nth-child(2){flex:1;display:flex;flex-direction:column;gap:4px}.explore-create-store b{font-size:clamp(17px,3vw,25px)}.explore-create-store small{font-size:12px;color:#e1f1e6}.explore-create-store strong{background:#f3d522;color:#163b2d;border-radius:999px;padding:13px 18px;white-space:nowrap}
 @media(max-width:760px){.explore-reference-top{min-height:68px}.explore-reference-hero{padding:21px 17px 15px;min-height:205px}.explore-reference-hero p{max-width:80%;font-size:12px}.explore-hero-art{right:14px;top:20px;font-size:34px}.explore-category{flex-basis:88px;min-height:88px}.explore-mode{font-size:12px;padding:12px 7px}.explore-products{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.explore-product-photo{height:130px}.store-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.store-directory-head{align-items:flex-start;flex-direction:column}.store-create-button{width:100%}.explore-create-store{padding:14px;gap:10px}.explore-create-store>span:first-child{font-size:32px}.explore-create-store strong{padding:10px 12px;font-size:11px}}
 @media(max-width:390px){.explore-reference-top .explore-back{padding:10px 12px;font-size:11px}.explore-mark{font-size:20px}.explore-account{width:36px;height:36px}.explore-mode{font-size:10px}.explore-create-store{flex-wrap:wrap}.explore-create-store strong{margin-left:auto}}
+
+/* Explorer is a focused discovery workspace, not a second homepage. */
+.explore-heading{display:grid;grid-template-columns:1fr minmax(280px,.9fr);align-items:center;gap:20px;padding:17px 5px 20px;border-bottom:1px solid #e5ece5}
+.explore-heading h1{font-size:clamp(23px,4vw,32px);line-height:1.12;letter-spacing:-.8px;color:#173b2e;margin:5px 0}
+.explore-heading p{font-size:13px;color:#6c7a70;margin:5px 0 0}
+.explore-eyebrow{font-size:10px;font-weight:900;letter-spacing:1.6px;color:#16804f}
+.explore-search{border:1px solid #dfe8e0!important;border-radius:13px!important;background:#f8fbf8!important;padding:5px 6px 5px 13px!important}
+.explore-search button{border-radius:10px!important;background:#174b3d!important}
+.explore-categories{padding-top:14px}
+.explore-create-store{display:none!important}
+@media(max-width:760px){.explore-heading{grid-template-columns:1fr;gap:12px;padding:14px 2px 16px}.explore-heading h1{font-size:25px}.explore-heading p{font-size:12px}.explore-search{width:100%}}
+
 </style>
 </head>
 <body>
@@ -700,10 +712,9 @@ main{max-width:980px;margin:16px auto 0;padding:0 12px}
   <section class="explore-page" id="explorePage" hidden aria-label="Browse ManiHub products and businesses">
     <div class="explore-reference-head">
       <div class="explore-reference-top"><button type="button" class="explore-back" onclick="closeExplorePage()">← Back to home</button><span class="explore-mark">ManiHub</span><button type="button" class="explore-account" onclick="openAuth()" aria-label="Account">♟</button></div>
-      <div class="explore-reference-hero">
-        <div><span class="hot-now-kicker">THE MANIHUB MARKETPLACE</span><h1>Explore <em>Everything</em></h1><p>Browse products and services from people and businesses across South Africa.</p></div>
-        <div class="explore-hero-art" aria-hidden="true">🛒 🇿🇦</div>
-        <div class="explore-search"><span>⌕</span><input id="exploreSearch" type="search" placeholder="What are you looking for?" aria-label="Search products and businesses" oninput="handleExploreSearch()"><button type="button" onclick="renderCurrentExplore()">Search</button></div>
+      <div class="explore-heading">
+        <div><span class="explore-eyebrow">DISCOVER ON MANIHUB</span><h1>Explore products &amp; businesses</h1><p>Find what you need from local sellers and stores.</p></div>
+        <div class="explore-search"><span>⌕</span><input id="exploreSearch" type="search" placeholder="Search products, services or stores" aria-label="Search products and businesses" oninput="handleExploreSearch()"><button type="button" onclick="renderCurrentExplore()">Search</button></div>
       </div>
     </div>
     <div class="explore-categories" id="exploreCategories" aria-label="Browse by category">
@@ -735,7 +746,7 @@ main{max-width:980px;margin:16px auto 0;padding:0 12px}
       <div class="store-directory-head"><div><h2>Businesses & Stores</h2><p>Discover businesses and the people behind them.</p></div><button type="button" class="store-create-button" onclick="openStoreForm()">＋ Create your store</button></div>
       <div class="store-grid" id="exploreStores"><div class="hot-empty">Loading ManiHub stores…</div></div>
     </div>
-    <button type="button" class="explore-create-store" onclick="openStoreForm()"><span>▣</span><span><b>Create Your Own Store</b><small>Showcase your business on ManiHub today!</small></span><strong>Get Started →</strong></button>
+
   </section>
 
   <section class="listing-discovery" aria-label="Discover listings">
@@ -815,7 +826,6 @@ main{max-width:980px;margin:16px auto 0;padding:0 12px}
   </form>
  </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 let supabaseClient = null;
 const SUPABASE_URL = "https://oochtzrlpylesoqvtikg.supabase.co";
@@ -1047,10 +1057,7 @@ function openExplorePage(){
   showExploreView(true);
 }
 function closeExplorePage(){
-  if(location.hash==="#explore"&&history.state?.manihubView==="explore"){
-    history.back();
-    return;
-  }
+  // Return directly to Home; do not depend on browser history after a refresh.
   history.replaceState({manihubView:"home"},"",location.pathname+location.search);
   showHomeView();
 }
@@ -1403,7 +1410,30 @@ function bindButtons(){
   byId("modal")?.addEventListener("click",e=>{if(e.target.id==="modal")closeForm();});
   byId("detailsModal")?.addEventListener("click",e=>{if(e.target.id==="detailsModal")closeDetails();});
 }
-function loadSupabaseFallback(){return new Promise(resolve=>{if(window.supabase?.createClient){resolve(true);return;}const s=document.createElement("script");s.src="https://unpkg.com/@supabase/supabase-js@2";s.onload=()=>resolve(!!window.supabase?.createClient);s.onerror=()=>resolve(false);document.head.appendChild(s);});}
+function loadSupabaseFallback(){
+  if(window.supabase?.createClient)return Promise.resolve(true);
+  const sources=[
+    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2",
+    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js",
+    "https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"
+  ];
+  return new Promise(async resolve=>{
+    for(const src of sources){
+      const loaded=await new Promise(done=>{
+        const script=document.createElement("script");
+        let settled=false,timer;
+        const finish=ok=>{if(settled)return;settled=true;clearTimeout(timer);script.onload=null;script.onerror=null;done(ok&&!!window.supabase?.createClient);};
+        timer=setTimeout(()=>{script.remove();finish(false);},12000);
+        script.src=src;script.async=true;
+        script.onload=()=>finish(true);
+        script.onerror=()=>{script.remove();finish(false);};
+        document.head.appendChild(script);
+      });
+      if(loaded){resolve(true);return;}
+    }
+    resolve(false);
+  });
+}
 async function initManiHub(){
   bindButtons();render();restorePageFromUrl();setStatus("Starting ManiHub account connection…");
   try{if(!window.supabase?.createClient){const loaded=await loadSupabaseFallback();if(!loaded)throw new Error("The Supabase library could not load. Check your internet connection.");}
@@ -1418,16 +1448,3 @@ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",
 </script>
 </body>
 </html>
-
-
-/* Explore is a separate page: never show homepage hero, promo banners or footer sections here. */
-main > section[hidden]{display:none!important}
-body.exploring main > section:not(#explorePage){display:none!important}
-body.exploring main > .hero,
-body.exploring main > .concept-one-ad,
-body.exploring main > .ad-opportunities,
-body.exploring main > .hot-now-section,
-body.exploring main > .listing-discovery,
-body.exploring main > .concept-one-footer-banner{display:none!important}
-body.exploring main{padding-top:16px}
-body.exploring #explorePage{display:block!important}
