@@ -729,7 +729,7 @@ let active = "All", activeDepartment = "all", listings = [], currentUser = null;
 function byId(id){ return document.getElementById(id); }
 function setStatus(message){ const el=byId("authStatus"); if(el) el.textContent=message; }
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-function mapListing(x){return {id:x.id,item:x.title,price:Number(x.price),category:x.category,kind:x.seller_type==="business"?"Registered business":"Individual seller",seller:x.seller_name,province:x.province,town:x.town||"",phone:x.whatsapp||"",description:x.description||"",photo:x.photo_url||"",emoji:"🛍️"};}
+function mapListing(x){return {id:x.id,created_at:x.created_at||"",item:x.title,price:Number(x.price),category:x.category,kind:x.seller_type==="business"?"Registered business":"Individual seller",seller:x.seller_name,province:x.province,town:x.town||"",phone:x.whatsapp||"",description:x.description||"",photo:x.photo_url||"",emoji:"🛍️"};}
 function renderCats(){const el=byId("categories"); if(!el)return; el.innerHTML=cats.map(c=>`<button type="button" class="chip ${active===c?'active':''}" data-category="${esc(c)}">${esc(c)}</button>`).join("");}
 function setCat(c){active=c;activeDepartment="all";render();}
 function showListingResults(){
@@ -794,7 +794,7 @@ function productCardMarkup(x,compact=false){
 }
 function renderHotProducts(){
   const target=byId("hotProducts");if(!target)return;
-  const fresh=[...listings].sort((a,b)=>String(b.id).localeCompare(String(a.id))).slice(0,8);
+  const fresh=[...listings].sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0)).slice(0,8);
   target.innerHTML=fresh.length?fresh.map(x=>productCardMarkup(x,true)).join(""):'<div class="hot-empty">New products will appear here as soon as sellers publish adverts. <button type="button" class="secondary" onclick="openForm()">Be the first to sell</button></div>';
 }
 function openExplorePage(){
