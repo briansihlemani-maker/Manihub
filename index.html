@@ -506,6 +506,53 @@ main{max-width:980px;margin:16px auto 0;padding:0 12px}
 }
 @media(prefers-reduced-motion:reduce){.concept-one-tile{transition:none}}
 
+
+/* Live product discovery: real seller listings only */
+.hot-now-section{margin:22px 0 28px;padding:18px 0 8px}
+.hot-now-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 2px 14px}
+.hot-now-kicker{display:block;color:#98772a;font-size:9px;font-weight:900;letter-spacing:1.7px;margin-bottom:5px}
+.hot-now-heading h2{font-size:clamp(20px,3vw,26px);color:#123f32;letter-spacing:-.7px;margin:0 0 4px}
+.hot-now-heading p{font-size:12px;color:#738078;margin:0}
+.hot-more-button{flex:0 0 auto;border-radius:999px;background:linear-gradient(120deg,#087c46,#0b9a50);color:#fff;padding:11px 18px;box-shadow:0 6px 16px #087c4626}
+.hot-products{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(190px,22%);gap:12px;overflow-x:auto;overscroll-behavior-x:contain;padding:3px 2px 13px;scroll-snap-type:x mandatory}
+.hot-product{min-width:0;scroll-snap-align:start;background:#fff;border:1px solid #e3eae2;border-radius:17px;overflow:hidden;box-shadow:0 7px 20px #173b2d0c;cursor:pointer;transition:transform .18s,box-shadow .18s}
+.hot-product:hover{transform:translateY(-3px);box-shadow:0 12px 24px #173b2d16}
+.hot-product-photo{height:145px;background:linear-gradient(145deg,#edf4ed,#e2ece4);display:grid;place-items:center;overflow:hidden;font-size:42px}
+.hot-product-photo img{width:100%;height:100%;object-fit:cover}
+.hot-product-body{padding:11px 12px 13px}
+.hot-product-badge{display:inline-block;margin-bottom:6px;padding:4px 7px;border-radius:99px;background:#edf6df;color:#4d7924;font-size:9px;font-weight:900}
+.hot-product-title{font-size:13px;font-weight:800;color:#1d3429;line-height:1.3;min-height:34px}
+.hot-product-price{font-size:18px;font-weight:950;color:#14583d;margin:7px 0 4px}
+.hot-product-location{font-size:10px;color:#748078;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hot-empty{grid-column:1/-1;padding:23px;border:1px dashed #cbd9cb;border-radius:15px;background:#fff;color:#6c7a70;font-size:12px}
+.explore-page{padding:8px 0 25px}
+.explore-page[hidden]{display:none!important}
+.explore-page-head{padding:23px;border-radius:20px;background:linear-gradient(125deg,#073e30,#08744e 65%,#239260);color:#fff;box-shadow:0 12px 30px #0c4b3522}
+.explore-back{display:block;background:#ffffff1b;border:1px solid #ffffff55;color:#fff;padding:8px 12px;margin-bottom:20px;border-radius:10px}
+.explore-page-head .hot-now-kicker{color:#f1d985}
+.explore-page-head h1{font-size:clamp(27px,5vw,38px);margin:5px 0}
+.explore-page-head p{color:#e0eee7;font-size:13px;margin:0 0 16px}
+.explore-search{display:flex;align-items:center;gap:7px;background:#fff;border-radius:12px;padding:5px 6px 5px 12px;color:#597466}
+.explore-search span{font-size:22px}
+.explore-search input{min-width:0;flex:1;border:0;outline:0;padding:9px 4px;color:#173b2e}
+.explore-search button{background:#d9f36b;color:#173b2e;border-radius:9px;padding:10px 14px}
+.explore-categories{display:flex;gap:8px;overflow-x:auto;padding:17px 0 12px}
+.explore-category{flex:0 0 auto;border:1px solid #dfe8df;background:#fff;color:#40564a;border-radius:99px;padding:9px 13px;font-size:11px;font-weight:750}
+.explore-category.active{background:#174b3d;border-color:#174b3d;color:#fff}
+.explore-results-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px 0}
+.explore-results-head h2{font-size:20px;color:#173b2e}
+.explore-results-head span{font-size:11px;color:#748078}
+.explore-products{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.explore-product{background:#fff;border:1px solid #e2eae2;border-radius:16px;overflow:hidden;box-shadow:0 5px 16px #173b2d08;cursor:pointer}
+.explore-product-photo{height:155px;background:#edf3ed;display:grid;place-items:center;font-size:40px;overflow:hidden}
+.explore-product-photo img{width:100%;height:100%;object-fit:cover}
+.explore-product-body{padding:11px}
+.explore-product-body small{font-size:10px;color:#748078}
+.explore-product-body b{display:block;font-size:13px;line-height:1.35;margin:5px 0;color:#21392d}
+.explore-product-body strong{display:block;font-size:18px;color:#14583d}
+@media(max-width:760px){.hot-products{grid-auto-columns:minmax(160px,44%);gap:9px}.hot-product-photo{height:120px}.hot-product-body{padding:9px}.hot-product-title{font-size:12px}.hot-product-price{font-size:16px}.explore-page-head{padding:18px}.explore-products{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.explore-product-photo{height:125px}}
+@media(max-width:380px){.hot-products{grid-auto-columns:minmax(145px,52%)}.hot-product-photo{height:108px}}
+
 </style>
 </head>
 <body>
@@ -559,17 +606,13 @@ main{max-width:980px;margin:16px auto 0;padding:0 12px}
     </div>
   </section>
 
-  <section class="concept-one-categories" id="departments" aria-label="Top ManiHub categories">
-    <div class="concept-one-section-title"><span>🔥</span><div><h2>Top Categories</h2><p>Browse our popular categories</p></div></div>
-    <div class="concept-one-tile-grid">
-      <button class="concept-one-tile tile-shopping" type="button" data-department="shopping"><span class="tile-photo"></span><b>Shopping &<br>Groceries</b></button>
-      <button class="concept-one-tile tile-health" type="button" data-department="health"><span class="tile-photo"></span><b>Healthcare</b></button>
-      <button class="concept-one-tile tile-fashion" type="button" data-department="fashion"><span class="tile-photo"></span><b>Fashion &<br>Clothing</b></button>
-      <button class="concept-one-tile tile-legal" type="button" data-department="legal"><span class="tile-photo"></span><b>Legal<br>Services</b></button>
-      <button class="concept-one-tile tile-food" type="button" data-department="restaurants"><span class="tile-photo"></span><b>Food &<br>Dining</b></button>
-      <button class="concept-one-tile tile-beauty" type="button" data-department="health"><span class="tile-photo"></span><b>Beauty &<br>Health</b></button>
-      <button class="concept-one-tile tile-vehicles" type="button" data-department="local"><span class="tile-photo"></span><b>Vehicles</b></button>
-      <button class="concept-one-tile tile-services" type="button" data-department="delivery"><span class="tile-photo"></span><b>Tools &<br>Services</b></button>
+  <section class="hot-now-section" id="hotNowSection" aria-label="What's hot on ManiHub">
+    <div class="hot-now-heading">
+      <div><span class="hot-now-kicker">DISCOVER SOMETHING NEW</span><h2>🔥 What's Hot on ManiHub</h2><p>Fresh finds from sellers across South Africa</p></div>
+      <button class="hot-more-button" type="button" onclick="openExplorePage()">More <span>→</span></button>
+    </div>
+    <div class="hot-products" id="hotProducts" aria-live="polite">
+      <div class="hot-empty">Loading the latest products from ManiHub…</div>
     </div>
   </section>
 
@@ -588,6 +631,31 @@ main{max-width:980px;margin:16px auto 0;padding:0 12px}
     </div>
     <div class="ad-cta"><div><b>Want to advertise on ManiHub?</b><span>We're preparing self-service advertising for businesses and individuals.</span></div><button type="button" onclick="openForm()">Create a listing</button></div>
   </section>
+  <section class="explore-page" id="explorePage" hidden aria-label="Browse all ManiHub products and services">
+    <div class="explore-page-head">
+      <button type="button" class="explore-back" onclick="closeExplorePage()">← Back to home</button>
+      <span class="hot-now-kicker">THE MANIHUB MARKETPLACE</span>
+      <h1>Explore everything</h1>
+      <p>Browse products and services from people and businesses across South Africa.</p>
+      <div class="explore-search"><span>⌕</span><input id="exploreSearch" type="search" placeholder="What are you looking for?" aria-label="Search all listings"><button type="button" onclick="renderExploreListings()">Search</button></div>
+    </div>
+    <div class="explore-categories" id="exploreCategories" aria-label="Browse by category">
+      <button type="button" class="explore-category active" data-explore-category="All" onclick="setExploreCategory('All')">All</button>
+      <button type="button" class="explore-category" data-explore-category="Electronics" onclick="setExploreCategory('Electronics')">Electronics</button>
+      <button type="button" class="explore-category" data-explore-category="Clothing" onclick="setExploreCategory('Clothing')">Fashion & clothing</button>
+      <button type="button" class="explore-category" data-explore-category="Home & Furniture" onclick="setExploreCategory('Home & Furniture')">Home & furniture</button>
+      <button type="button" class="explore-category" data-explore-category="Food" onclick="setExploreCategory('Food')">Food & groceries</button>
+      <button type="button" class="explore-category" data-explore-category="Beauty" onclick="setExploreCategory('Beauty')">Beauty</button>
+      <button type="button" class="explore-category" data-explore-category="Vehicles" onclick="setExploreCategory('Vehicles')">Vehicles</button>
+      <button type="button" class="explore-category" data-explore-category="Services" onclick="setExploreCategory('Services')">Local services</button>
+      <button type="button" class="explore-category" data-explore-category="Healthcare" onclick="setExploreCategory('Healthcare')">Healthcare</button>
+      <button type="button" class="explore-category" data-explore-category="Legal services" onclick="setExploreCategory('Legal services')">Legal services</button>
+      <button type="button" class="explore-category" data-explore-category="Other" onclick="setExploreCategory('Other')">Other</button>
+    </div>
+    <div class="explore-results-head"><h2 id="exploreResultsTitle">All listings</h2><span id="exploreCount">Loading…</span></div>
+    <div class="explore-products" id="exploreProducts"></div>
+  </section>
+
   <section class="listing-discovery" aria-label="Discover listings">
   <div class="sectionhead"><h2>Discover listings</h2><button class="secondary" onclick="openForm()">＋ Sell something</button></div>
   <div class="toolbar"><span id="count">Showing listings</span><select id="province" onchange="render()"><option value="">All provinces</option><option>Eastern Cape</option><option>Free State</option><option>Gauteng</option><option>KwaZulu-Natal</option><option>Limpopo</option><option>Mpumalanga</option><option>Northern Cape</option><option>North West</option><option>Western Cape</option></select></div>
@@ -708,13 +776,57 @@ function setDepartment(department){
   render();
 }
 function render(){
-  renderCats(); const search=byId("search"),province=byId("province"),target=byId("listings"); if(!search||!province||!target)return;
+  renderCats();renderHotProducts();if(!byId("explorePage")?.hidden)renderExploreListings(); const search=byId("search"),province=byId("province"),target=byId("listings"); if(!search||!province||!target)return;
   const q=search.value.trim().toLowerCase(),p=province.value;
   const deptFilter=departmentFilters[activeDepartment];
   const shown=listings.filter(x=>(active==="All"||x.category===active)&&(!deptFilter||deptFilter.includes(x.category))&&(!p||x.province===p)&&(!q||[x.item,x.category,x.seller,x.town,x.province,x.description].join(" ").toLowerCase().includes(q)));
   byId("count").textContent=`${shown.length} listing${shown.length===1?"":"s"} found`;
   target.innerHTML=shown.length?shown.map(x=>{const wa=String(x.phone||"").replace(/\D/g,"");const msg=encodeURIComponent(`Hi ${x.seller}, I saw your "${x.item}" advert on ManiHub. Is it still available?`);return `<article class="card"><div class="photo">${x.photo?`<img src="${esc(x.photo)}" alt="${esc(x.item)}">`:esc(x.emoji)}</div><div class="cardbody"><div class="meta">${esc(x.category)} · ${esc(x.kind)}</div><div class="title">${esc(x.item)}</div><div class="price">R${Number(x.price).toLocaleString("en-ZA",{maximumFractionDigits:2})}</div><div class="seller">${esc(x.seller)}</div><div class="meta">📍 ${esc(x.town?x.town+", ":"")}${esc(x.province)}</div><div class="cardactions">${wa?`<a href="https://wa.me/${wa}?text=${msg}" target="_blank" rel="noopener">WhatsApp seller</a>`:`<span class="meta">No contact supplied</span>`}<button type="button" data-details="${esc(x.id)}">Details</button></div></div></article>`}).join(""):`<div class="empty"><div style="font-size:35px">🔎</div><b>No listings found</b><p>${supabaseClient?"There are no matching live adverts yet. Create an account and post the first one.":"Marketplace connection is not ready. Please refresh the page and try again."}</p><button type="button" class="secondary" data-open-form>Post an advert</button></div>`;
 }
+
+let exploreCategory="All";
+function productCardMarkup(x,compact=false){
+  const image=x.photo?'<img src="'+esc(x.photo)+'" alt="'+esc(x.item)+'" loading="lazy">':"🛍️";
+  const location=(x.town?x.town+", ":"")+x.province;
+  const price="R"+Number(x.price).toLocaleString("en-ZA",{maximumFractionDigits:2});
+  if(compact)return '<article class="hot-product" role="button" tabindex="0" onclick="showDetails(\''+esc(x.id)+'\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();showDetails(\''+esc(x.id)+'\')}"><div class="hot-product-photo">'+image+'</div><div class="hot-product-body"><span class="hot-product-badge">✦ Fresh find</span><div class="hot-product-title">'+esc(x.item)+'</div><div class="hot-product-price">'+price+'</div><div class="hot-product-location">📍 '+esc(location)+'</div></div></article>';
+  return '<article class="explore-product" role="button" tabindex="0" onclick="showDetails(\''+esc(x.id)+'\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();showDetails(\''+esc(x.id)+'\')}"><div class="explore-product-photo">'+image+'</div><div class="explore-product-body"><small>'+esc(x.category)+' · '+esc(location)+'</small><b>'+esc(x.item)+'</b><strong>'+price+'</strong><small>Seller: '+esc(x.seller)+'</small></div></article>';
+}
+function renderHotProducts(){
+  const target=byId("hotProducts");if(!target)return;
+  const fresh=[...listings].sort((a,b)=>String(b.id).localeCompare(String(a.id))).slice(0,8);
+  target.innerHTML=fresh.length?fresh.map(x=>productCardMarkup(x,true)).join(""):'<div class="hot-empty">New products will appear here as soon as sellers publish adverts. <button type="button" class="secondary" onclick="openForm()">Be the first to sell</button></div>';
+}
+function openExplorePage(){
+  closeManiMenu();
+  ["hotNowSection",""].forEach(()=>{});
+  const mainSections=document.querySelectorAll("main > section");
+  mainSections.forEach(section=>{if(section.id!=="explorePage")section.hidden=true;});
+  byId("explorePage").hidden=false;
+  document.body.classList.add("exploring");
+  exploreCategory="All";byId("exploreSearch").value="";
+  document.querySelectorAll("[data-explore-category]").forEach(b=>b.classList.toggle("active",b.dataset.exploreCategory==="All"));
+  renderExploreListings();window.scrollTo({top:0,behavior:"smooth"});
+}
+function closeExplorePage(){
+  byId("explorePage").hidden=true;
+  document.querySelectorAll("main > section").forEach(section=>{if(section.id!=="explorePage")section.hidden=false;});
+  document.body.classList.remove("exploring");window.scrollTo({top:0,behavior:"smooth"});
+}
+function setExploreCategory(category){
+  exploreCategory=category;
+  document.querySelectorAll("[data-explore-category]").forEach(b=>b.classList.toggle("active",b.dataset.exploreCategory===category));
+  renderExploreListings();
+}
+function renderExploreListings(){
+  const target=byId("exploreProducts");if(!target)return;
+  const q=(byId("exploreSearch")?.value||"").trim().toLowerCase();
+  const found=listings.filter(x=>(exploreCategory==="All"||x.category===exploreCategory)&&(!q||[x.item,x.category,x.seller,x.town,x.province,x.description].join(" ").toLowerCase().includes(q)));
+  byId("exploreResultsTitle").textContent=exploreCategory==="All"?"All listings":exploreCategory;
+  byId("exploreCount").textContent=found.length+" listing"+(found.length===1?"":"s");
+  target.innerHTML=found.length?found.map(x=>productCardMarkup(x,false)).join(""):'<div class="hot-empty">No live adverts in this category yet. Try another category or check back soon.</div>';
+}
+
 function showDetails(id){
   const x=listings.find(a=>String(a.id)===String(id));if(!x)return;
   const wa=String(x.phone||"").replace(/\D/g,"");
@@ -987,7 +1099,7 @@ function bindButtons(){
   document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeAuth();closeForm();closeDetails();closeHelp();closeManiMenu();}});
   byId("departments")?.addEventListener("click",e=>{const b=e.target.closest("[data-department]");if(b)setDepartment(b.dataset.department);});
   document.querySelector(".concept-one-dots")?.addEventListener("click",e=>{const dot=e.target.closest("[data-hero-slide]");if(dot)showHeroSlide(Number(dot.dataset.heroSlide));});
-  byId("search")?.addEventListener("input",()=>{showListingResults();render();});byId("province")?.addEventListener("change",render);byId("listingForm")?.addEventListener("submit",publishListing);byId("photo")?.addEventListener("change",previewListingPhoto);
+  byId("search")?.addEventListener("input",()=>{showListingResults();render();});byId("exploreSearch")?.addEventListener("input",renderExploreListings);byId("province")?.addEventListener("change",render);byId("listingForm")?.addEventListener("submit",publishListing);byId("photo")?.addEventListener("change",previewListingPhoto);
   ["item","price","category","seller","provinceInput","phone"].forEach(id=>{
     const input=byId(id);if(!input)return;
     const clear=()=>{input.setAttribute("aria-invalid","false");const error=input.closest(".field")?.querySelector(".field-error");if(error){error.hidden=true;error.textContent="";}};
@@ -1007,7 +1119,7 @@ async function initManiHub(){
     await refreshAuth();await refreshListings();
   }catch(error){setStatus("ManiHub connection could not start: "+(error.message||error));const target=byId("listings");if(target)target.innerHTML=`<div class="empty">${esc(error.message||error)}</div>`;}
 }
-window.signUpUser=signUpUser;window.signInUser=signInUser;window.openAuth=openAuth;window.closeAuth=closeAuth;window.closeDetails=closeDetails;window.toggleAuthMode=toggleAuthMode;window.togglePasswordVisibility=togglePasswordVisibility;window.signOutUser=signOutUser;window.render=render;window.openForm=openForm;window.closeForm=closeForm;window.setCat=setCat;window.showDetails=showDetails;window.setDepartment=setDepartment;
+window.signUpUser=signUpUser;window.signInUser=signInUser;window.openAuth=openAuth;window.closeAuth=closeAuth;window.closeDetails=closeDetails;window.toggleAuthMode=toggleAuthMode;window.togglePasswordVisibility=togglePasswordVisibility;window.signOutUser=signOutUser;window.render=render;window.openForm=openForm;window.closeForm=closeForm;window.setCat=setCat;window.showDetails=showDetails;window.setDepartment=setDepartment;window.openExplorePage=openExplorePage;window.closeExplorePage=closeExplorePage;window.setExploreCategory=setExploreCategory;window.renderExploreListings=renderExploreListings;
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",initManiHub,{once:true});else initManiHub();
 
 </script>
