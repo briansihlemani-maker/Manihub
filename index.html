@@ -184,6 +184,8 @@ footer{color:#6b7a70;padding-top:25px}
 @media(max-width:430px){.hero h1{font-size:39px}.hero p{font-size:13px}.searchrow{min-height:54px;padding-left:10px}.searchrow input{font-size:12px}.searchrow button{padding:9px 12px;font-size:12px}.hero-showcase{min-height:165px}.showcase-float{min-width:150px;padding:9px 10px}.showcase-float b{font-size:10px}.showcase-float small{font-size:9px}.sectionhead h2{font-size:19px}.photo{height:118px}}
 
 
+/* Keep the listings feed hidden while the ManiHub storefront experience is prepared. Keep its DOM available for existing search/render code. */
+.listing-discovery{display:none!important}
 /* Lively homepage showcase and advertising inventory */
 .spotlight{margin:28px 0 30px;padding:19px;border-radius:22px;background:#fff;border:1px solid #e3ebe4;box-shadow:0 12px 30px #173b2d0b;overflow:hidden}
 .spotlight-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:14px}
@@ -358,9 +360,11 @@ footer{color:#6b7a70;padding-top:25px}
   </section>
   <div class="sectionhead"><h2>Browse listing categories</h2></div>
   <div class="categories" id="categories"></div>
+  <section class="listing-discovery" aria-label="Discover listings">
   <div class="sectionhead"><h2>Discover listings</h2><button class="secondary" onclick="openForm()">＋ Sell something</button></div>
   <div class="toolbar"><span id="count">Showing listings</span><select id="province" onchange="render()"><option value="">All provinces</option><option>Eastern Cape</option><option>Free State</option><option>Gauteng</option><option>KwaZulu-Natal</option><option>Limpopo</option><option>Mpumalanga</option><option>Northern Cape</option><option>North West</option><option>Western Cape</option></select></div>
   <section class="grid" id="listings"></section>
+  </section>
 </main>
 <footer><b>ManiHub beta</b> · Shared listings and account sign-in use Supabase. Help & Messages workspace is being connected.</footer>
   
