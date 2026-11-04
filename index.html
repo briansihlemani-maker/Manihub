@@ -261,6 +261,112 @@ footer{color:#6b7a70;padding-top:25px}
 .help-compose button:disabled,.help-compose input:disabled{opacity:.55;cursor:not-allowed}
 @media(max-width:480px){.help-panel{right:8px;bottom:8px;width:calc(100vw - 16px);max-height:75svh}}
 
+/* Concept 1 + 2 + 3: lively Marketplace homepage polish */
+.hero{position:relative;isolation:isolate;overflow:hidden;min-height:390px;padding:clamp(22px,4vw,42px);border-radius:28px;background:radial-gradient(ellipse at 83% 18%,#55a77d 0,transparent 36%),linear-gradient(125deg,#103f34 0%,#17634b 58%,#23805a 100%);box-shadow:0 18px 45px #103f3426}
+.hero:before{content:"";position:absolute;z-index:-1;width:390px;height:390px;right:-120px;top:-150px;border:1px solid #ffffff26;border-radius:50%;box-shadow:0 0 0 24px #ffffff09,0 0 0 52px #ffffff07}
+.hero:after{content:"✦";position:absolute;right:42%;bottom:18%;font-size:30px;color:#d9f36b;text-shadow:0 0 22px #d9f36b88;animation:artPulse 2.8s ease-in-out infinite}
+.hero-copy{position:relative;z-index:2}
+.hero-kicker{color:#e3f4b1;font-size:10px;letter-spacing:2px;font-weight:900}
+.hero h1{font-size:clamp(32px,5.2vw,54px);letter-spacing:-1.7px;max-width:650px}
+.hero h1 span{color:#d9f36b}
+.hero p{font-size:clamp(14px,1.7vw,17px);line-height:1.65;max-width:570px}
+.searchrow{max-width:690px;border-radius:16px;padding:6px;box-shadow:0 12px 28px #062a1c33}
+.searchrow input{padding:13px 11px}
+.searchrow button{border-radius:12px;min-width:100px}
+.hero-actions{align-items:center;margin-top:17px}
+.hero-sell{background:#ffffff18;border:1px solid #ffffff60;color:#fff;border-radius:13px;padding:12px 17px}
+.hero-sell:hover{background:#ffffff2b}
+.hero-note{font-size:12px;color:#d8ebe0}
+.hero-showcase{min-height:280px;position:relative}
+.showcase-glow{width:235px;height:235px;background:radial-gradient(circle,#b4e86c55,transparent 68%);filter:blur(4px)}
+.showcase-main-icon{width:175px;height:175px;display:grid;place-items:center;border-radius:38px;background:linear-gradient(145deg,#ffffff35,#ffffff0b);border:1px solid #ffffff70;box-shadow:0 22px 55px #062d2545;backdrop-filter:blur(5px);font-size:94px;transform:rotate(-7deg);animation:artFloat 4s ease-in-out infinite}
+.showcase-orbit{border-color:#ffffff35}
+.showcase-float{border-radius:16px;box-shadow:0 12px 30px #082f2633;padding:12px 15px}
+.hero-bottomline{border-color:#ffffff2d;color:#e6f1e9;padding-top:14px;font-size:11px}
+.spotlight{margin:26px 0 32px;padding:17px;border-radius:24px;border:1px solid #e2ebe2;background:linear-gradient(145deg,#fff,#f5f9f3);box-shadow:0 15px 34px #153e2d10}
+.spotlight-head{align-items:center;margin:0 2px 13px}
+.spotlight-head h2{font-size:clamp(19px,2.5vw,25px);letter-spacing:-.7px}
+.spotlight-tag{background:#eaf5d8;color:#507b20}
+.spotlight-slide{min-height:238px;padding:clamp(20px,3vw,32px);border-radius:19px}
+.slide-shop{background:radial-gradient(circle at 82% 30%,#3c9b6c 0,transparent 35%),linear-gradient(115deg,#073e31,#147052 65%,#27865c)}
+.slide-food{background:radial-gradient(circle at 82% 30%,#e7a34c 0,transparent 35%),linear-gradient(115deg,#66321f,#b75e32 65%,#d18a40)}
+.slide-services{background:radial-gradient(circle at 82% 30%,#6a91bd 0,transparent 35%),linear-gradient(115deg,#1e3458,#365f88 65%,#4b7ca0)}
+.spotlight-copy{max-width:62%}
+.spotlight-slide h3{font-size:clamp(21px,3.3vw,32px);letter-spacing:-.8px;max-width:480px}
+.spotlight-slide p{font-size:13px;max-width:410px}
+.slide-cta{margin-top:17px;border-radius:999px;background:#d9f36b;color:#173c2d;padding:11px 17px;font-size:12px;box-shadow:0 8px 20px #08291f33}
+.slide-cta span{font-size:17px;margin-left:8px}
+.slide-stamp{position:absolute;right:16px;bottom:14px;border:1px solid #ffffff55;border-radius:99px;padding:6px 10px;color:#fff9;font-size:8px;letter-spacing:1.5px;font-weight:900}
+.moving-art{width:35%;height:180px}
+.art-orbit{width:170px;height:170px;border-style:dashed}
+.art-bag{font-size:88px}
+.art-box{font-size:43px}
+.art-extra{right:7%;top:8%;font-size:33px;animation:artFloat 4.2s ease-in-out infinite}
+.art-star{font-size:34px}
+.spotlight-foot{padding:0 3px;font-size:10px}
+.department-intro{margin:34px 0 12px;position:relative}
+.department-intro h2{font-size:clamp(23px,3vw,30px);letter-spacing:-.8px}
+.department-intro p{font-size:13px;line-height:1.5}
+.department-grid{gap:13px;margin:16px 0 22px}
+.department-card{position:relative;overflow:hidden;min-height:104px;padding:15px;border-radius:19px;box-shadow:0 8px 22px #173b2d0b;transition:transform .2s,box-shadow .2s}
+.department-card:after{content:"→";position:absolute;right:13px;bottom:10px;color:#7ca34c;font-size:17px;font-weight:800;opacity:.75}
+.department-card:hover{transform:translateY(-4px);box-shadow:0 14px 28px #173b2d17}
+.department-icon{width:52px;height:52px;flex-basis:52px;border-radius:17px;background:linear-gradient(145deg,#eff7e9,#dcefd5);box-shadow:inset 0 1px #fff;font-size:27px}
+.department-card b{font-size:14px}
+.department-card small{font-size:10px;max-width:210px}
+.department-status{padding:9px 12px;border-radius:12px;background:#edf5e9;margin:0 0 18px;min-height:0}
+.ad-opportunities{margin:30px 0 38px;padding:20px;border-radius:22px;background:linear-gradient(145deg,#eaf4e7,#f7faf4);border:1px solid #e0eadf}
+.ad-opportunities .sectionhead{margin:0 0 14px}
+.ad-opportunities .sectionhead h2{font-size:22px}
+.ad-slot-grid{gap:12px}
+.ad-slot{border:1px solid #e0e9dd;border-radius:18px;min-height:174px;box-shadow:0 7px 20px #173b2d08}
+.ad-slot:nth-child(1){background:linear-gradient(145deg,#fff,#f4f8e9)}
+.ad-slot:nth-child(2){background:linear-gradient(145deg,#fff,#edf5f7)}
+.ad-slot:nth-child(3){background:linear-gradient(145deg,#fff,#f7f0e7)}
+.ad-slot-icon{width:48px;height:48px;flex-basis:48px;font-size:24px}
+.ad-cta{border:1px solid #dce9d5;border-radius:17px;background:linear-gradient(100deg,#e3f2d7,#f3f8e9)}
+@media(max-width:760px){
+ main{margin:14px auto;padding:0 13px}
+ .hero{grid-template-columns:1fr;min-height:0;padding:23px 19px;border-radius:23px;gap:3px}
+ .hero h1{font-size:clamp(32px,9vw,43px)}
+ .hero p{font-size:13px;line-height:1.55;margin-bottom:15px}
+ .hero-showcase{min-height:185px;margin-top:3px}
+ .showcase-main-icon{width:125px;height:125px;font-size:70px;border-radius:30px}
+ .showcase-glow{width:180px;height:180px}
+ .showcase-float{padding:9px 11px;font-size:11px}
+ .showcase-float small{font-size:9px}
+ .float-top{right:0}
+ .float-bottom{left:0}
+ .hero:after{right:24%;bottom:17%}
+ .hero-bottomline{gap:8px;flex-wrap:wrap;font-size:9px}
+ .spotlight{padding:12px;margin:19px 0 25px;border-radius:20px}
+ .spotlight-head h2{font-size:18px}
+ .spotlight-head p{font-size:10px}
+ .spotlight-slide{min-height:218px;padding:17px 14px}
+ .spotlight-copy{max-width:65%}
+ .spotlight-slide h3{font-size:21px;line-height:1.13}
+ .spotlight-slide p{font-size:10px;line-height:1.4}
+ .slide-cta{font-size:10px;padding:9px 12px;margin-top:12px}
+ .moving-art{width:32%;min-width:88px;height:140px}
+ .art-orbit{width:108px;height:108px}
+ .art-bag{font-size:58px}
+ .art-box{font-size:29px}
+ .art-extra{font-size:24px}
+ .art-star{font-size:22px}
+ .slide-stamp{font-size:7px;right:9px;bottom:9px}
+ .spotlight-foot{font-size:8px}
+ .department-intro{margin-top:26px}
+ .department-grid{gap:9px}
+ .department-card{min-height:94px;padding:11px 10px;gap:8px}
+ .department-icon{width:42px;height:42px;flex-basis:42px;font-size:22px;border-radius:14px}
+ .department-card b{font-size:12px}
+ .department-card small{font-size:9px}
+ .department-card:after{right:8px;bottom:5px;font-size:13px}
+ .ad-opportunities{padding:14px;margin:24px 0 30px}
+ .ad-opportunities .sectionhead h2{font-size:19px}
+}
+@media(prefers-reduced-motion:reduce){.showcase-main-icon,.hero:after{animation:none!important}}
+
 </style>
 </head>
 <body>
@@ -319,16 +425,19 @@ footer{color:#6b7a70;padding-top:25px}
     <div class="spotlight-head"><div><span class="eyebrow">MADE TO BE SEEN</span><h2>Put your business in the spotlight</h2><p>Reach customers across your community with ManiHub.</p></div><span class="spotlight-tag">ADVERTISING</span></div>
     <div class="spotlight-track" aria-label="Animated ManiHub promotional showcase">
       <article class="spotlight-slide slide-shop">
-        <div class="spotlight-copy"><span class="slide-label">SHOP LOCAL</span><h3>Your next favourite find is closer than you think.</h3><p>Discover products and businesses from people nearby.</p></div>
-        <div class="moving-art" aria-hidden="true"><span class="art-orbit"></span><span class="art-item art-bag">🛍️</span><span class="art-item art-box">📦</span><span class="art-item art-star">✦</span></div>
+        <div class="spotlight-copy"><span class="slide-label">SHOP LOCAL · SUPPORT LOCAL</span><h3>Find something you'll love. Right here in South Africa.</h3><p>Explore everyday essentials, special finds and independent stores.</p><button class="slide-cta" type="button" onclick="setDepartment('shopping')">Explore shopping <span>→</span></button></div>
+        <div class="moving-art" aria-hidden="true"><span class="art-orbit"></span><span class="art-item art-bag">🛍️</span><span class="art-item art-box">🎁</span><span class="art-item art-star">✦</span><span class="art-item art-extra">🛒</span></div>
+        <span class="slide-stamp">MADE FOR SA</span>
       </article>
       <article class="spotlight-slide slide-food">
-        <div class="spotlight-copy"><span class="slide-label">TASTE SOMETHING GREAT</span><h3>Local flavour. Delivered from your neighbourhood.</h3><p>Explore restaurants, takeaways and food businesses.</p></div>
-        <div class="moving-art" aria-hidden="true"><span class="art-orbit"></span><span class="art-item art-bag">🍔</span><span class="art-item art-box">🍕</span><span class="art-item art-star">✦</span></div>
+        <div class="spotlight-copy"><span class="slide-label">GOOD FOOD · GREAT PEOPLE</span><h3>Your next favourite meal could be just around the corner.</h3><p>Discover neighbourhood restaurants, takeaways and food makers.</p><button class="slide-cta" type="button" onclick="setDepartment('restaurants')">Explore food <span>→</span></button></div>
+        <div class="moving-art" aria-hidden="true"><span class="art-orbit"></span><span class="art-item art-bag">🍔</span><span class="art-item art-box">🍕</span><span class="art-item art-star">✦</span><span class="art-item art-extra">🥤</span></div>
+        <span class="slide-stamp">LOCAL FLAVOUR</span>
       </article>
       <article class="spotlight-slide slide-services">
-        <div class="spotlight-copy"><span class="slide-label">GROW TOGETHER</span><h3>Showcase what you do. Find the people who need it.</h3><p>From local services to creative businesses.</p></div>
-        <div class="moving-art" aria-hidden="true"><span class="art-orbit"></span><span class="art-item art-bag">🧰</span><span class="art-item art-box">✨</span><span class="art-item art-star">✦</span></div>
+        <div class="spotlight-copy"><span class="slide-label">YOUR SKILLS DESERVE THE SPOTLIGHT</span><h3>Turn what you do into your next opportunity.</h3><p>Connect with customers looking for trusted local services.</p><button class="slide-cta" type="button" onclick="setDepartment('local')">Find local services <span>→</span></button></div>
+        <div class="moving-art" aria-hidden="true"><span class="art-orbit"></span><span class="art-item art-bag">🧰</span><span class="art-item art-box">✨</span><span class="art-item art-star">✦</span><span class="art-item art-extra">🤝</span></div>
+        <span class="slide-stamp">GROW TOGETHER</span>
       </article>
     </div>
     <div class="spotlight-foot"><span><i></i> Rotating community showcase</span><span>Advertising placements are being prepared</span></div>
