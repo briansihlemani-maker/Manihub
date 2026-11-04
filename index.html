@@ -550,7 +550,7 @@ main{max-width:980px;margin:16px auto 0;padding:0 12px}
       <h1>Shop Local.<br><span>Grow Together!</span></h1>
       <p>Buy · Sell · Advertise</p>
       <button class="concept-one-cta" type="button" onclick="document.getElementById('departments').scrollIntoView({behavior:'smooth'})">Explore Now <span>→</span></button>
-      <div class="concept-one-dots" aria-label="Featured marketplace highlights"><i class="active"></i><i></i><i></i></div>
+      <div class="concept-one-dots" role="group" aria-label="Featured marketplace slides"><button type="button" class="active" aria-label="Show local shopping" aria-pressed="true" data-hero-slide="0"></button><button type="button" aria-label="Show local businesses" aria-pressed="false" data-hero-slide="1"></button><button type="button" aria-label="Show services" aria-pressed="false" data-hero-slide="2"></button></div>
     </div>
     <div class="concept-one-search">
       <span aria-hidden="true">⌕</span>
@@ -576,7 +576,7 @@ main{max-width:980px;margin:16px auto 0;padding:0 12px}
   <section class="ad-opportunities concept-one-ad" aria-label="Advertise your business on ManiHub">
     <div class="concept-one-ad-art" aria-hidden="true">📣</div>
     <div class="concept-one-ad-copy"><span>GROW YOUR BUSINESS</span><h2>Advertise<br>Your Business Here!</h2><p>Reach thousands of customers across South Africa.</p></div>
-    <button type="button" onclick="openForm()">Get Started <span>→</span></button>
+    <button type="button" onclick="openForm()">List Your Business <span>→</span></button>
   </section>
 
   <section class="concept-one-footer-banner">
@@ -666,6 +666,24 @@ function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&l
 function mapListing(x){return {id:x.id,item:x.title,price:Number(x.price),category:x.category,kind:x.seller_type==="business"?"Registered business":"Individual seller",seller:x.seller_name,province:x.province,town:x.town||"",phone:x.whatsapp||"",description:x.description||"",photo:x.photo_url||"",emoji:"🛍️"};}
 function renderCats(){const el=byId("categories"); if(!el)return; el.innerHTML=cats.map(c=>`<button type="button" class="chip ${active===c?'active':''}" data-category="${esc(c)}">${esc(c)}</button>`).join("");}
 function setCat(c){active=c;activeDepartment="all";render();}
+function showListingResults(){
+  const section=document.querySelector(".listing-discovery");
+  if(section)section.style.setProperty("display","block","important");
+}
+function showHeroSlide(index){
+  const slides=[
+    {image:"https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1500&q=85",kicker:"🇿🇦 SOUTH AFRICA'S COMMUNITY MARKETPLACE",title:"Shop Local.",highlight:"Grow Together!",sub:"Buy · Sell · Advertise"},
+    {image:"https://images.unsplash.com/photo-1607082349566-187342175e2f?auto=format&fit=crop&w=1500&q=85",kicker:"SUPPORT LOCAL BUSINESSES",title:"Discover.",highlight:"Something Great!",sub:"Find local shops · Compare · Connect"},
+    {image:"https://images.unsplash.com/photo-1581244277943-fe4a9c777189?auto=format&fit=crop&w=1500&q=85",kicker:"SERVICES IN YOUR COMMUNITY",title:"Find Help.",highlight:"Right Around You!",sub:"Local people · Trusted services"}
+  ];
+  const slide=slides[index];if(!slide)return;
+  const photo=document.querySelector(".concept-one-photo"),kicker=document.querySelector(".concept-one-kicker"),heading=document.querySelector(".concept-one-copy h1"),sub=document.querySelector(".concept-one-copy p");
+  if(photo)photo.style.backgroundImage="url('"+slide.image+"')";
+  if(kicker)kicker.textContent=slide.kicker;
+  if(heading)heading.innerHTML=esc(slide.title)+"<br><span>"+esc(slide.highlight)+"</span>";
+  if(sub)sub.textContent=slide.sub;
+  document.querySelectorAll("[data-hero-slide]").forEach((button,i)=>{button.classList.toggle("active",i===index);button.setAttribute("aria-pressed",String(i===index));});
+}
 function setDepartment(department){
   activeDepartment=department;
   active="All";
@@ -680,6 +698,14 @@ function setDepartment(department){
     all:"Showing all available ManiHub listings."
   };
   const status=byId("departmentStatus");if(status)status.textContent=messages[department]||messages.all;
+  showListingResults();
+  if(department==="health"||department==="legal"){
+    const target=byId("listings");
+    if(target)target.innerHTML='<div class="empty"><div style="font-size:35px">'+(department==="health"?"🩺":"⚖️")+'</div><b>'+(department==="health"?"Healthcare directory coming soon":"Legal services directory coming soon")+'</b><p>We are preparing verified professional profiles and safe appointment or consultation requests for this department.</p></div>';
+    byId("count").textContent="Department preview";
+  }else{render();}
+  document.querySelector(".listing-discovery")?.scrollIntoView({behavior:"smooth",block:"start"});
+  return;
   document.querySelectorAll("[data-department]").forEach(b=>b.classList.toggle("active",b.dataset.department===department));
   render();
 }
@@ -962,7 +988,8 @@ window.openHelp=openHelp;window.closeHelp=closeHelp;window.switchHelpTab=switchH
 function bindButtons(){
   document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeAuth();closeForm();closeDetails();closeHelp();closeManiMenu();}});
   byId("departments")?.addEventListener("click",e=>{const b=e.target.closest("[data-department]");if(b)setDepartment(b.dataset.department);});
-  byId("search")?.addEventListener("input",render);byId("province")?.addEventListener("change",render);byId("listingForm")?.addEventListener("submit",publishListing);byId("photo")?.addEventListener("change",previewListingPhoto);
+  document.querySelector(".concept-one-dots")?.addEventListener("click",e=>{const dot=e.target.closest("[data-hero-slide]");if(dot)showHeroSlide(Number(dot.dataset.heroSlide));});
+  byId("search")?.addEventListener("input",()=>{showListingResults();render();});byId("province")?.addEventListener("change",render);byId("listingForm")?.addEventListener("submit",publishListing);byId("photo")?.addEventListener("change",previewListingPhoto);
   ["item","price","category","seller","provinceInput","phone"].forEach(id=>{
     const input=byId(id);if(!input)return;
     const clear=()=>{input.setAttribute("aria-invalid","false");const error=input.closest(".field")?.querySelector(".field-error");if(error){error.hidden=true;error.textContent="";}};
