@@ -184,6 +184,50 @@ footer{color:#6b7a70;padding-top:25px}
 @media(max-width:430px){.hero h1{font-size:39px}.hero p{font-size:13px}.searchrow{min-height:54px;padding-left:10px}.searchrow input{font-size:12px}.searchrow button{padding:9px 12px;font-size:12px}.hero-showcase{min-height:165px}.showcase-float{min-width:150px;padding:9px 10px}.showcase-float b{font-size:10px}.showcase-float small{font-size:9px}.sectionhead h2{font-size:19px}.photo{height:118px}}
 
 
+/* Lively homepage showcase and advertising inventory */
+.spotlight{margin:28px 0 30px;padding:19px;border-radius:22px;background:#fff;border:1px solid #e3ebe4;box-shadow:0 12px 30px #173b2d0b;overflow:hidden}
+.spotlight-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:14px}
+.spotlight-head h2{margin:4px 0 5px;color:#173b2e;font-size:22px}
+.spotlight-head p,.sectionhead p{margin:0;color:#718078;font-size:12px}
+.eyebrow,.slide-label,.ad-label{font-size:9px;font-weight:900;letter-spacing:1.5px;color:#7aa62b}
+.spotlight-tag{border-radius:99px;background:#f0f6e8;color:#557d28;padding:7px 10px;font-size:9px;font-weight:900;letter-spacing:1px;white-space:nowrap}
+.spotlight-track{display:flex;width:300%;animation:spotlightRotate 21s infinite ease-in-out}
+.spotlight-track:hover{animation-play-state:paused}
+.spotlight-slide{width:33.3333%;min-height:210px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:15px;padding:22px 25px;border-radius:17px;overflow:hidden;color:#fff;position:relative}
+.slide-shop{background:linear-gradient(115deg,#104b3b,#2d8760)}
+.slide-food{background:linear-gradient(115deg,#7a3c24,#d27a3f)}
+.slide-services{background:linear-gradient(115deg,#283d68,#547db0)}
+.spotlight-copy{position:relative;z-index:2;max-width:58%}
+.slide-label{color:#dcf28b}
+.spotlight-slide h3{font-size:clamp(19px,3vw,27px);line-height:1.12;margin:9px 0;max-width:420px}
+.spotlight-slide p{font-size:12px;line-height:1.5;color:#ffffffd9;margin:0;max-width:390px}
+.moving-art{position:relative;width:34%;height:160px;min-width:120px;display:grid;place-items:center}
+.art-orbit{position:absolute;width:150px;height:150px;border:1px solid #ffffff55;border-radius:50%;animation:artSpin 12s linear infinite}
+.art-item{position:absolute;display:grid;place-items:center;filter:drop-shadow(0 9px 10px #09291d55)}
+.art-bag{font-size:76px;animation:artFloat 3.2s ease-in-out infinite}
+.art-box{font-size:38px;right:8%;bottom:8%;animation:artFloat 3.8s ease-in-out infinite reverse}
+.art-star{font-size:30px;left:4%;top:8%;color:#d9f56c;animation:artPulse 2.2s ease-in-out infinite}
+.spotlight-foot{display:flex;justify-content:space-between;gap:10px;margin-top:12px;color:#7b8980;font-size:10px}
+.spotlight-foot i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#85bb36;margin-right:5px;box-shadow:0 0 0 4px #85bb3620}
+@keyframes spotlightRotate{0%,27%{transform:translateX(0)}33%,60%{transform:translateX(-33.3333%)}66%,93%{transform:translateX(-66.6666%)}100%{transform:translateX(0)}}
+@keyframes artFloat{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-12px) rotate(4deg)}}
+@keyframes artSpin{to{transform:rotate(360deg)}}
+@keyframes artPulse{0%,100%{transform:scale(.85);opacity:.7}50%{transform:scale(1.15);opacity:1}}
+.ad-opportunities{margin:30px 0}
+.ad-opportunities .sectionhead{margin-bottom:13px}
+.ad-opportunities .sectionhead h2{color:#173b2e}
+.ad-slot-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.ad-slot{display:flex;gap:12px;align-items:flex-start;min-height:160px;padding:16px;border-radius:17px;border:1px dashed #c7d8c9;background:linear-gradient(145deg,#fff,#f4f8f2)}
+.ad-slot-icon{width:42px;height:42px;flex:0 0 42px;border-radius:13px;display:grid;place-items:center;background:#eaf3e6;font-size:21px}
+.ad-label{font-size:8px}
+.ad-slot h3{font-size:14px;line-height:1.25;color:#1b4535;margin:6px 0}
+.ad-slot p{font-size:11px;line-height:1.4;color:#748078;margin:0 0 9px}
+.ad-slot small{font-size:9px;color:#8a9a8e;font-weight:700}
+.ad-cta{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;padding:14px 16px;background:#eaf3e9;border-radius:15px}
+.ad-cta b,.ad-cta span{display:block}.ad-cta b{font-size:13px;color:#174532}.ad-cta span{font-size:10px;color:#6b7b70;margin-top:3px}
+.ad-cta button{background:#d6f36b;color:#173b2e;white-space:nowrap}
+@media(max-width:760px){.spotlight{padding:13px;margin:20px 0 24px}.spotlight-head h2{font-size:18px}.spotlight-slide{min-height:190px;padding:17px 15px}.spotlight-copy{max-width:62%}.spotlight-slide h3{font-size:19px}.spotlight-slide p{font-size:10px}.moving-art{width:34%;min-width:95px;height:135px}.art-orbit{width:112px;height:112px}.art-bag{font-size:58px}.art-box{font-size:29px}.art-star{font-size:22px}.spotlight-foot{font-size:9px}.ad-slot-grid{grid-template-columns:1fr}.ad-slot{min-height:unset;padding:13px}.ad-cta{align-items:flex-start;flex-direction:column}.ad-cta button{width:100%}}
+@media(prefers-reduced-motion:reduce){.spotlight-track,.art-orbit,.art-item{animation:none!important}.spotlight-track{transform:none}}
 /* ManiHub all-in-one department hub */
 .department-intro{margin:30px 0 12px}.department-intro h2{font-size:22px;color:#173b2e;margin:0 0 5px}.department-intro p{margin:0;color:#6b7a70;font-size:13px}
 .department-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:14px 0 28px}
@@ -269,7 +313,24 @@ footer{color:#6b7a70;padding-top:25px}
     <div class="hero-bottomline"><span>🇿🇦 Made for South Africa</span><span>All 9 provinces</span><span>Individuals & businesses</span></div>
   </section>
 
-
+  <section class="spotlight" aria-label="ManiHub advertising showcase">
+    <div class="spotlight-head"><div><span class="eyebrow">MADE TO BE SEEN</span><h2>Put your business in the spotlight</h2><p>Reach customers across your community with ManiHub.</p></div><span class="spotlight-tag">ADVERTISING</span></div>
+    <div class="spotlight-track" aria-label="Animated ManiHub promotional showcase">
+      <article class="spotlight-slide slide-shop">
+        <div class="spotlight-copy"><span class="slide-label">SHOP LOCAL</span><h3>Your next favourite find is closer than you think.</h3><p>Discover products and businesses from people nearby.</p></div>
+        <div class="moving-art" aria-hidden="true"><span class="art-orbit"></span><span class="art-item art-bag">🛍️</span><span class="art-item art-box">📦</span><span class="art-item art-star">✦</span></div>
+      </article>
+      <article class="spotlight-slide slide-food">
+        <div class="spotlight-copy"><span class="slide-label">TASTE SOMETHING GREAT</span><h3>Local flavour. Delivered from your neighbourhood.</h3><p>Explore restaurants, takeaways and food businesses.</p></div>
+        <div class="moving-art" aria-hidden="true"><span class="art-orbit"></span><span class="art-item art-bag">🍔</span><span class="art-item art-box">🍕</span><span class="art-item art-star">✦</span></div>
+      </article>
+      <article class="spotlight-slide slide-services">
+        <div class="spotlight-copy"><span class="slide-label">GROW TOGETHER</span><h3>Showcase what you do. Find the people who need it.</h3><p>From local services to creative businesses.</p></div>
+        <div class="moving-art" aria-hidden="true"><span class="art-orbit"></span><span class="art-item art-bag">🧰</span><span class="art-item art-box">✨</span><span class="art-item art-star">✦</span></div>
+      </article>
+    </div>
+    <div class="spotlight-foot"><span><i></i> Rotating community showcase</span><span>Advertising placements are being prepared</span></div>
+  </section>
 
   <section class="department-intro">
     <h2>One hub. Everything you need.</h2>
@@ -286,6 +347,15 @@ footer{color:#6b7a70;padding-top:25px}
     <button class="department-card" type="button" data-department="all"><span class="department-icon">✨</span><span><b>Explore everything</b><small>Browse all available ManiHub listings</small></span></button>
   </section>
   <div class="department-status" id="departmentStatus" aria-live="polite">Choose a department or search across ManiHub.</div>
+  <section class="ad-opportunities" aria-label="Advertising opportunities">
+    <div class="sectionhead"><div><h2>Make your business stand out</h2><p>Advertising spaces for South African businesses</p></div></div>
+    <div class="ad-slot-grid">
+      <article class="ad-slot ad-banner"><span class="ad-slot-icon">📣</span><div><span class="ad-label">FEATURED BANNER</span><h3>Put your brand front and centre</h3><p>Showcase your business in a prominent homepage position.</p><small>Ad placement · Coming soon</small></div></article>
+      <article class="ad-slot ad-category"><span class="ad-slot-icon">🎯</span><div><span class="ad-label">SPONSORED CATEGORY</span><h3>Reach customers looking for what you offer</h3><p>Promote your business in a relevant department.</p><small>Category promotion · Coming soon</small></div></article>
+      <article class="ad-slot ad-listing"><span class="ad-slot-icon">⭐</span><div><span class="ad-label">PROMOTED LISTING</span><h3>Give your product or service more visibility</h3><p>Highlight a listing as customers browse ManiHub.</p><small>Listing promotion · Coming soon</small></div></article>
+    </div>
+    <div class="ad-cta"><div><b>Want to advertise on ManiHub?</b><span>We're preparing self-service advertising for businesses and individuals.</span></div><button type="button" onclick="openForm()">Create a listing</button></div>
+  </section>
   <div class="sectionhead"><h2>Browse listing categories</h2></div>
   <div class="categories" id="categories"></div>
   <div class="sectionhead"><h2>Discover listings</h2><button class="secondary" onclick="openForm()">＋ Sell something</button></div>
