@@ -553,6 +553,26 @@ main{max-width:980px;margin:16px auto 0;padding:0 12px}
 @media(max-width:760px){.hot-products{grid-auto-columns:minmax(160px,44%);gap:9px}.hot-product-photo{height:120px}.hot-product-body{padding:9px}.hot-product-title{font-size:12px}.hot-product-price{font-size:16px}.explore-page-head{padding:18px}.explore-products{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.explore-product-photo{height:125px}}
 @media(max-width:380px){.hot-products{grid-auto-columns:minmax(145px,52%)}.hot-product-photo{height:108px}}
 
+/* Explorer: distinct product and business discovery lanes */
+.explore-mode-tabs{display:flex;gap:9px;margin:8px 0 17px;padding:5px;background:#eaf1e9;border-radius:14px}
+.explore-mode{flex:1;background:transparent;color:#496052;border-radius:11px;padding:12px 9px;font-size:12px}
+.explore-mode.active{background:#fff;color:#124c37;box-shadow:0 3px 12px #173b2d12}
+.store-directory-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:16px 0}
+.store-directory-head h2{font-size:20px;color:#173b2e}.store-directory-head p{margin:4px 0 0;color:#758078;font-size:11px}
+.store-create-button{background:#d9f36b;color:#173b2e;border-radius:999px;padding:11px 14px;font-size:11px;white-space:nowrap}
+.store-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.store-card{overflow:hidden;border:1px solid #e2eae2;border-radius:17px;background:#fff;box-shadow:0 6px 18px #173b2d0b;cursor:pointer}
+.store-card-top{min-height:82px;padding:16px;background:linear-gradient(125deg,#073e30,#138358);color:white;display:flex;align-items:center;gap:12px}
+.store-avatar{width:48px;height:48px;flex:0 0 48px;border-radius:15px;background:#ffffff22;display:grid;place-items:center;font-size:25px}
+.store-card-top b{font-size:14px;line-height:1.25}.store-card-body{padding:12px}
+.store-card-body p{font-size:11px;color:#6c7a70;margin:5px 0 9px;min-height:32px}
+.store-card-meta{font-size:10px;color:#738078}
+.store-open-label{display:inline-block;margin-top:8px;padding:6px 9px;border-radius:99px;background:#edf6df;color:#4d7924;font-size:10px;font-weight:800}
+.store-profile-intro{padding:17px;border-radius:15px;background:linear-gradient(125deg,#073e30,#138358);color:#fff}
+.store-profile-intro p{color:#e4eee8;font-size:13px;white-space:pre-wrap}
+.store-profile-meta{font-size:12px;color:#6e7b73;margin:12px 0}
+@media(max-width:760px){.store-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.store-card-top{padding:12px;gap:8px}.store-avatar{width:40px;height:40px;flex-basis:40px}.store-card-top b{font-size:12px}.store-card-body{padding:10px}.store-directory-head{align-items:flex-start;flex-direction:column}.store-create-button{width:100%}}
+@media(max-width:380px){.store-grid{grid-template-columns:1fr}.explore-mode{font-size:10px}}
 </style>
 </head>
 <body>
@@ -652,8 +672,18 @@ main{max-width:980px;margin:16px auto 0;padding:0 12px}
       <button type="button" class="explore-category" data-explore-category="Legal services" onclick="setExploreCategory('Legal services')">Legal services</button>
       <button type="button" class="explore-category" data-explore-category="Other" onclick="setExploreCategory('Other')">Other</button>
     </div>
-    <div class="explore-results-head"><h2 id="exploreResultsTitle">All listings</h2><span id="exploreCount">Loading…</span></div>
-    <div class="explore-products" id="exploreProducts"></div>
+    <div class="explore-mode-tabs" role="tablist" aria-label="Explore marketplace">
+      <button type="button" class="explore-mode active" id="productsMode" role="tab" aria-selected="true" onclick="setExploreMode('products')">🛍️ Products & listings</button>
+      <button type="button" class="explore-mode" id="storesMode" role="tab" aria-selected="false" onclick="setExploreMode('stores')">🏬 Businesses & stores</button>
+    </div>
+    <div id="exploreProductsPanel">
+      <div class="explore-results-head"><h2 id="exploreResultsTitle">All listings</h2><span id="exploreCount">Loading…</span></div>
+      <div class="explore-products" id="exploreProducts"></div>
+    </div>
+    <div id="exploreStoresPanel" hidden>
+      <div class="store-directory-head"><div><h2>Discover local stores</h2><p>Explore businesses and the people behind them.</p></div><button type="button" class="store-create-button" onclick="openStoreForm()">＋ Create your store</button></div>
+      <div class="store-grid" id="exploreStores"><div class="hot-empty">Loading ManiHub stores…</div></div>
+    </div>
   </section>
 
   <section class="listing-discovery" aria-label="Discover listings">
@@ -694,6 +724,25 @@ main{max-width:980px;margin:16px auto 0;padding:0 12px}
   <div class="dialoghead"><h2 id="detailsTitle">Listing details</h2><button class="close" type="button" onclick="closeDetails()" aria-label="Close listing details">✕</button></div>
   <div id="detailsContent"></div>
  </div>
+</div>
+<div class="modal" id="storeModal" role="dialog" aria-modal="true" aria-labelledby="storeFormTitle">
+ <div class="dialog">
+  <div class="dialoghead"><h2 id="storeFormTitle">Create your ManiHub store</h2><button class="close" type="button" onclick="closeStoreForm()">✕</button></div>
+  <p class="meta">Set up your business storefront. You can add products, photos, videos and stock controls in the next store-building stage.</p>
+  <form id="storeForm" novalidate>
+   <div class="field"><label for="storeName">Store or business name *</label><input id="storeName" maxlength="90" required placeholder="Your business name"></div>
+   <div class="field"><label for="storeCategory">Business category *</label><select id="storeCategory" required><option value="">Choose a category</option><option>Shopping & groceries</option><option>Fashion & clothing</option><option>Food & restaurants</option><option>Beauty & personal care</option><option>Healthcare</option><option>Legal services</option><option>Home & local services</option><option>Vehicles</option><option>Other</option></select></div>
+   <div class="field"><label for="storeProvince">Province *</label><select id="storeProvince" required><option value="">Choose province</option><option>Eastern Cape</option><option>Free State</option><option>Gauteng</option><option>KwaZulu-Natal</option><option>Limpopo</option><option>Mpumalanga</option><option>Northern Cape</option><option>North West</option><option>Western Cape</option></select></div>
+   <div class="field"><label for="storeTown">Town or area</label><input id="storeTown" maxlength="80" placeholder="Town or suburb"></div>
+   <div class="field"><label for="storeWhatsApp">Business WhatsApp number</label><input id="storeWhatsApp" inputmode="tel" maxlength="25" placeholder="e.g. 27821234567"></div>
+   <div class="field"><label for="storeDescription">About your business</label><textarea id="storeDescription" maxlength="1200" placeholder="Tell customers what you sell or offer"></textarea></div>
+   <div class="note">Your store profile will be publicly visible. Do not include private customer or medical information.</div>
+   <button class="primary" id="createStoreButton" type="submit">Create my store</button>
+  </form>
+ </div>
+</div>
+<div class="modal" id="storeDetailsModal" role="dialog" aria-modal="true" aria-labelledby="storeDetailsTitle">
+ <div class="dialog"><div class="dialoghead"><h2 id="storeDetailsTitle">Store</h2><button class="close" type="button" onclick="closeStoreDetails()">✕</button></div><div id="storeDetailsContent"></div></div>
 </div>
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="formTitle">
  <div class="dialog">
@@ -840,7 +889,72 @@ async function toggleListingSave(id){
   if(button){button.textContent=already?"♡ Save":"♥ Saved";button.classList.toggle("saved",!already);}
 }
 
-let exploreCategory="All";
+let exploreCategory="All",exploreMode="products",manihubStores=[];
+function setExploreMode(mode){
+  exploreMode=mode==="stores"?"stores":"products";
+  const products=exploreMode==="products";
+  byId("productsMode")?.classList.toggle("active",products);
+  byId("storesMode")?.classList.toggle("active",!products);
+  byId("productsMode")?.setAttribute("aria-selected",String(products));
+  byId("storesMode")?.setAttribute("aria-selected",String(!products));
+  byId("exploreProductsPanel").hidden=!products;
+  byId("exploreStoresPanel").hidden=products;
+  if(!products)loadManiHubStores();
+}
+function openStoreForm(){
+  if(!currentUser){openAuth();return;}
+  byId("storeModal")?.classList.add("open");
+}
+function closeStoreForm(){byId("storeModal")?.classList.remove("open");}
+function closeStoreDetails(){byId("storeDetailsModal")?.classList.remove("open");}
+async function loadManiHubStores(){
+  const target=byId("exploreStores");if(!target)return;
+  if(!supabaseClient){target.innerHTML='<div class="hot-empty">Store directory connection is not ready. Please refresh and try again.</div>';return;}
+  target.innerHTML='<div class="hot-empty">Loading local stores…</div>';
+  try{
+    const {data,error}=await supabaseClient.from("manihub_stores").select("id,owner_id,store_name,description,category,province,town,whatsapp,logo_url,banner_url,promo_video_url,created_at").eq("status","active").order("created_at",{ascending:false}).limit(100);
+    if(error)throw error;
+    manihubStores=data||[];renderExploreStores();
+  }catch(error){
+    target.innerHTML='<div class="hot-empty">The store directory is waiting for its database setup. Apply the ManiHub storefront migration in Supabase, then refresh this page.</div>';
+    console.info("ManiHub storefront database is not ready yet.",error.message||error);
+  }
+}
+function renderExploreStores(){
+  const target=byId("exploreStores");if(!target)return;
+  const q=(byId("exploreSearch")?.value||"").trim().toLowerCase();
+  const found=manihubStores.filter(x=>[x.store_name,x.description,x.category,x.town,x.province].join(" ").toLowerCase().includes(q));
+  target.innerHTML=found.length?found.map(x=>'<article class="store-card" role="button" tabindex="0" onclick="openStoreDetails(\''+esc(x.id)+'\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openStoreDetails(\''+esc(x.id)+'\')}"><div class="store-card-top"><span class="store-avatar">'+(x.logo_url?'<img src="'+esc(x.logo_url)+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:15px">':'🏬')+'</span><b>'+esc(x.store_name)+'</b></div><div class="store-card-body"><span class="store-card-meta">'+esc(x.category)+' · '+esc(x.town?x.town+", ":"")+esc(x.province)+'</span><p>'+esc(x.description||"Discover this local ManiHub business.")+'</p><span class="store-open-label">View storefront →</span></div></article>').join(""):'<div class="hot-empty">No stores have opened on ManiHub yet. Be the first business to create a store.</div>';
+}
+async function openStoreDetails(id){
+  const store=manihubStores.find(x=>String(x.id)===String(id));if(!store)return;
+  const phone=String(store.whatsapp||"").replace(/\D/g,"");
+  const message=encodeURIComponent("Hello "+store.store_name+", I found your store on ManiHub.");
+  const content=byId("storeDetailsContent");
+  content.innerHTML='<div class="store-profile-intro"><div style="font-size:34px">🏬</div><h2 style="color:white;margin:7px 0">'+esc(store.store_name)+'</h2><span>'+esc(store.category)+'</span><p>'+esc(store.description||"This business has not added its description yet.")+'</p></div><div class="store-profile-meta">📍 '+esc(store.town?store.town+", ":"")+esc(store.province)+'</div><div class="note">This storefront profile is active. Product catalogue, stock controls, store photos and promotional videos are the next build stage.</div><div class="detail-contact">'+(phone?'<a class="whatsapp" href="https://wa.me/'+phone+'?text='+message+'" target="_blank" rel="noopener">Contact business</a>':'')+'<button type="button" class="secondary" onclick="closeStoreDetails()">Close</button></div>';
+  byId("storeDetailsTitle").textContent=store.store_name;
+  byId("storeDetailsModal")?.classList.add("open");
+}
+async function createManiHubStore(event){
+  event.preventDefault();
+  if(!currentUser||!supabaseClient){openAuth();return;}
+  const required=[["storeName","Enter your store name."],["storeCategory","Choose a business category."],["storeProvince","Choose your province."]];
+  for(const [id,message] of required){const el=byId(id);if(!el.value.trim()){alert(message);el.focus();return;}}
+  const button=byId("createStoreButton");button.disabled=true;button.textContent="Creating store…";
+  try{
+    const {error}=await supabaseClient.from("manihub_stores").insert({
+      owner_id:currentUser.id,store_name:byId("storeName").value.trim(),
+      category:byId("storeCategory").value,province:byId("storeProvince").value,
+      town:byId("storeTown").value.trim(),whatsapp:byId("storeWhatsApp").value.trim(),
+      description:byId("storeDescription").value.trim(),status:"active"
+    });
+    if(error)throw error;
+    byId("storeForm").reset();closeStoreForm();await loadManiHubStores();setExploreMode("stores");
+    alert("Your ManiHub store has been created. Next we can add its catalogue, photos, videos and stock controls.");
+  }catch(error){alert("Could not create your store: "+(error.message||error));}
+  finally{button.disabled=false;button.textContent="Create my store";}
+}
+
 function productCardMarkup(x,compact=false){
   const image=x.photo?'<img src="'+esc(x.photo)+'" alt="'+esc(x.item)+'" loading="lazy">':"🛍️";
   const location=(x.town?x.town+", ":"")+x.province;
@@ -862,7 +976,7 @@ function openExplorePage(){
   document.body.classList.add("exploring");
   exploreCategory="All";byId("exploreSearch").value="";
   document.querySelectorAll("[data-explore-category]").forEach(b=>b.classList.toggle("active",b.dataset.exploreCategory==="All"));
-  renderExploreListings();window.scrollTo({top:0,behavior:"smooth"});
+  renderExploreListings();setExploreMode("products");window.scrollTo({top:0,behavior:"smooth"});
 }
 function closeExplorePage(){
   byId("explorePage").hidden=true;
@@ -1156,7 +1270,8 @@ function bindButtons(){
   document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeAuth();closeForm();closeDetails();closeHelp();closeManiMenu();}});
   byId("departments")?.addEventListener("click",e=>{const b=e.target.closest("[data-department]");if(b)setDepartment(b.dataset.department);});
   document.querySelector(".concept-one-dots")?.addEventListener("click",e=>{const dot=e.target.closest("[data-hero-slide]");if(dot)showHeroSlide(Number(dot.dataset.heroSlide));});
-  byId("search")?.addEventListener("input",()=>{showListingResults();render();});byId("exploreSearch")?.addEventListener("input",renderExploreListings);byId("province")?.addEventListener("change",render);byId("listingForm")?.addEventListener("submit",publishListing);byId("photo")?.addEventListener("change",previewListingPhoto);
+  byId("search")?.addEventListener("input",()=>{showListingResults();render();});byId("exploreSearch")?.addEventListener("input",()=>{renderExploreListings();if(exploreMode==="stores")renderExploreStores();});
+  byId("storeForm")?.addEventListener("submit",createManiHubStore);byId("province")?.addEventListener("change",render);byId("listingForm")?.addEventListener("submit",publishListing);byId("photo")?.addEventListener("change",previewListingPhoto);
   ["item","price","category","seller","provinceInput","phone"].forEach(id=>{
     const input=byId(id);if(!input)return;
     const clear=()=>{input.setAttribute("aria-invalid","false");const error=input.closest(".field")?.querySelector(".field-error");if(error){error.hidden=true;error.textContent="";}};
@@ -1176,7 +1291,7 @@ async function initManiHub(){
     await refreshAuth();await refreshListings();await refreshListingPopularity();
   }catch(error){setStatus("ManiHub connection could not start: "+(error.message||error));const target=byId("listings");if(target)target.innerHTML=`<div class="empty">${esc(error.message||error)}</div>`;}
 }
-window.signUpUser=signUpUser;window.signInUser=signInUser;window.openAuth=openAuth;window.closeAuth=closeAuth;window.closeDetails=closeDetails;window.toggleAuthMode=toggleAuthMode;window.togglePasswordVisibility=togglePasswordVisibility;window.signOutUser=signOutUser;window.render=render;window.openForm=openForm;window.closeForm=closeForm;window.setCat=setCat;window.showDetails=showDetails;window.setDepartment=setDepartment;window.openExplorePage=openExplorePage;window.toggleListingSave=toggleListingSave;window.closeExplorePage=closeExplorePage;window.setExploreCategory=setExploreCategory;window.renderExploreListings=renderExploreListings;
+window.signUpUser=signUpUser;window.signInUser=signInUser;window.openAuth=openAuth;window.closeAuth=closeAuth;window.closeDetails=closeDetails;window.toggleAuthMode=toggleAuthMode;window.togglePasswordVisibility=togglePasswordVisibility;window.signOutUser=signOutUser;window.render=render;window.openForm=openForm;window.closeForm=closeForm;window.setCat=setCat;window.showDetails=showDetails;window.setDepartment=setDepartment;window.openExplorePage=openExplorePage;window.toggleListingSave=toggleListingSave;window.closeExplorePage=closeExplorePage;window.setExploreCategory=setExploreCategory;window.renderExploreListings=renderExploreListings;window.setExploreMode=setExploreMode;window.openStoreForm=openStoreForm;window.closeStoreForm=closeStoreForm;window.openStoreDetails=openStoreDetails;window.closeStoreDetails=closeStoreDetails;
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",initManiHub,{once:true});else initManiHub();
 
 </script>
