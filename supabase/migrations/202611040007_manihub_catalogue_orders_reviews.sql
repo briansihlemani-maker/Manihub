@@ -141,6 +141,35 @@ alter table public.manihub_order_items enable row level security;
 alter table public.manihub_order_events enable row level security;
 alter table public.manihub_product_reviews enable row level security;
 
+-- SECURITY DEFINER membership helpers avoid recursive RLS policy evaluation
+-- between order headers and order-item rows. They expose only boolean membership.
+create or replace function public.manihub_is_order_buyer(p_order_id uuid)
+returns boolean
+language sql stable security definer
+set search_path = public, pg_temp
+as $
+  select exists (
+    select 1 from public.manihub_orders o
+    where o.id = p_order_id and o.buyer_id = (select auth.uid())
+  );
+$;
+
+create or replace function public.manihub_is_order_seller(p_order_id uuid)
+returns boolean
+language sql stable security definer
+set search_path = public, pg_temp
+as $
+  select exists (
+    select 1 from public.manihub_order_items oi
+    where oi.order_id = p_order_id and oi.seller_id = (select auth.uid())
+  );
+$;
+
+revoke all on function public.manihub_is_order_buyer(uuid) from public;
+revoke all on function public.manihub_is_order_seller(uuid) from public;
+grant execute on function public.manihub_is_order_buyer(uuid) to authenticated;
+grant execute on function public.manihub_is_order_seller(uuid) to authenticated;
+
 -- Orders and payment state are intentionally read-only to clients.
 -- A trusted Edge Function/service role must create orders, validate prices/stock,
 -- write order events, and update payment/fulfilment states.
@@ -149,10 +178,7 @@ create policy "Buyers and sellers can view relevant orders"
 on public.manihub_orders for select to authenticated
 using (
   buyer_id = (select auth.uid())
-  or exists (
-    select 1 from public.manihub_order_items oi
-    where oi.order_id = id and oi.seller_id = (select auth.uid())
-  )
+  or public.manihub_is_order_seller(id)
 );
 
 drop policy if exists "Buyers and sellers can view relevant order items" on public.manihub_order_items;
@@ -160,24 +186,15 @@ create policy "Buyers and sellers can view relevant order items"
 on public.manihub_order_items for select to authenticated
 using (
   seller_id = (select auth.uid())
-  or exists (
-    select 1 from public.manihub_orders o
-    where o.id = order_id and o.buyer_id = (select auth.uid())
-  )
+  or public.manihub_is_order_buyer(order_id)
 );
 
 drop policy if exists "Buyers and sellers can view relevant order events" on public.manihub_order_events;
 create policy "Buyers and sellers can view relevant order events"
 on public.manihub_order_events for select to authenticated
 using (
-  exists (
-    select 1 from public.manihub_orders o
-    where o.id = order_id and o.buyer_id = (select auth.uid())
-  )
-  or exists (
-    select 1 from public.manihub_order_items oi
-    where oi.order_id = order_id and oi.seller_id = (select auth.uid())
-  )
+  public.manihub_is_order_buyer(order_id)
+  or public.manihub_is_order_seller(order_id)
 );
 
 drop policy if exists "Public can view published product reviews" on public.manihub_product_reviews;
@@ -203,8 +220,8 @@ with check (
       and oi.order_id = o.id
       and o.buyer_id = (select auth.uid())
       and o.payment_status in ('paid','partially_refunded')
-      and oi.store_id = store_id
-      and oi.product_id is not distinct from product_id
+      and oi.store_id = public.manihub_product_reviews.store_id
+      and oi.product_id is not distinct from public.manihub_product_reviews.product_id
   )
 );
 
