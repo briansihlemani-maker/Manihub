@@ -1234,7 +1234,7 @@ async function forgotPassword(){
     if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier))credentials={email:identifier,password};
     else{const phone=normalizeSouthAfricanPhone(identifier);if(!phone){alert("Enter a valid email address or South African cellphone number.");return;}credentials={phone,password};}
     const {data,error}=await supabaseClient.auth.signInWithPassword(credentials);if(error)throw error;
-    currentUser=data.user;await refreshAuth();closeAuth();alert("You are signed in to ManiHub.");
+    currentUser=data.user;await refreshAuth();window.location.href="/marketplace/";
   }catch(error){alert("Could not sign in: "+(error.message||error));}
 }
 async function signOutUser(){if(!supabaseClient){alert("ManiHub's connection service has not loaded. Refresh the page and try again.");return;}try{const {error}=await supabaseClient.auth.signOut();if(error)throw error;currentUser=null;await refreshAuth();alert("You have signed out.");}catch(error){alert("Could not sign out: "+(error.message||error));}}
