@@ -639,91 +639,77 @@ body.exploring main{padding-top:16px}
 body.exploring #explorePage{display:block!important}
 
 
-/* Screenshot-matched ManiHub storefront homepage */
-:root{--mh-green:#087a32;--mh-deep:#064b25;--mh-gold:#f5c51b;--mh-lime:#d9f5a5}
-body{background:#f7fbf5!important;color:#123b25}
-.mh-header{position:sticky;top:0;z-index:60;background:linear-gradient(105deg,#168a0c,#087b2c 52%,#006b32);border:0;box-shadow:0 5px 16px #073b1d24;padding:5px 16px}
-.mh-top{max-width:1200px;min-height:84px;margin:auto;display:flex;justify-content:space-between!important;align-items:center;gap:12px}
-.mh-brand{width:auto!important;justify-content:flex-start!important;gap:10px;min-width:0}
-.mh-brand .brand-logo{width:145px;height:82px;object-fit:contain}
-.mh-brand-copy{display:flex;flex-direction:column;color:#fff;line-height:1}
-.mh-brand-copy strong{font-size:clamp(25px,4vw,43px);font-weight:950;letter-spacing:-1.7px}
-.mh-brand-copy strong span,.mh-footer-brand strong span{color:#f5c51b}
-.mh-brand-copy small{font-size:12px;font-weight:800;font-style:italic;margin-top:6px;color:#f4ffe9}
+
+/* MANIHUB SINGLE MASTER DESIGN — reference image */
+:root{--mh-green:#07812f;--mh-deep:#034b27;--mh-gold:#f6c51c;--mh-soft:#eff9e7;--mh-ink:#123b25}
+body{margin:0;background:#f7fbf4!important;color:var(--mh-ink);font-family:Arial,Helvetica,sans-serif}
+.mh-header{position:sticky;top:0;z-index:60;background:linear-gradient(105deg,#168d13,#087a2f 52%,#005c2c);padding:5px 16px;box-shadow:0 4px 16px #003e1b30;border:0}
+.mh-top{max-width:1250px;min-height:84px;margin:auto;display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;gap:12px}
+.mh-brand{display:flex!important;align-items:center;justify-content:flex-start!important;gap:9px;width:auto!important;min-width:0}
+.mh-brand .brand-logo{width:155px;height:82px;object-fit:contain}
+.mh-brand-copy{display:flex;flex-direction:column;line-height:1;color:#fff}
+.mh-brand-copy strong{font-size:clamp(26px,4vw,44px);font-weight:950;letter-spacing:-1.8px}
+.mh-brand-copy strong span,.mh-footer-brand strong span{color:var(--mh-gold)}
+.mh-brand-copy small{margin-top:6px;font-size:12px;font-style:italic;font-weight:800;color:#f1ffe9}
 .mh-header-actions{display:flex;align-items:center;gap:9px}
-.mh-header-actions button{width:48px;height:48px;padding:0;border-radius:50%;border:2px solid #20b64b;background:#08742d;color:#fff;font-size:27px;box-shadow:0 3px 10px #003b1a33}
-.mh-header-actions button span{display:block;line-height:44px}
-.mh-header-actions .mh-bell{position:relative}.mh-header-actions .mh-bell:after{content:"";position:absolute;right:2px;top:0;width:10px;height:10px;border-radius:50%;background:#f22;border:2px solid #fff}
-main{max-width:1200px!important;margin:0 auto!important;padding:14px 16px 18px!important}
-.mh-hero{position:relative;isolation:isolate;overflow:hidden;min-height:330px;border-radius:0 0 16px 16px;margin:0 0 13px;background:#d8f3ff;color:#073c21;display:flex;align-items:center;padding:30px 28px;box-shadow:0 7px 18px #173b2d18}
-.mh-hero-photo{position:absolute;inset:0;z-index:-2;background-image:url('https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1600&q=85');background-size:cover;background-position:center 42%;transform:scale(1.02)}
-.mh-hero-shade{position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,#e9f7edfa 0%,#e9f7eddd 44%,#e9f7ed20 78%),linear-gradient(0deg,#0c642a22,transparent 55%)}
-.mh-hero-copy{position:relative;z-index:2;width:min(65%,680px)}
-.mh-country{display:inline-block;font-size:11px;font-weight:950;letter-spacing:1.5px;color:#087a32;margin-bottom:10px}
-.mh-hero h1{font-size:clamp(37px,6.5vw,66px);line-height:.99;letter-spacing:-2.8px;font-weight:950;margin:0 0 14px;color:#075027;text-shadow:0 2px #fff8}
-.mh-hero h1 em{font-style:italic;color:#078333}.mh-hero p{font-size:clamp(13px,2vw,19px);font-weight:750;color:#172b20;margin:0 0 20px}
-.mh-yellow-button{background:linear-gradient(110deg,#ffe52b,#f4b900);color:#171c0c;border-radius:999px;padding:13px 23px;font-size:15px;font-weight:950;box-shadow:0 5px 13px #8d6b0033}
-.mh-yellow-button span{font-size:20px;margin-left:9px}
-.mh-hero-person{position:absolute;right:5%;bottom:0;height:100%;width:37%;display:flex;align-items:center;justify-content:center;pointer-events:none}
-.mh-hero-person span{font-size:clamp(90px,18vw,190px);filter:drop-shadow(0 12px 13px #173b2d55);transform:translateY(14px)}
-.mh-hero-person b{position:absolute;right:-4%;top:14%;font-size:clamp(34px,6vw,70px);filter:drop-shadow(0 4px 5px #0004)}
+.mh-header-actions button{width:49px;height:49px;border:2px solid #25b64b;border-radius:50%;background:#08742d;color:#fff;font-size:26px;box-shadow:0 3px 10px #003b1a33;cursor:pointer}
+.mh-header-actions button span{line-height:44px;display:block}
+.mh-header-actions .mh-bell{position:relative}.mh-header-actions .mh-bell:after{content:"3";position:absolute;right:-2px;top:-5px;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#f01822;color:#fff;font-size:12px;font-weight:900;border:2px solid #08742d}
+main{max-width:1250px!important;margin:0 auto!important;padding:0 16px 18px!important}
+.mh-hero{position:relative;isolation:isolate;overflow:hidden;min-height:340px;margin:0 0 14px;border-radius:0 0 16px 16px;display:flex;align-items:center;padding:30px 34px;background:#d8f1ff;color:#063f20;box-shadow:0 6px 18px #173b2d18}
+.mh-hero-photo{position:absolute;inset:0;z-index:-2;background-image:url('https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?auto=format&fit=crop&w=1800&q=88');background-size:cover;background-position:center 48%}
+.mh-hero-shade{position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,#f4fff1f5 0%,#effff0df 43%,#eaf9ed22 76%),linear-gradient(0deg,#005d2522,transparent 60%)}
+.mh-hero-copy{position:relative;z-index:2;width:min(64%,690px)}
+.mh-country{display:inline-block;margin-bottom:10px;color:#087a32;font-size:11px;font-weight:950;letter-spacing:1.5px}
+.mh-hero h1{margin:0 0 14px;color:#075027;font-size:clamp(39px,6.2vw,70px);font-weight:950;line-height:.99;letter-spacing:-2.7px;text-shadow:0 2px #fff8}
+.mh-hero h1 em{color:#078333;font-style:italic}.mh-hero p{margin:0 0 20px;color:#152e1e;font-size:clamp(13px,2vw,19px);font-weight:800}
+.mh-yellow-button{border:0;border-radius:999px;background:linear-gradient(110deg,#ffe52b,#f4b900);color:#171c0c;padding:13px 24px;font-size:15px;font-weight:950;box-shadow:0 5px 13px #8d6b0033;cursor:pointer}.mh-yellow-button span{margin-left:9px;font-size:20px}
+.mh-hero-person{position:absolute;right:3%;bottom:0;z-index:1;width:38%;height:100%;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.mh-hero-person span{display:block;width:100%;height:100%;background-image:url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=850&q=88');background-size:cover;background-position:center 20%;clip-path:ellipse(42% 49% at 55% 55%);filter:drop-shadow(0 10px 12px #173b2d44)}
+.mh-hero-person b{position:absolute;right:-4%;top:10%;font-size:clamp(32px,6vw,70px);filter:drop-shadow(0 4px 5px #0004)}
 .mh-departments{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin:0 0 18px}
-.mh-department{min-width:0;min-height:112px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:10px 6px;border:1px solid #dce8d9;border-radius:18px;background:linear-gradient(145deg,#fff,#eff8e9);color:#173b25;box-shadow:0 5px 14px #173b2d13;transition:transform .18s,border-color .18s}
-.mh-department:hover{transform:translateY(-3px);border-color:#d5b42e}.mh-department span{font-size:36px;line-height:1.1}.mh-department b{font-size:13px;line-height:1.2;text-align:center}
-.mh-hot{margin:0 0 18px;padding:0 0 5px}
-.mh-section-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(100deg,#087a32,#16a329);color:#fff;border-radius:16px 16px 0 0;padding:10px 16px;margin-bottom:0;box-shadow:0 4px 12px #0a672b25}
-.mh-section-bar h2{font-size:clamp(18px,2.5vw,26px);font-weight:950;color:#fff;margin:0}.mh-more{padding:9px 17px;font-size:13px;white-space:nowrap}
-.mh-hot .hot-products{grid-auto-columns:minmax(155px,1fr);grid-template-columns:repeat(5,minmax(0,1fr));grid-auto-flow:initial;overflow:visible;gap:9px;padding:9px 0}
-.mh-hot .hot-product{border-radius:16px;border:1px solid #e4eae0;box-shadow:0 5px 15px #173b2d13}
-.mh-hot .hot-product-photo{height:145px;background:linear-gradient(145deg,#f8faf7,#eaf3e9);font-size:50px}
-.mh-hot .hot-product-body{padding:10px 11px 12px}.mh-hot .hot-product-badge{background:#0b9843;color:white;font-size:10px}
-.mh-hot .hot-product-title{font-size:13px;min-height:32px}.mh-hot .hot-product-price{font-size:21px;color:#087a32;margin:7px 0}.mh-hot .hot-product-location{font-size:10px}
-.mh-business-banner{position:relative;overflow:hidden;display:flex;align-items:center;gap:18px;min-height:135px;margin:10px 0 22px;padding:15px 24px;border-radius:16px;color:#fff;background:radial-gradient(circle at 5% 50%,#2b934d 0,transparent 34%),linear-gradient(110deg,#064c28,#0c8b37 65%,#075526);box-shadow:0 7px 18px #173b2d1c}
-.mh-handshake{font-size:68px;flex:0 0 100px;filter:drop-shadow(0 6px 6px #001d12aa)}.mh-business-copy{flex:1;min-width:0;text-align:center}
-.mh-business-copy h2{font-size:clamp(21px,3.7vw,36px);line-height:1.03;color:#fff;margin:0 0 6px;font-weight:950}.mh-business-copy h2 em{font-style:normal;color:#ffe52b}
-.mh-business-copy p{margin:0;font-size:13px;font-weight:700;color:#eff9e9}.mh-business-banner>.mh-yellow-button{white-space:nowrap}
-.mh-popular{margin:0 0 20px}.mh-popular-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 3px 10px}
-.mh-popular-head h2{font-size:clamp(19px,2.5vw,25px);color:#07552b;font-weight:950}.mh-popular-head button{border-radius:99px;background:#e8f7d9;color:#15532a;padding:8px 16px;font-weight:900}
-.mh-popular-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
-.mh-popular-grid button{min-width:0;min-height:112px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;border:1px solid #e0e9dc;border-radius:18px;background:linear-gradient(145deg,#fff,#eff8e9);color:#173b25;box-shadow:0 5px 14px #173b2d12}
+.mh-department{min-width:0;min-height:118px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:10px 6px;border:1px solid #dce8d9;border-radius:18px;background:linear-gradient(145deg,#fff,#eff8e9);color:#173b25;box-shadow:0 5px 14px #173b2d13;cursor:pointer;transition:transform .18s,border-color .18s}
+.mh-department:hover,.mh-popular-grid button:hover{transform:translateY(-3px);border-color:#d5b42e}.mh-department span{font-size:36px;line-height:1.1}.mh-department b{font-size:13px;line-height:1.2;text-align:center}
+.mh-hot{margin:0 0 18px;padding:0 0 5px}.mh-section-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0;background:linear-gradient(100deg,#087a32,#16a329);color:#fff;border-radius:16px 16px 0 0;padding:10px 16px;box-shadow:0 4px 12px #0a672b25}
+.mh-section-bar h2{margin:0;color:#fff;font-size:clamp(18px,2.5vw,26px);font-weight:950}.mh-more{padding:9px 18px;font-size:13px;white-space:nowrap}
+.mh-hot .hot-products{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));grid-auto-flow:row;grid-auto-columns:initial;gap:9px;overflow:visible;padding:9px 0}
+.mh-hot .hot-product{min-width:0;border:1px solid #e4eae0;border-radius:16px;background:#fff;box-shadow:0 5px 15px #173b2d13}
+.mh-hot .hot-product-photo{height:150px;background:linear-gradient(145deg,#f8faf7,#eaf3e9);font-size:50px}.mh-hot .hot-product-photo img{width:100%;height:100%;object-fit:cover}
+.mh-hot .hot-product-body{padding:10px 11px 12px}.mh-hot .hot-product-badge{background:#0b9843;color:#fff;font-size:10px}.mh-hot .hot-product-title{min-height:32px;font-size:13px}.mh-hot .hot-product-price{margin:7px 0;color:#087a32;font-size:21px}.mh-hot .hot-product-location{font-size:10px}
+.mh-business-banner{position:relative;overflow:hidden;display:flex;align-items:center;gap:18px;min-height:142px;margin:10px 0 22px;padding:15px 24px;border-radius:16px;color:#fff;background:linear-gradient(90deg,#064c28e8,#0c8b37df),url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=1200&q=85') center/cover;box-shadow:0 7px 18px #173b2d1c}
+.mh-handshake{flex:0 0 105px;width:105px;height:110px;background:url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=350&q=85') center/cover;border-radius:12px}
+.mh-business-copy{flex:1;min-width:0;text-align:center}.mh-business-copy h2{margin:0 0 6px;color:#fff;font-size:clamp(21px,3.7vw,36px);font-weight:950;line-height:1.03}.mh-business-copy h2 em{color:#ffe52b;font-style:normal}.mh-business-copy p{margin:0;color:#eff9e9;font-size:13px;font-weight:700}.mh-business-banner>.mh-yellow-button{white-space:nowrap}
+.mh-popular{margin:0 0 20px}.mh-popular-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 3px 10px}.mh-popular-head h2{margin:0;color:#07552b;font-size:clamp(19px,2.5vw,25px);font-weight:950}
+.mh-popular-head button{border:0;border-radius:99px;background:#e8f7d9;color:#15532a;padding:8px 16px;font-weight:900;cursor:pointer}
+.mh-popular-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}.mh-popular-grid button{min-width:0;min-height:118px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;border:1px solid #e0e9dc;border-radius:18px;background:linear-gradient(145deg,#fff,#eff8e9);color:#173b25;box-shadow:0 5px 14px #173b2d12;cursor:pointer;transition:transform .18s,border-color .18s}
 .mh-popular-grid button span{font-size:36px;line-height:1.1}.mh-popular-grid button b{font-size:12px;line-height:1.2;text-align:center}
 .mh-trust-strip{display:flex;align-items:center;justify-content:space-around;gap:9px;margin:18px 0 15px;padding:12px 10px;border-radius:16px;background:linear-gradient(100deg,#dff5ad,#f0f9d5);color:#154b27}
 .mh-trust-strip div{display:flex;align-items:center;justify-content:center;gap:8px;min-width:0}.mh-trust-strip div span{font-size:25px}.mh-trust-strip b{font-size:12px;white-space:nowrap}.mh-trust-strip>i{width:1px;height:28px;background:#55904c}
 .mh-footer-banner{position:relative;overflow:hidden;display:grid;grid-template-columns:1.2fr 2px auto 1.5fr;align-items:center;gap:18px;margin:20px 0 5px;padding:23px 28px 30px;border-radius:48% 48% 18px 18px/12% 12% 18px 18px;background:radial-gradient(ellipse at 50% 0%,#168b4b 0%,transparent 58%),linear-gradient(145deg,#064629,#08743d 60%,#033b24);border:1px solid #d5b83d;box-shadow:0 12px 28px #0b402b22;color:#fff}
 .mh-footer-banner:before{content:"";position:absolute;inset:auto -5% -48px -5%;height:75px;border-top:7px solid #d7f345;border-radius:50%;box-shadow:0 -8px 0 #e7c84d}
-.mh-footer-brand{display:flex;align-items:center;gap:8px;min-width:0}.mh-footer-brand .brand-logo{width:90px;height:75px;object-fit:contain}
-.mh-footer-brand>div{display:flex;flex-direction:column}.mh-footer-brand strong{font-size:clamp(20px,3vw,29px);font-weight:950}.mh-footer-brand small{font-size:9px;color:#e7f5e9;font-weight:800}
-.mh-footer-divider{height:75px;background:#ffffff9c}.mh-footer-globe{font-size:67px;filter:drop-shadow(0 6px 8px #001d13aa)}
-.mh-footer-copy h2{font-size:clamp(17px,2.5vw,24px);color:#f7df65;margin:0 0 6px}.mh-footer-copy p{font-size:12px;line-height:1.4;color:#e8f2e9;margin:0}
+.mh-footer-brand{display:flex;align-items:center;gap:8px;min-width:0}.mh-footer-brand .brand-logo{width:90px;height:75px;object-fit:contain}.mh-footer-brand>div{display:flex;flex-direction:column}.mh-footer-brand strong{font-size:clamp(20px,3vw,29px);font-weight:950}.mh-footer-brand small{font-size:9px;color:#e7f5e9;font-weight:800}
+.mh-footer-divider{height:75px;background:#ffffff9c}.mh-footer-globe{font-size:67px;filter:drop-shadow(0 6px 8px #001d13aa)}.mh-footer-copy h2{margin:0 0 6px;color:#f7df65;font-size:clamp(17px,2.5vw,24px)}.mh-footer-copy p{margin:0;color:#e8f2e9;font-size:12px;line-height:1.4}
 @media(max-width:760px){
- .mh-header{padding:5px 9px}.mh-top{min-height:65px}.mh-brand .brand-logo{width:76px;height:58px}.mh-brand-copy strong{font-size:24px}.mh-brand-copy small{font-size:8px;margin-top:4px}
- .mh-header-actions{gap:5px}.mh-header-actions button{width:35px;height:35px;font-size:20px;border-width:1px}.mh-header-actions button span{line-height:32px}
- main{padding:10px 9px 15px!important}.mh-hero{min-height:270px;padding:20px 15px;border-radius:0 0 14px 14px}.mh-hero-copy{width:75%}
- .mh-hero h1{font-size:clamp(30px,8vw,45px);letter-spacing:-1.5px}.mh-hero p{font-size:11px;max-width:250px}.mh-country{font-size:8px}
- .mh-hero-person{right:-4%;width:36%}.mh-hero-person span{font-size:95px}.mh-hero-person b{font-size:30px;right:0}
- .mh-departments{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-bottom:14px}.mh-department{min-height:92px;border-radius:14px}.mh-department span{font-size:29px}.mh-department b{font-size:10px}
- .mh-section-bar{padding:8px 10px}.mh-section-bar h2{font-size:17px}.mh-more{padding:7px 12px;font-size:11px}
- .mh-hot .hot-products{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.mh-hot .hot-product:nth-child(n+5){display:none}.mh-hot .hot-product-photo{height:105px}.mh-hot .hot-product-title{font-size:11px;min-height:28px}.mh-hot .hot-product-price{font-size:17px}
- .mh-business-banner{gap:7px;min-height:112px;padding:12px 9px}.mh-handshake{flex-basis:43px;font-size:36px}.mh-business-copy h2{font-size:18px}.mh-business-copy p{font-size:9px}.mh-business-banner>.mh-yellow-button{padding:9px 10px;font-size:9px}.mh-business-banner>.mh-yellow-button span{font-size:14px;margin-left:3px}
- .mh-popular-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.mh-popular-grid button{min-height:90px;border-radius:13px}.mh-popular-grid button span{font-size:29px}.mh-popular-grid button b{font-size:10px}
- .mh-trust-strip{gap:5px;padding:10px 4px;flex-wrap:wrap}.mh-trust-strip div{gap:3px}.mh-trust-strip div span{font-size:18px}.mh-trust-strip b{font-size:8px}.mh-trust-strip>i{height:20px}
- .mh-footer-banner{grid-template-columns:1fr 1px auto 1.4fr;gap:8px;padding:18px 10px 24px;border-radius:35% 35% 14px 14px/8% 8% 14px 14px}
- .mh-footer-brand{gap:3px}.mh-footer-brand .brand-logo{width:42px;height:42px}.mh-footer-brand strong{font-size:14px}.mh-footer-brand small{font-size:6px}.mh-footer-divider{height:48px}.mh-footer-globe{font-size:34px}.mh-footer-copy h2{font-size:12px}.mh-footer-copy p{font-size:8px}
+.mh-header{padding:5px 9px}.mh-top{min-height:65px}.mh-brand .brand-logo{width:76px;height:58px}.mh-brand-copy strong{font-size:24px}.mh-brand-copy small{font-size:8px;margin-top:4px}
+.mh-header-actions{gap:5px}.mh-header-actions button{width:35px;height:35px;font-size:20px;border-width:1px}.mh-header-actions button span{line-height:32px}
+main{padding:0 9px 15px!important}.mh-hero{min-height:270px;padding:20px 15px;border-radius:0 0 14px 14px}.mh-hero-copy{width:76%}.mh-hero h1{font-size:clamp(30px,8vw,45px);letter-spacing:-1.5px}.mh-hero p{font-size:11px;max-width:250px}.mh-country{font-size:8px}
+.mh-hero-person{right:-6%;width:38%}.mh-hero-person b{font-size:30px;right:0}
+.mh-departments{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-bottom:14px}.mh-department{min-height:94px;border-radius:14px}.mh-department span{font-size:29px}.mh-department b{font-size:10px}
+.mh-section-bar{padding:8px 10px}.mh-section-bar h2{font-size:17px}.mh-more{padding:7px 12px;font-size:11px}
+.mh-hot .hot-products{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.mh-hot .hot-product:nth-child(n+5){display:none}.mh-hot .hot-product-photo{height:105px}.mh-hot .hot-product-title{font-size:11px;min-height:28px}.mh-hot .hot-product-price{font-size:17px}
+.mh-business-banner{gap:7px;min-height:112px;padding:12px 9px}.mh-handshake{flex-basis:48px;width:48px;height:75px}.mh-business-copy h2{font-size:18px}.mh-business-copy p{font-size:9px}.mh-business-banner>.mh-yellow-button{padding:9px 10px;font-size:9px}.mh-business-banner>.mh-yellow-button span{font-size:14px;margin-left:3px}
+.mh-popular-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.mh-popular-grid button{min-height:91px;border-radius:13px}.mh-popular-grid button span{font-size:29px}.mh-popular-grid button b{font-size:10px}
+.mh-trust-strip{gap:5px;padding:10px 4px;flex-wrap:wrap}.mh-trust-strip div{gap:3px}.mh-trust-strip div span{font-size:18px}.mh-trust-strip b{font-size:8px}.mh-trust-strip>i{height:20px}
+.mh-footer-banner{grid-template-columns:1fr 1px auto 1.4fr;gap:8px;padding:18px 10px 24px;border-radius:35% 35% 14px 14px/8% 8% 14px 14px}.mh-footer-brand{gap:3px}.mh-footer-brand .brand-logo{width:42px;height:42px}.mh-footer-brand strong{font-size:14px}.mh-footer-brand small{font-size:6px}.mh-footer-divider{height:48px}.mh-footer-globe{font-size:34px}.mh-footer-copy h2{font-size:12px}.mh-footer-copy p{font-size:8px}
 }
-@media(max-width:380px){.mh-brand .brand-logo{width:58px}.mh-brand-copy strong{font-size:21px}.mh-header-actions button{width:31px;height:31px}.mh-header-actions button span{line-height:28px}.mh-hero{min-height:245px}.mh-hero-person span{font-size:76px}.mh-footer-banner{gap:5px;padding-left:7px;padding-right:7px}.mh-footer-globe{font-size:29px}}
-
-
-/* Header alignment override after legacy responsive rules */
-header.mh-header .mh-top{display:flex!important;flex-direction:row!important;justify-content:space-between!important;align-items:center!important}
-header.mh-header .brand-wrap.mh-brand{width:auto!important;justify-content:flex-start!important}
-.mh-header-actions button{cursor:pointer}
+@media(max-width:380px){.mh-brand .brand-logo{width:58px}.mh-brand-copy strong{font-size:21px}.mh-header-actions button{width:31px;height:31px}.mh-header-actions button span{line-height:28px}.mh-hero{min-height:245px}.mh-hero-person{width:34%}.mh-footer-banner{gap:5px;padding-left:7px;padding-right:7px}.mh-footer-globe{font-size:29px}}
 </style>
 </head>
 <body>
 <header class="mh-header"><div class="top mh-top">
   <div class="brand-wrap mh-brand"><img class="brand-logo" src="assets/manihub-logo-transparent.png" alt="ManiHub logo"><div class="mh-brand-copy"><strong>Mani<span>Hub</span></strong><small>Buy. Sell. Grow. Together.</small></div></div>
   <nav class="mh-header-actions" aria-label="Main actions">
-    <button type="button" aria-label="Search ManiHub" title="Search" onclick="document.getElementById('search').focus();document.getElementById('search').scrollIntoView({behavior:'smooth',block:'center'})"><span>⌕</span></button>
+    <button type="button" aria-label="Search ManiHub" title="Search" onclick="openExplorePage();setTimeout(()=>document.getElementById('search').focus();document.getElementById('search').scrollIntoView({behavior:'smooth',block:'center'})"><span>⌕</span></button>
     <button type="button" aria-label="Notifications" title="Notifications" class="mh-bell" onclick="showManiNotifications()"><span>♧</span></button>
     <button type="button" aria-label="Messages" title="Messages" onclick="openHelp('messages')"><span>▤</span></button>
     <button type="button" aria-label="My account" title="My account" onclick="openAuth()"><span>♟</span></button>
@@ -758,12 +744,12 @@ header.mh-header .brand-wrap.mh-brand{width:auto!important;justify-content:flex-
     </div><div class="mh-hero-person" aria-hidden="true"><span>🛍️</span><b>🇿🇦</b></div>
   </section>
   <section class="mh-departments" id="departments" aria-label="Shop by department">
-    <button class="mh-department" type="button" data-department="shopping"><span>🛒</span><b>Shopping &<br>Groceries</b></button>
+    <button class="mh-department" type="button" onclick="openExplorePage();setDepartment('shopping')"><span>🛒</span><b>Shopping &<br>Groceries</b></button>
     <button class="mh-department" type="button" data-department="shopping"><span>💻</span><b>Electronics</b></button>
-    <button class="mh-department" type="button" data-department="fashion"><span>👚</span><b>Fashion &<br>Clothing</b></button>
+    <button class="mh-department" type="button" onclick="openExplorePage();setDepartment('fashion')"><span>👚</span><b>Fashion &<br>Clothing</b></button>
     <button class="mh-department" type="button" data-department="shopping"><span>🛋️</span><b>Home &<br>Furniture</b></button>
-    <button class="mh-department" type="button" data-department="restaurants"><span>🍴</span><b>Food &<br>Restaurants</b></button>
-    <button class="mh-department" type="button" data-department="health"><span>✚</span><b>Health &<br>Wellness</b></button>
+    <button class="mh-department" type="button" onclick="openExplorePage();setDepartment('restaurants')"><span>🍴</span><b>Food &<br>Restaurants</b></button>
+    <button class="mh-department" type="button" onclick="openExplorePage();setDepartment('health')"><span>✚</span><b>Health &<br>Wellness</b></button>
   </section>
   <section class="hot-now-section mh-hot" id="hotNowSection" aria-label="What's hot on ManiHub">
     <div class="mh-section-bar"><h2>🔥 What's Hot Now</h2><button class="mh-yellow-button mh-more" type="button" onclick="openExplorePage()">More <span>→</span></button></div>
