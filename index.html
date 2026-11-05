@@ -709,7 +709,7 @@ main{padding:0 9px 15px!important}.mh-hero{min-height:270px;padding:20px 15px;bo
 <header class="mh-header"><div class="top mh-top">
   <div class="brand-wrap mh-brand"><img class="brand-logo" src="assets/manihub-logo-transparent.png" alt="ManiHub logo"><div class="mh-brand-copy"><strong>Mani<span>Hub</span></strong><small>Buy. Sell. Grow. Together.</small></div></div>
   <nav class="mh-header-actions" aria-label="Main actions">
-    <button type="button" aria-label="Search ManiHub" title="Search" onclick="openExplorePage();setTimeout(()=>document.getElementById('search').focus();document.getElementById('search').scrollIntoView({behavior:'smooth',block:'center'})"><span>⌕</span></button>
+    <button type="button" aria-label="Search ManiHub" title="Search" onclick="openExplorePage();setTimeout(()=>document.getElementById('exploreSearch')?.focus(),180)"><span>⌕</span></button>
     <button type="button" aria-label="Notifications" title="Notifications" class="mh-bell" onclick="showManiNotifications()"><span>♧</span></button>
     <button type="button" aria-label="Messages" title="Messages" onclick="openHelp('messages')"><span>▤</span></button>
     <button type="button" aria-label="My account" title="My account" onclick="openAuth()"><span>♟</span></button>
@@ -745,7 +745,7 @@ main{padding:0 9px 15px!important}.mh-hero{min-height:270px;padding:20px 15px;bo
   </section>
   <section class="mh-departments" id="departments" aria-label="Shop by department">
     <button class="mh-department" type="button" onclick="openExplorePage();setDepartment('shopping')"><span>🛒</span><b>Shopping &<br>Groceries</b></button>
-    <button class="mh-department" type="button" data-department="shopping"><span>💻</span><b>Electronics</b></button>
+    <button class="mh-department" type="button" onclick="openExplorePage();setDepartment('shopping')"><span>💻</span><b>Electronics</b></button>
     <button class="mh-department" type="button" onclick="openExplorePage();setDepartment('fashion')"><span>👚</span><b>Fashion &<br>Clothing</b></button>
     <button class="mh-department" type="button" data-department="shopping"><span>🛋️</span><b>Home &<br>Furniture</b></button>
     <button class="mh-department" type="button" onclick="openExplorePage();setDepartment('restaurants')"><span>🍴</span><b>Food &<br>Restaurants</b></button>
