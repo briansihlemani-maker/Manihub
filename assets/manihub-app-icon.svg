@@ -1,7 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="112" fill="#03532c"/>
-  <circle cx="256" cy="256" r="207" fill="none" stroke="#f3c91a" stroke-width="13"/>
-  <path d="M105 366V222c0-49 38-88 86-88 32 0 59 17 75 44 16-27 43-44 75-44 48 0 86 39 86 88v144h-54V222c0-19-14-34-32-34s-32 15-32 34v144h-86V222c0-19-14-34-32-34s-32 15-32 34v144z" fill="#f3c91a"/>
-  <circle cx="191" cy="103" r="25" fill="#fff4b0"/>
-  <circle cx="321" cy="103" r="25" fill="#fff4b0"/>
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#003b25"/><stop offset=".48" stop-color="#078b35"/><stop offset="1" stop-color="#00351f"/></linearGradient>
+ <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff05b"/><stop offset=".5" stop-color="#f5c900"/><stop offset="1" stop-color="#e99b00"/></linearGradient>
+ <linearGradient id="lime" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#baff00"/><stop offset="1" stop-color="#58c900"/></linearGradient>
+ <linearGradient id="emerald" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#20b978"/><stop offset="1" stop-color="#007344"/></linearGradient>
+ <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="8"/></filter>
+</defs>
+<rect width="512" height="512" rx="100" fill="url(#bg)"/>
+<path d="M0 390 Q130 430 260 390 T512 370 V512 H0Z" fill="#005b2b" opacity=".65"/>
+<path d="M0 432 Q160 472 512 385" fill="none" stroke="#18c900" stroke-width="22" opacity=".8"/>
+<path d="M0 472 Q220 490 512 405" fill="none" stroke="url(#gold)" stroke-width="7"/>
+<path d="M74 200 Q255 20 438 190 Q470 224 424 257 Q248 350 75 260 Q39 241 74 200Z" fill="none" stroke="#002c1a" stroke-width="23" opacity=".45"/>
+<path d="M66 194 Q255 18 444 185 Q474 220 424 247 Q250 332 75 250 Q38 231 66 194Z" fill="none" stroke="url(#gold)" stroke-width="10"/>
+<circle cx="178" cy="112" r="23" fill="#079c63"/>
+<circle cx="329" cy="112" r="23" fill="#a4ed00"/>
+<path d="M112 275 L130 176 Q137 145 170 145 Q192 145 218 166 L255 197 L292 166 Q317 145 343 145 Q375 145 382 178 L400 275 L342 275 L329 201 L278 239 L278 275 L232 275 L232 239 L181 201 L168 275Z" fill="url(#emerald)"/>
+<path d="M255 197 L292 166 Q317 145 343 145 Q375 145 382 178 L400 275 L342 275 L329 201 L278 239 L278 275 L255 275Z" fill="url(#lime)"/>
+<text x="256" y="365" text-anchor="middle" font-family="Arial,sans-serif" font-weight="900" font-size="77" letter-spacing="-5"><tspan fill="#fff">Mani</tspan><tspan fill="#a7ef00">Hub</tspan></text>
+<path d="M58 397 H113 M399 397 H454" stroke="url(#gold)" stroke-width="6" stroke-linecap="round"/>
+<text x="256" y="407" text-anchor="middle" font-family="Arial,sans-serif" font-style="italic" font-weight="700" font-size="18" fill="#fff">Buy. Sell. Grow. Together.</text>
+<rect x="3" y="3" width="506" height="506" rx="97" fill="none" stroke="#d5f33c" stroke-width="3" opacity=".8"/>
 </svg>
