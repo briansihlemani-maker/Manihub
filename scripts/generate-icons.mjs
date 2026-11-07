@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 
 // Use the exact original logo uploaded by the ManiHub owner.
 // Do not redraw, recolour, or substitute this artwork.
-const source = await readFile("assets/file_00000000f6cc81f49123ad83b8781fe4.jpg");
+const source = await readFile("assets/file_000000004420824681cbd3dc77302cd3.png");
 
 // Keep the full original square artwork visible in the launcher icon.
 await sharp(source)
