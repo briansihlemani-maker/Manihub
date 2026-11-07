@@ -1,11 +1,21 @@
 import sharp from "sharp";
 import { readFile } from "node:fs/promises";
 
-const source = await readFile("assets/manihub-app-icon.svg");
-await sharp(source).resize(1024, 1024, { fit: "contain" }).png().toFile("assets/icon-only.png");
+// Use the exact original logo uploaded by the ManiHub owner.
+// Do not redraw, recolour, or substitute this artwork.
+const source = await readFile("assets/file_00000000f6cc81f49123ad83b8781fe4.jpg");
+
+// Keep the full original square artwork visible in the launcher icon.
+await sharp(source)
+  .resize(1024, 1024, { fit: "contain", background: "#ffffff" })
+  .png()
+  .toFile("assets/icon-only.png");
+
+// Use the same approved artwork for the native splash screen.
 await sharp({
   create: { width: 2732, height: 2732, channels: 4, background: "#003b25" }
 }).composite([
-  { input: await sharp(source).resize(1200, 1200, { fit: "contain" }).png().toBuffer(), gravity: "centre" }
+  { input: await sharp(source).resize(1800, 1800, { fit: "contain" }).png().toBuffer(), gravity: "centre" }
 ]).png().toFile("assets/splash.png");
-console.log("Generated ManiHub native icon and splash source images.");
+
+console.log("Generated ManiHub native icon and splash from the owner's original logo.");
