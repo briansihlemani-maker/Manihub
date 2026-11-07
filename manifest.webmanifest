@@ -16,10 +16,10 @@
   ],
   "icons": [
     {
-      "src": "assets/manihub-app-icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "src": "assets/file_00000000f6cc81f49123ad83b8781fe4.jpg",
+      "sizes": "1024x1024",
+      "type": "image/jpeg",
+      "purpose": "any"
     }
   ]
 }
