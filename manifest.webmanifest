@@ -1,0 +1,22 @@
+{
+  "id": "./",
+  "name": "ManiHub",
+  "short_name": "ManiHub",
+  "description": "South Africa's community marketplace. Buy, sell and grow together.",
+  "lang": "en-ZA",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#003b25",
+  "theme_color": "#087d35",
+  "categories": ["shopping", "business"],
+  "icons": [
+    {
+      "src": "assets/manihub-app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
