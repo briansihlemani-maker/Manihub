@@ -39,6 +39,10 @@ jobs:
         run: |
           npm run prepare:icons
           npx capacitor-assets generate --android
+          # Remove the template adaptive icons: they override the generated PNGs
+          # on modern Android launchers and show the default Capacitor mark.
+          rm -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+          rm -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
       - name: Sync Android project
         run: npx cap sync android
       - name: Set up Java
