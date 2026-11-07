@@ -12,6 +12,7 @@ on:
       - "package.json"
       - "package-lock.json"
       - "scripts/**"
+      - "assets/manihub-app-icon.svg"
       - ".github/workflows/mobile-build.yml"
 
 permissions:
@@ -34,6 +35,10 @@ jobs:
         run: npm run prepare:mobile
       - name: Add Android project
         run: npx cap add android
+      - name: Generate ManiHub native icons
+        run: |
+          npm run prepare:icons
+          npx capacitor-assets generate --android
       - name: Sync Android project
         run: npx cap sync android
       - name: Set up Java
@@ -70,6 +75,10 @@ jobs:
         run: npm run prepare:mobile
       - name: Add iOS project
         run: npx cap add ios
+      - name: Generate ManiHub native icons
+        run: |
+          npm run prepare:icons
+          npx capacitor-assets generate --ios
       - name: Sync iOS project
         run: npx cap sync ios
       - name: Build unsigned iOS simulator app
