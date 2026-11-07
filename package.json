@@ -8,7 +8,8 @@
     "build:mobile": "npm run prepare:mobile",
     "sync:mobile": "npm run prepare:mobile && cap sync",
     "android": "cap open android",
-    "ios": "cap open ios"
+    "ios": "cap open ios",
+    "prepare:icons": "node scripts/generate-icons.mjs"
   },
   "dependencies": {
     "@capacitor/core": "^8.6.0",
@@ -17,6 +18,8 @@
   },
   "devDependencies": {
     "@capacitor/cli": "^8.6.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "@capacitor/assets": "^3.0.5",
+    "sharp": "^0.34.5"
   }
 }
