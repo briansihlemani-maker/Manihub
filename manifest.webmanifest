@@ -10,7 +10,10 @@
   "orientation": "portrait-primary",
   "background_color": "#003b25",
   "theme_color": "#087d35",
-  "categories": ["shopping", "business"],
+  "categories": [
+    "shopping",
+    "business"
+  ],
   "icons": [
     {
       "src": "assets/manihub-app-icon.svg",
