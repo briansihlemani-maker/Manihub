@@ -5,7 +5,8 @@
   "description": "ManiHub South Africa marketplace mobile application",
   "scripts": {
     "prepare:mobile": "node scripts/prepare-mobile.mjs",
-    "build:mobile": "npm run prepare:mobile && cap sync",
+    "build:mobile": "npm run prepare:mobile",
+    "sync:mobile": "npm run prepare:mobile && cap sync",
     "android": "cap open android",
     "ios": "cap open ios"
   },
