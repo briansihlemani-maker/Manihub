@@ -7,7 +7,7 @@ const source = await readFile("assets/file_000000004420824681cbd3dc77302cd3.png"
 
 // Keep the full original square artwork visible in the launcher icon.
 await sharp(source)
-  .resize(1024, 1024, { fit: "contain", background: "#ffffff" })
+  .resize(1024, 1024, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
   .png()
   .toFile("assets/icon-only.png");
 
