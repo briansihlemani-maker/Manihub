@@ -42,4 +42,14 @@ const nativeHtml = await readFile(new URL('index.html', out), 'utf8');
 const withLocalSupabase = nativeHtml.replace('<script>', '<script src="vendor/supabase.js"></script>\\n<script>');
 await writeFile(new URL('index.html', out), withLocalSupabase);
 
-console.log('Prepared ManiHub shared web app and local Supabase client in ./www for Capacitor.');
+// The marketplace is a separate document in the same Capacitor WebView.
+// Give it the same local Supabase client so auth/session restoration does not
+// depend on a third-party CDN being reachable on the tablet.
+const nativeMarketplaceHtml = await readFile(new URL('marketplace/index.html', out), 'utf8');
+const withLocalMarketplaceSupabase = nativeMarketplaceHtml.replace(
+  '<script>',
+  '<script src="../vendor/supabase.js"></script>\\n<script>'
+);
+await writeFile(new URL('marketplace/index.html', out), withLocalMarketplaceSupabase);
+
+console.log('Prepared ManiHub web app and local Supabase client for both native pages in ./www.');
