@@ -31,4 +31,15 @@ const marketplaceHtml = await readFile(new URL('marketplace/index.html', out), '
 const safeMarketplaceHtml = marketplaceHtml.replace(/<script>if\("serviceWorker" in navigator\)[\s\S]*?<\/script>/, '');
 await writeFile(new URL('marketplace/index.html', out), safeMarketplaceHtml);
 
-console.log('Prepared ManiHub shared web app in ./www for Capacitor.');
+// Bundle Supabase locally for native WebViews, avoiding external CDN loading.
+const vendor = new URL('../node_modules/@supabase/supabase-js/dist/umd/supabase.js', import.meta.url);
+const vendorOut = new URL('vendor/', out);
+await mkdir(vendorOut, { recursive: true });
+await cp(vendor, new URL('supabase.js', vendorOut));
+
+// Load the bundled client before the app's inline initialization code.
+const nativeHtml = await readFile(new URL('index.html', out), 'utf8');
+const withLocalSupabase = nativeHtml.replace('<script>', '<script src="vendor/supabase.js"></script>\\n<script>');
+await writeFile(new URL('index.html', out), withLocalSupabase);
+
+console.log('Prepared ManiHub shared web app and local Supabase client in ./www for Capacitor.');
