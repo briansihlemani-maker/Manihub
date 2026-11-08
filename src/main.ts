@@ -278,6 +278,16 @@ app.addEventListener('click',async event=>{
   if(action==='search'){const input=document.querySelector<HTMLInputElement>('#explore-search')||document.querySelector<HTMLInputElement>('#global-search');if(input)searchTerm=input.value;view='explore';render();}
   if(action==='signout'){await supabase.auth.signOut();session=null;user=null;profile=null;render();}
   if(action==='account'){notify('Signed in as '+(user?.email||user?.phone||'ManiHub member'));}
+  if(action==='save-stock'){
+    const productId=target.dataset.productId||'';
+    const input=document.querySelector<HTMLInputElement>('[data-stock-input="'+productId+'"]');
+    const quantity=Number(input?.value);
+    if(!user||!productId||!Number.isInteger(quantity)||quantity<0){notify('Enter a valid stock quantity.','error');return;}
+    const {data,error}=await supabase.from('manihub_store_products').update({stock_quantity:quantity,status:quantity===0?'out_of_stock':'active',updated_at:new Date().toISOString()}).eq('id',productId).eq('owner_id',user.id).select('id,stock_quantity,status').single();
+    if(error){notify(error.message,'error');return;}
+    await loadMarketplace();render();notify('Inventory updated. Remaining stock: '+data.stock_quantity+'.');
+  }
+  if(action==='promote-product'){notify('This product is ready for its own advert. Paid promotion will stay disabled until the advertising campaign and payment setup are connected.');}
   if(action==='new-product'){const editor=document.querySelector<HTMLElement>('#product-editor');if(editor)editor.hidden=false;}
   if(action==='cancel-product'){const editor=document.querySelector<HTMLElement>('#product-editor');if(editor)editor.hidden=true;}
   if(action==='change-store'){activeStore=null;view='my-store';render();}
