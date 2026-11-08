@@ -3,7 +3,7 @@ import type { Session, User } from '@supabase/supabase-js';
 import logoUrl from '../assets/manihub-logo-transparent.png';
 import './style.css';
 
-type Store = { id:string; store_name:string; description:string; category:string; province:string; town:string; logo_url:string|null; banner_url:string|null; seller_type?:string };
+type Store = { id:string; owner_id:string; store_name:string; description:string; category:string; province:string; town:string; logo_url:string|null; banner_url:string|null; seller_type?:string };
 type Product = { id:string; product_name:string; description:string; category:string; price_zar:number; stock_quantity:number; media_urls:string[]; store_id:string; manihub_stores?:{store_name:string;town:string;province:string;logo_url:string|null}|null };
 type Listing = { id:string; title:string; description:string; price:number; category:string; seller_name:string; province:string; town:string|null; photo_url:string|null };
 type Mode = 'signin'|'signup'|'reset';
@@ -73,8 +73,8 @@ function exploreMarkup():string{
 }
 
 function myStoreMarkup():string{
-  const own=stores.filter(s=>s.id===activeStore?.id);
-  const store=activeStore||own[0]||null;
+  const store=activeStore||stores.find(s=>s.owner_id===user?.id)||null;
+  activeStore=store;
   if(!store)return '<section class="page-heading"><span class="eyebrow">SELL ON MANIHUB</span><h1>Open your ManiHub store</h1><p>Create your storefront and start introducing your business to South Africa.</p></section><section class="form-panel"><form id="store-form" class="stack-form"><label>Business or store name<input name="store_name" required minlength="2" maxlength="90" placeholder="e.g. Sihle Fashion"></label><label>Category<select name="category">'+categories.filter(x=>x!=='All').map(x=>'<option>'+esc(x)+'</option>').join('')+'</select></label><label>Province<select name="province" required><option value="">Choose province</option>'+provinces.map(x=>'<option>'+esc(x)+'</option>').join('')+'</select></label><label>Town or city<input name="town" placeholder="Town or city"></label><label>Short description<textarea name="description" maxlength="1200" rows="3" placeholder="Tell customers about your store"></textarea></label><button class="primary-button" type="submit">Create my store</button></form></section>';
   const mine=products.filter(p=>p.store_id===store.id);
   return '<section class="page-heading"><span class="eyebrow">SELLER WORKSPACE</span><h1>'+esc(store.store_name)+'</h1><p>'+esc(store.description||'Your ManiHub storefront')+' · '+esc([store.town,store.province].filter(Boolean).join(', '))+'</p></section><section class="seller-actions"><button class="primary-button" data-action="new-product">＋ Add a product</button><button class="subtle-button" data-action="change-store">Manage store</button></section><section id="product-editor" class="form-panel" hidden><form id="product-form" class="stack-form"><h2>Add a product</h2><label>Product name<input name="product_name" required minlength="2" maxlength="140"></label><label>Category<select name="category">'+categories.filter(x=>x!=='All').map(x=>'<option>'+esc(x)+'</option>').join('')+'</select></label><label>Price (ZAR)<input name="price_zar" type="number" min="0" step="0.01" required></label><label>Available stock<input name="stock_quantity" type="number" min="0" step="1" value="1" required></label><label>Description<textarea name="description" rows="3" maxlength="4000"></textarea></label><label>Product image URL (optional)<input name="image_url" type="url" placeholder="https://…"></label><div class="form-actions"><button class="primary-button" type="submit">Publish product</button><button class="subtle-button" type="button" data-action="cancel-product">Cancel</button></div></form></section><section class="content-section"><div class="section-heading"><h2>Your products</h2><span class="result-count">'+mine.length+' products</span></div><div class="product-grid">'+(mine.length?mine.map(productCard).join(''):'<div class="empty-state compact"><p>Your published products will appear here.</p></div>')+'</div></section>';
@@ -115,7 +115,7 @@ async function ensureProfile(current:User):Promise<void>{
 
 async function loadMarketplace():Promise<void>{
   const [storeResult,productResult,listingResult]=await Promise.all([
-    supabase.from('manihub_stores').select('id,store_name,description,category,province,town,logo_url,banner_url,seller_type').eq('status','active').order('created_at',{ascending:false}).limit(30),
+    supabase.from('manihub_stores').select('id,owner_id,store_name,description,category,province,town,logo_url,banner_url,seller_type').eq('status','active').order('created_at',{ascending:false}).limit(30),
     supabase.from('manihub_store_products').select('id,product_name,description,category,price_zar,stock_quantity,media_urls,store_id,manihub_stores(store_name,town,province,logo_url)').eq('status','active').order('created_at',{ascending:false}).limit(40),
     supabase.from('listings').select('id,title,description,price,category,seller_name,province,town,photo_url').eq('status','active').order('created_at',{ascending:false}).limit(40)
   ]);
@@ -140,7 +140,7 @@ async function handleAuthSubmit(event:SubmitEvent):Promise<void>{
       if(!identifier.includes('@'))throw new Error('Password reset currently requires the email address on your account.');
       const {error}=await supabase.auth.resetPasswordForEmail(identifier,{redirectTo:window.location.origin});
       if(error)throw error;
-      mode='signin';render();showAuthMessage('If an account exists for that email, a password reset link has been sent.');return;
+      mode='signin';busy=false;render();showAuthMessage('If an account exists for that email, a password reset link has been sent.');return;
     }
     if(mode==='signup'){
       const displayName=String(data.get('display_name')||'').trim();
@@ -197,7 +197,7 @@ app.addEventListener('submit',async event=>{
     event.preventDefault();if(!user)return;
     const data=new FormData(form);
     const payload={owner_id:user.id,store_name:String(data.get('store_name')||'').trim(),description:String(data.get('description')||''),category:String(data.get('category')||'General'),province:String(data.get('province')||''),town:String(data.get('town')||''),status:'active',seller_type:profile?.account_type==='business'?'business':'individual'};
-    const {data:created,error}=await supabase.from('manihub_stores').insert(payload).select('id,store_name,description,category,province,town,logo_url,banner_url,seller_type').single();
+    const {data:created,error}=await supabase.from('manihub_stores').insert(payload).select('id,owner_id,store_name,description,category,province,town,logo_url,banner_url,seller_type').single();
     if(error){notify(error.message,'error');return;}
     activeStore=created as Store;stores.unshift(activeStore);render();notify('Your ManiHub store is open.');
   }
