@@ -124,18 +124,17 @@ function storeDetailMarkup():string{
 }
 
 function productDetailMarkup():string{
-  if(!selectedProduct)return '<section class="empty-state"><h3>Product not found</h3><button class="subtle-button" data-view="explore">Back to Explore</button></section>';
-  const isStoreProduct='product_name' in selectedProduct;
-  const title=isStoreProduct?selectedProduct.product_name:selectedProduct.title;
-  const description=selectedProduct.description||'No description has been added yet.';
-  const image=isStoreProduct?(selectedProduct.media_urls?.[0]||''):(selectedProduct.photo_url||'');
-  const price=isStoreProduct?selectedProduct.price_zar:selectedProduct.price;
-  const storeInfo=isStoreProduct?(Array.isArray(selectedProduct.manihub_stores)?selectedProduct.manihub_stores[0]:selectedProduct.manihub_stores):null;
-  const seller=isStoreProduct?(storeInfo?.store_name||'ManiHub seller'):(selectedProduct.seller_name||'Community seller');
-  if(isStoreProduct)activeStore=stores.find(store=>store.id===selectedProduct.store_id)||null;
-  return '<section class="page-heading"><button class="subtle-button" data-view="explore">← Back to Explore</button></section><section class="product-detail-panel">'+(image?'<img class="product-detail-image" src="'+esc(image)+'" alt="'+esc(title)+'">':'<div class="product-detail-placeholder">ManiHub</div>')+'<div class="product-detail-copy"><span class="eyebrow">'+esc(selectedProduct.category||'Marketplace')+'</span><h1>'+esc(title)+'</h1><strong class="detail-price">'+money(Number(price))+'</strong><p>'+esc(description)+'</p><div class="detail-seller"><span class="store-avatar">'+esc(initials(seller))+'</span><div><strong>'+esc(seller)+'</strong><small>'+esc(isStoreProduct?[storeInfo?.town,storeInfo?.province].filter(Boolean).join(', '):[selectedProduct.town,selectedProduct.province].filter(Boolean).join(', '))+'</small></div></div>'+(isStoreProduct&&activeStore?.owner_id!==user?.id?'<button class="primary-button" data-action="start-conversation">Message seller</button>':isStoreProduct?'<button class="subtle-button" data-view="my-store">Manage your product</button>':'<p class="detail-note">Contact options for community listings will be connected in the next seller tools milestone.</p>')+'</div></section>';
+  const item=selectedProduct;
+  if(!item)return '<section class="empty-state"><h3>Product not found</h3><button class="subtle-button" data-view="explore">Back to Explore</button></section>';
+  if('product_name' in item){
+    const storeInfo=Array.isArray(item.manihub_stores)?item.manihub_stores[0]:item.manihub_stores;
+    const image=item.media_urls?.[0]||'';
+    const seller=storeInfo?.store_name||'ManiHub seller';
+    activeStore=stores.find(store=>store.id===item.store_id)||null;
+    return '<section class="page-heading"><button class="subtle-button" data-view="explore">← Back to Explore</button></section><section class="product-detail-panel">'+(image?'<img class="product-detail-image" src="'+esc(image)+'" alt="'+esc(item.product_name)+'">':'<div class="product-detail-placeholder">ManiHub</div>')+'<div class="product-detail-copy"><span class="eyebrow">'+esc(item.category||'Marketplace')+'</span><h1>'+esc(item.product_name)+'</h1><strong class="detail-price">'+money(Number(item.price_zar))+'</strong><p>'+esc(item.description||'No description has been added yet.')+'</p><div class="detail-seller"><span class="store-avatar">'+esc(initials(seller))+'</span><div><strong>'+esc(seller)+'</strong><small>'+esc([storeInfo?.town,storeInfo?.province].filter(Boolean).join(', '))+'</small></div></div>'+(activeStore?.owner_id!==user?.id?'<button class="primary-button" data-action="start-conversation">Message seller</button>':'<button class="subtle-button" data-view="my-store">Manage your product</button>')+'</div></section>';
+  }
+  return '<section class="page-heading"><button class="subtle-button" data-view="explore">← Back to Explore</button></section><section class="product-detail-panel">'+(item.photo_url?'<img class="product-detail-image" src="'+esc(item.photo_url)+'" alt="'+esc(item.title)+'">':'<div class="product-detail-placeholder">ManiHub</div>')+'<div class="product-detail-copy"><span class="eyebrow">'+esc(item.category||'Marketplace')+'</span><h1>'+esc(item.title)+'</h1><strong class="detail-price">'+money(Number(item.price))+'</strong><p>'+esc(item.description||'No description has been added yet.')+'</p><div class="detail-seller"><span class="store-avatar">'+esc(initials(item.seller_name||'Community seller'))+'</span><div><strong>'+esc(item.seller_name||'Community seller')+'</strong><small>'+esc([item.town,item.province].filter(Boolean).join(', '))+'</small></div></div><p class="detail-note">Contact options for community listings will be connected in the next seller tools milestone.</p></div></section>';
 }
-
 function pageMarkup():string{
   if(view==='product-detail')return productDetailMarkup();
   if(view==='explore')return exploreMarkup();
