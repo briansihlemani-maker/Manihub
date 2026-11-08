@@ -6,7 +6,7 @@ import './style.css';
 type Store = { id:string; owner_id:string; store_name:string; description:string; category:string; province:string; town:string; logo_url:string|null; banner_url:string|null; seller_type?:string };
 type Product = { id:string; product_name:string; description:string; category:string; price_zar:number; stock_quantity:number; media_urls:string[]; store_id:string; manihub_stores?:{store_name:string;town:string;province:string;logo_url:string|null}|{store_name:string;town:string;province:string;logo_url:string|null}[]|null };
 type Listing = { id:string; title:string; description:string; price:number; category:string; seller_name:string; province:string; town:string|null; photo_url:string|null };
-type Mode = 'signin'|'signup'|'reset';
+type Mode = 'signin'|'signup'|'reset'|'verify'|'new-password';
 type View = 'home'|'explore'|'my-store'|'messages';
 const app=document.querySelector<HTMLDivElement>('#app')!;
 const toastRoot=document.querySelector<HTMLDivElement>('#toast-root')!;
@@ -17,6 +17,7 @@ let stores:Store[]=[];
 let products:Product[]=[];
 let listings:Listing[]=[];
 let mode:Mode='signin';
+let pendingPhone='';
 let view:View='home';
 let category='All';
 let searchTerm='';
@@ -33,17 +34,17 @@ const initials=(name:string)=>name.trim().split(/\s+/).slice(0,2).map(x=>x[0]||'
 const logo=(className='brand-logo')=>'<img class="'+className+'" src="'+logoUrl+'" alt="ManiHub logo">';
 
 function authMarkup():string{
-  const title=mode==='signup'?'Create your account':mode==='reset'?'Reset your password':'Welcome back';
-  const intro=mode==='signup'?'Join South Africa’s community marketplace.':'Sign in to your ManiHub account';
-  return '<main class="auth-screen"><div class="auth-brand">'+logo('auth-logo')+'<div class="tagline">BUY. SELL. GROW. TOGETHER.</div></div><section class="auth-card"><div class="eyebrow">SOUTH AFRICA COMMUNITY MARKETPLACE</div><h1>'+title+'</h1><p class="auth-intro">'+intro+'</p><div class="backend-status '+backendStatus+'"><span></span>'+(backendStatus==='connected'?'ManiHub account service connected':backendStatus==='checking'?'Connecting to ManiHub account service…':'Connection unavailable')+'</div><div id="auth-message" class="inline-message" hidden></div><form id="auth-form">'+
-    (mode==='signup'?'<label>Your name<input name="display_name" autocomplete="name" placeholder="Full name" required minlength="2"></label>':'')+
-    (mode!=='reset'?'<label>Email address or cellphone number<input name="identifier" autocomplete="username" placeholder="you@example.com or 082 123 4567" required></label>':'<label>Email address<input name="identifier" type="email" autocomplete="email" placeholder="you@example.com" required></label>')+
-    (mode!=='reset'?'<label>Password<div class="password-field"><input name="password" type="password" autocomplete="'+(mode==='signup'?'new-password':'current-password')+'" placeholder="Enter your password" required minlength="8"><button type="button" class="password-toggle" data-action="toggle-password" aria-label="Show password">Show</button></div></label>':'')+
-    (mode==='signup'?'<label>Account type<select name="account_type"><option value="individual">Individual</option><option value="business">Registered business</option></select></label>':'')+
-    (mode==='signin'?'<div class="auth-links"><button type="button" class="text-button" data-action="reset-mode">Forgot password?</button></div>':'')+
-    '<button class="primary-button full-button" type="submit" '+(busy?'disabled':'')+'>'+(busy?'Please wait…':mode==='signup'?'Create account':mode==='reset'?'Send reset link':'Sign in')+'</button></form><div class="auth-divider"><span>or</span></div><p class="auth-switch">'+(mode==='signin'?'Don’t have an account? <button class="text-button" data-action="signup-mode">Create an account</button>':mode==='signup'?'Already have an account? <button class="text-button" data-action="signin-mode">Sign in</button>':'Remembered your password? <button class="text-button" data-action="signin-mode">Back to sign in</button>')+'</p></section><p class="auth-footer">One Hub. Everything you need. · South Africa</p></main>';
+  const title=mode==='signup'?'Create your account':mode==='reset'?'Reset your password':mode==='verify'?'Verify your cellphone':mode==='new-password'?'Choose a new password':'Welcome back';
+  const intro=mode==='signup'?'Join South Africa’s community marketplace.':mode==='verify'?'Enter the six-digit code sent to '+pendingPhone+'.':mode==='new-password'?'Create a new password for your ManiHub account.':'Sign in to your ManiHub account';
+  const identity=mode==='reset'?'<label>Email address<input name="identifier" type="email" autocomplete="email" placeholder="you@example.com" required></label>':mode==='verify'?'<label>Verification code<input name="token" inputmode="numeric" autocomplete="one-time-code" placeholder="6-digit code" minlength="6" maxlength="6" required></label>':mode==='new-password'?'<label>New password<input name="password" type="password" autocomplete="new-password" placeholder="At least 8 characters" minlength="8" required></label><label>Confirm new password<input name="password_confirm" type="password" autocomplete="new-password" placeholder="Enter the password again" minlength="8" required></label>':'<label>Email address or cellphone number<input name="identifier" autocomplete="username" placeholder="you@example.com or 082 123 4567" required></label>';
+  const password=mode==='signin'||mode==='signup'?'<label>Password<div class="password-field"><input name="password" type="password" autocomplete="'+(mode==='signup'?'new-password':'current-password')+'" placeholder="Enter your password" required minlength="8"><button type="button" class="password-toggle" data-action="toggle-password" aria-label="Show password">Show</button></div></label>':'';
+  const display=mode==='signup'?'<label>Your name<input name="display_name" autocomplete="name" placeholder="Full name" required minlength="2"></label>':'';
+  const account=mode==='signup'?'<label>Account type<select name="account_type"><option value="individual">Individual</option><option value="business">Registered business</option></select></label>':'';
+  const links=mode==='signin'?'<div class="auth-links"><button type="button" class="text-button" data-action="reset-mode">Forgot password?</button></div>':mode==='verify'?'<div class="auth-links"><button type="button" class="text-button" data-action="resend-otp">Resend code</button></div>':'';
+  const label=busy?'Please wait…':mode==='signup'?'Create account':mode==='reset'?'Send reset link':mode==='verify'?'Verify code':mode==='new-password'?'Save new password':'Sign in';
+  const switcher=mode==='signin'?'Don’t have an account? <button class="text-button" data-action="signup-mode">Create an account</button>':mode==='signup'?'Already have an account? <button class="text-button" data-action="signin-mode">Sign in</button>':mode==='verify'?'Entered the wrong number? <button class="text-button" data-action="signin-mode">Back to sign in</button>':mode==='reset'?'Remembered your password? <button class="text-button" data-action="signin-mode">Back to sign in</button>':'';
+  return '<main class="auth-screen"><div class="auth-brand">'+logo('auth-logo')+'<div class="tagline">BUY. SELL. GROW. TOGETHER.</div></div><section class="auth-card"><div class="eyebrow">SOUTH AFRICA COMMUNITY MARKETPLACE</div><h1>'+title+'</h1><p class="auth-intro">'+intro+'</p><div class="backend-status '+backendStatus+'"><span></span>'+(backendStatus==='connected'?'ManiHub account service connected':backendStatus==='checking'?'Connecting to ManiHub account service…':'Connection unavailable')+'</div><div id="auth-message" class="inline-message" hidden></div><form id="auth-form">'+display+identity+password+account+links+'<button class="primary-button full-button" type="submit" '+(busy?'disabled':'')+'>'+label+'</button></form>'+(switcher?'<div class="auth-divider"><span>or</span></div><p class="auth-switch">'+switcher+'</p>':'')+'</section><p class="auth-footer">One Hub. Everything you need. · South Africa</p></main>';
 }
-
 function shellMarkup():string{
   const nav=(id:View,label:string,icon:string)=>'<button class="nav-link '+(view===id?'active':'')+'" data-view="'+id+'"><span class="nav-icon">'+icon+'</span>'+label+'</button>';
   return '<div class="site-shell"><header class="site-header"><button class="brand-button" data-view="home">'+logo('header-logo')+'<span class="brand-word">Mani<span>Hub</span><small>BUY. SELL. GROW. TOGETHER.</small></span></button><div class="header-search"><span>⌕</span><input id="global-search" value="'+esc(searchTerm)+'" placeholder="Search products, stores and services"><button data-action="search">Search</button></div><div class="header-actions"><button class="icon-button" data-view="messages" aria-label="Messages">✉</button><button class="account-button" data-action="account">'+esc(profile?.display_name||user?.email||'My account')+' ▾</button></div></header><nav class="main-nav">'+nav('home','Home','⌂')+nav('explore','Explore','⌕')+nav('my-store','My business','▦')+nav('messages','Messages','✉')+'<button class="nav-link mobile-account" data-action="signout">Sign out</button></nav><main id="page-content">'+pageMarkup()+'</main><footer class="site-footer"><strong>ManiHub</strong><span>One Hub. Everything you need. · South Africa</span><span>Buy. Sell. Grow. Together.</span></footer></div>';
@@ -129,6 +130,13 @@ async function loadMarketplace():Promise<void>{
   if(listingResult.error)console.warn('Community listings could not load',listingResult.error.message);
 }
 
+function normalizePhone(value:string):string{
+  const compact=value.replace(/[^0-9+]/g,'');
+  if(compact.startsWith('0'))return '+27'+compact.slice(1);
+  if(compact.startsWith('27'))return '+'+compact;
+  return compact;
+}
+
 async function handleAuthSubmit(event:SubmitEvent):Promise<void>{
   event.preventDefault();
   if(busy)return;
@@ -144,18 +152,36 @@ async function handleAuthSubmit(event:SubmitEvent):Promise<void>{
       if(error)throw error;
       mode='signin';busy=false;render();showAuthMessage('If an account exists for that email, a password reset link has been sent.');return;
     }
+    if(mode==='verify'){
+      const token=String(data.get('token')||'').trim();
+      const {data:result,error}=await supabase.auth.verifyOtp({phone:pendingPhone,token,type:'sms'});
+      if(error)throw error;
+      if(!result.user)throw new Error('The verification code was not accepted. Request a new code and try again.');
+      session=result.session;user=result.user;await ensureProfile(result.user);await loadMarketplace();view='home';busy=false;render();notify('Your cellphone number is verified. Welcome to ManiHub.');return;
+    }
+    if(mode==='new-password'){
+      const confirmation=String(data.get('password_confirm')||'');
+      if(password.length<8)throw new Error('Use a password with at least 8 characters.');
+      if(password!==confirmation)throw new Error('The passwords do not match.');
+      const {error}=await supabase.auth.updateUser({password});
+      if(error)throw error;
+      mode='signin';busy=false;await supabase.auth.signOut();session=null;user=null;profile=null;render();notify('Your password has been changed. Sign in with your new password.');return;
+    }
     if(mode==='signup'){
       const displayName=String(data.get('display_name')||'').trim();
       const accountType=String(data.get('account_type')||'individual');
-      const credentials=identifier.includes('@')?{email:identifier,password}:{phone:identifier,password};
+      const isEmail=identifier.includes('@');
+      const phone=normalizePhone(identifier);
+      const credentials=isEmail?{email:identifier,password}:{phone,password};
       const {data:result,error}=await supabase.auth.signUp({...credentials,options:{data:{display_name:displayName,account_type:accountType}}});
       if(error)throw error;
       if(result.session&&result.user){
         session=result.session;user=result.user;await ensureProfile(result.user);await loadMarketplace();view='home';busy=false;render();notify('Welcome to ManiHub, '+displayName+'!');return;
       }
-      mode='signin';busy=false;render();showAuthMessage('Your account request was received. Check your email or phone for the verification code/link before signing in.');return;
+      if(!isEmail){pendingPhone=phone;mode='verify';busy=false;render();showAuthMessage('A verification code has been sent to your cellphone. Enter it below to finish creating your account.');return;}
+      mode='signin';busy=false;render();showAuthMessage('Your account request was received. Check your email for the verification link before signing in.');return;
     }
-    const credentials=identifier.includes('@')?{email:identifier,password}:{phone:identifier,password};
+    const credentials=identifier.includes('@')?{email:identifier,password}:{phone:normalizePhone(identifier),password};
     const {data:result,error}=await supabase.auth.signInWithPassword(credentials);
     if(error)throw error;
     session=result.session;user=result.user;await ensureProfile(result.user);await loadMarketplace();view='home';busy=false;render();notify('You are signed in.');
@@ -185,6 +211,7 @@ app.addEventListener('click',async event=>{
   if(action==='signup-mode'){mode='signup';render();}
   if(action==='signin-mode'){mode='signin';render();}
   if(action==='reset-mode'){mode='reset';render();}
+  if(action==='resend-otp'){if(!pendingPhone){notify('Enter your cellphone number again to request a code.','error');mode='signin';render();return;}const {error}=await supabase.auth.resend({type:'sms',phone:pendingPhone});if(error)notify(error.message,'error');else notify('A new verification code has been sent.');}
   if(action==='toggle-password'){const input=document.querySelector<HTMLInputElement>('#auth-form input[name="password"]');if(input){input.type=input.type==='password'?'text':'password';target.textContent=input.type==='password'?'Show':'Hide';}}
   if(action==='search'){const input=document.querySelector<HTMLInputElement>('#explore-search')||document.querySelector<HTMLInputElement>('#global-search');if(input)searchTerm=input.value;view='explore';render();}
   if(action==='signout'){await supabase.auth.signOut();session=null;user=null;profile=null;render();}
@@ -222,7 +249,8 @@ async function init():Promise<void>{
     const {data,error}=await supabase.auth.getSession();
     if(error)throw error;
     await startSession(data.session);
-    supabase.auth.onAuthStateChange((_event,nextSession)=>{void startSession(nextSession);});
+    supabase.auth.onAuthStateChange((event,nextSession)=>{if(event==='PASSWORD_RECOVERY'){session=nextSession;user=nextSession?.user||null;mode='new-password';render();return;}void startSession(nextSession);});
+    if(new URLSearchParams(window.location.hash.slice(1)).get('type')==='recovery'){mode='new-password';render();}
   }catch(error){
     console.error('ManiHub startup failed',error);
     backendStatus='error';
