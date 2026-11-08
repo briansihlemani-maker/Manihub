@@ -41,6 +41,7 @@ The browser/mobile client uses only the Supabase publishable key. Row-level secu
 - Profile bootstrap after successful authentication.
 - Marketplace reads for active listings, stores and products.
 - Seller storefront creation and product publishing against existing RLS-protected tables.
+- Product image upload to the existing public `listing-photos` bucket, enforcing its 15 MB limit and JPG/PNG/WEBP types; product imagery is displayed in a 16:9 frame.
 - Private buyer/seller conversations through the existing RPC and RLS-protected messages table.
 - Relative PWA asset paths for deployment under a root domain or sub-path.
 - Automated TypeScript and Vite production build checks.
