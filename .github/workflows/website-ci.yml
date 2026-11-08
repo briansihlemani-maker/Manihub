@@ -20,3 +20,9 @@ jobs:
         run: npm run build
       - name: Verify output files
         run: test -s dist/index.html && test -s dist/manifest.webmanifest && test -s dist/assets/manihub-app-icon.svg
+      - name: Save website preview build
+        uses: actions/upload-artifact@v4
+        with:
+          name: manihub-website-v1-preview
+          path: dist/
+          retention-days: 7
