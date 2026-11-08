@@ -21,6 +21,7 @@ let view:View='home';
 let category='All';
 let searchTerm='';
 let busy=false;
+let backendStatus:'checking'|'connected'|'error'='checking';
 let activeStore:Store|null=null;
 
 const categories=['All','Electronics','Clothing','Home & Living','Food & Groceries','Beauty','Automotive','Services','Property','Other'];
@@ -213,13 +214,18 @@ app.addEventListener('submit',async event=>{
 });
 
 async function init():Promise<void>{
+  render();
   try{
+    const {error:healthError}=await supabase.from('listings').select('id',{head:true,count:'exact'}).limit(1);
+    if(healthError)throw healthError;
+    backendStatus='connected';
     const {data,error}=await supabase.auth.getSession();
     if(error)throw error;
     await startSession(data.session);
     supabase.auth.onAuthStateChange((_event,nextSession)=>{void startSession(nextSession);});
   }catch(error){
     console.error('ManiHub startup failed',error);
+    backendStatus='error';
     app.innerHTML='<main class="auth-screen"><div class="auth-brand">'+logo('auth-logo')+'</div><section class="auth-card"><h1>We could not connect</h1><p class="auth-intro">ManiHub could not reach the account service. Check your internet connection and try again.</p><p class="inline-message">'+esc(error instanceof Error?error.message:'Connection error')+'</p><button class="primary-button full-button" id="retry-connect">Try again</button></section></main>';
     document.querySelector('#retry-connect')?.addEventListener('click',()=>location.reload());
   }
