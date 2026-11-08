@@ -7,7 +7,9 @@ type Store = { id:string; owner_id:string; store_name:string; description:string
 type Product = { id:string; product_name:string; description:string; category:string; price_zar:number; stock_quantity:number; media_urls:string[]; store_id:string; manihub_stores?:{store_name:string;town:string;province:string;logo_url:string|null}|{store_name:string;town:string;province:string;logo_url:string|null}[]|null };
 type Listing = { id:string; title:string; description:string; price:number; category:string; seller_name:string; province:string; town:string|null; photo_url:string|null };
 type Mode = 'signin'|'signup'|'reset'|'verify'|'new-password';
-type View = 'home'|'explore'|'my-store'|'messages';
+type View = 'home'|'explore'|'my-store'|'messages'|'store-detail';
+type Conversation = {id:string;subject:string|null;conversation_type:string;updated_at:string};
+type Message = {id:string;sender_id:string;body:string;created_at:string};
 const app=document.querySelector<HTMLDivElement>('#app')!;
 const toastRoot=document.querySelector<HTMLDivElement>('#toast-root')!;
 let session:Session|null=null;
@@ -24,6 +26,9 @@ let searchTerm='';
 let busy=false;
 let backendStatus:'checking'|'connected'|'error'='checking';
 let activeStore:Store|null=null;
+let conversations:Conversation[]=[];
+let selectedConversationId:string|null=null;
+let messages:Message[]=[];
 
 const categories=['All','Electronics','Clothing','Home & Living','Food & Groceries','Beauty','Automotive','Services','Property','Other'];
 const provinces=['Eastern Cape','Free State','Gauteng','KwaZulu-Natal','Limpopo','Mpumalanga','Northern Cape','North West','Western Cape'];
@@ -83,10 +88,38 @@ function myStoreMarkup():string{
   return '<section class="page-heading"><span class="eyebrow">SELLER WORKSPACE</span><h1>'+esc(store.store_name)+'</h1><p>'+esc(store.description||'Your ManiHub storefront')+' · '+esc([store.town,store.province].filter(Boolean).join(', '))+'</p></section><section class="seller-actions"><button class="primary-button" data-action="new-product">＋ Add a product</button><button class="subtle-button" data-action="change-store">Manage store</button></section><section id="product-editor" class="form-panel" hidden><form id="product-form" class="stack-form"><h2>Add a product</h2><label>Product name<input name="product_name" required minlength="2" maxlength="140"></label><label>Category<select name="category">'+categories.filter(x=>x!=='All').map(x=>'<option>'+esc(x)+'</option>').join('')+'</select></label><label>Price (ZAR)<input name="price_zar" type="number" min="0" step="0.01" required></label><label>Available stock<input name="stock_quantity" type="number" min="0" step="1" value="1" required></label><label>Description<textarea name="description" rows="3" maxlength="4000"></textarea></label><label>Product image URL (optional)<input name="image_url" type="url" placeholder="https://…"></label><div class="form-actions"><button class="primary-button" type="submit">Publish product</button><button class="subtle-button" type="button" data-action="cancel-product">Cancel</button></div></form></section><section class="content-section"><div class="section-heading"><h2>Your products</h2><span class="result-count">'+mine.length+' products</span></div><div class="product-grid">'+(mine.length?mine.map(productCard).join(''):'<div class="empty-state compact"><p>Your published products will appear here.</p></div>')+'</div></section>';
 }
 
+
+async function loadConversations():Promise<void>{
+  if(!user){conversations=[];return;}
+  const {data:participantRows,error}=await supabase.from('manihub_conversation_participants').select('conversation_id').eq('user_id',user.id);
+  if(error){console.warn('Could not load conversations',error.message);conversations=[];return;}
+  const ids=(participantRows||[]).map((row:{conversation_id:string})=>row.conversation_id);
+  if(!ids.length){conversations=[];return;}
+  const {data,error:conversationError}=await supabase.from('manihub_conversations').select('id,subject,conversation_type,updated_at').in('id',ids).order('updated_at',{ascending:false});
+  if(conversationError){console.warn('Could not load conversations',conversationError.message);conversations=[];return;}
+  conversations=(data||[]) as Conversation[];
+}
+async function loadMessages(conversationId:string):Promise<void>{
+  const {data,error}=await supabase.from('manihub_messages').select('id,sender_id,body,created_at').eq('conversation_id',conversationId).order('created_at',{ascending:true}).limit(200);
+  if(error){notify(error.message,'error');messages=[];return;}
+  messages=(data||[]) as Message[];
+}
+function messagesMarkup():string{
+  const selected=conversations.find(c=>c.id===selectedConversationId);
+  if(!selected)return '<section class="page-heading"><span class="eyebrow">STAY CONNECTED</span><h1>Messages</h1><p>Talk directly with ManiHub businesses and customers.</p></section><section class="inbox-panel">'+(conversations.length?conversations.map(c=>'<button class="conversation-row" data-conversation="'+esc(c.id)+'"><span class="conversation-avatar">MH</span><span><strong>'+esc((c.subject||'ManiHub conversation').replace('Store:','Store '))+'</strong><small>'+esc(c.conversation_type==='support'?'ManiHub support':'Buyer and seller conversation')+'</small></span><span class="store-arrow">›</span></button>').join(''):'<div class="empty-state compact"><h3>No messages yet</h3><p>Open a store and choose Message seller to start a conversation.</p></div>')+'</section>';
+  return '<section class="page-heading"><button class="subtle-button" data-action="inbox">← All messages</button><h1>Conversation</h1><p>Messages are visible only to the people in this conversation.</p></section><section class="chat-panel"><div class="chat-history">'+(messages.length?messages.map(m=>'<div class="chat-message '+(m.sender_id===user?.id?'mine':'')+'"><p>'+esc(m.body)+'</p><small>'+(m.sender_id===user?.id?'You':'Seller / customer')+' · '+esc(new Date(m.created_at).toLocaleString('en-ZA',{dateStyle:'short',timeStyle:'short'}))+'</small></div>').join(''):'<div class="empty-state compact"><p>This conversation is ready. Send the first message.</p></div>')+'</div><form id="message-form" class="message-form"><input name="body" maxlength="10000" placeholder="Write a message…" required><button class="primary-button" type="submit">Send</button></form></section>';
+}
+function storeDetailMarkup():string{
+  if(!activeStore)return '<section class="empty-state"><h3>Store not found</h3><button class="subtle-button" data-view="explore">Back to Explore</button></section>';
+  const storeProducts=products.filter(p=>p.store_id===activeStore?.id);
+  return '<section class="store-detail-head"><div class="store-detail-brand">'+(activeStore.logo_url?'<img src="'+esc(activeStore.logo_url)+'" alt="">':'<span class="store-avatar large">'+esc(initials(activeStore.store_name))+'</span>')+'<div><span class="eyebrow">MANIHUB STOREFRONT</span><h1>'+esc(activeStore.store_name)+'</h1><p>'+esc([activeStore.town,activeStore.province].filter(Boolean).join(', '))+' · '+esc(activeStore.category)+'</p></div></div><p class="store-description">'+esc(activeStore.description||'Welcome to our ManiHub store.')+'</p><button class="primary-button" data-action="start-conversation">Message seller</button></section><section class="content-section"><div class="section-heading"><h2>Store catalogue</h2><span class="result-count">'+storeProducts.length+' products</span></div><div class="product-grid">'+(storeProducts.length?storeProducts.map(productCard).join(''):'<div class="empty-state compact"><p>This store has not published products yet.</p></div>')+'</div></section>';
+}
+
 function pageMarkup():string{
   if(view==='explore')return exploreMarkup();
   if(view==='my-store')return myStoreMarkup();
-  if(view==='messages')return '<section class="page-heading"><span class="eyebrow">STAY CONNECTED</span><h1>Messages</h1><p>ManiHub buyer and seller messaging is part of the shared marketplace build. We will connect this screen to your private conversations next.</p><div class="notice-card">Your messages are private and will only be visible to conversation participants.</div></section>';
+  if(view==='messages')return messagesMarkup();
+  if(view==='store-detail')return storeDetailMarkup();
   return homeMarkup();
 }
 
@@ -157,7 +190,7 @@ async function handleAuthSubmit(event:SubmitEvent):Promise<void>{
       const {data:result,error}=await supabase.auth.verifyOtp({phone:pendingPhone,token,type:'sms'});
       if(error)throw error;
       if(!result.user)throw new Error('The verification code was not accepted. Request a new code and try again.');
-      session=result.session;user=result.user;await ensureProfile(result.user);await loadMarketplace();view='home';busy=false;render();notify('Your cellphone number is verified. Welcome to ManiHub.');return;
+      session=result.session;user=result.user;await ensureProfile(result.user);await loadMarketplace();await loadConversations();view='home';busy=false;render();notify('Your cellphone number is verified. Welcome to ManiHub.');return;
     }
     if(mode==='new-password'){
       const confirmation=String(data.get('password_confirm')||'');
@@ -176,7 +209,7 @@ async function handleAuthSubmit(event:SubmitEvent):Promise<void>{
       const {data:result,error}=await supabase.auth.signUp({...credentials,options:{data:{display_name:displayName,account_type:accountType}}});
       if(error)throw error;
       if(result.session&&result.user){
-        session=result.session;user=result.user;await ensureProfile(result.user);await loadMarketplace();view='home';busy=false;render();notify('Welcome to ManiHub, '+displayName+'!');return;
+        session=result.session;user=result.user;await ensureProfile(result.user);await loadMarketplace();await loadConversations();view='home';busy=false;render();notify('Welcome to ManiHub, '+displayName+'!');return;
       }
       if(!isEmail){pendingPhone=phone;mode='verify';busy=false;render();showAuthMessage('A verification code has been sent to your cellphone. Enter it below to finish creating your account.');return;}
       mode='signin';busy=false;render();showAuthMessage('Your account request was received. Check your email for the verification link before signing in.');return;
@@ -184,7 +217,7 @@ async function handleAuthSubmit(event:SubmitEvent):Promise<void>{
     const credentials=identifier.includes('@')?{email:identifier,password}:{phone:normalizePhone(identifier),password};
     const {data:result,error}=await supabase.auth.signInWithPassword(credentials);
     if(error)throw error;
-    session=result.session;user=result.user;await ensureProfile(result.user);await loadMarketplace();view='home';busy=false;render();notify('You are signed in.');
+    session=result.session;user=result.user;await ensureProfile(result.user);await loadMarketplace();await loadConversations();view='home';busy=false;render();notify('You are signed in.');
   }catch(error){
     busy=false;render();notify(error instanceof Error?error.message:'We could not complete that request. Please try again.','error');
   }
@@ -197,7 +230,7 @@ function showAuthMessage(message:string):void{
 async function startSession(nextSession:Session|null):Promise<void>{
   session=nextSession;user=nextSession?.user||null;
   if(!user){profile=null;stores=[];products=[];listings=[];render();return;}
-  try{await ensureProfile(user);await loadMarketplace();render();}
+  try{await ensureProfile(user);await loadMarketplace();await loadConversations();render();}
   catch(error){console.error('ManiHub account setup failed',error);render();notify('Your account is connected, but profile data could not load. Please contact support.','error');}
 }
 
@@ -207,7 +240,8 @@ app.addEventListener('click',async event=>{
   const action=target.dataset.action;
   if(target.dataset.view){view=target.dataset.view as View;render();window.scrollTo({top:0,behavior:'smooth'});return;}
   if(target.dataset.category){category=target.dataset.category;render();return;}
-  if(target.dataset.store){activeStore=stores.find(s=>s.id===target.dataset.store)||null;view='explore';notify(activeStore?.store_name||'Store selected');return;}
+  if(target.dataset.store){activeStore=stores.find(s=>s.id===target.dataset.store)||null;view='store-detail';render();return;}
+  if(target.dataset.conversation){selectedConversationId=target.dataset.conversation;await loadMessages(selectedConversationId);view='messages';render();return;}
   if(action==='signup-mode'){mode='signup';render();}
   if(action==='signin-mode'){mode='signin';render();}
   if(action==='reset-mode'){mode='reset';render();}
@@ -219,6 +253,8 @@ app.addEventListener('click',async event=>{
   if(action==='new-product'){const editor=document.querySelector<HTMLElement>('#product-editor');if(editor)editor.hidden=false;}
   if(action==='cancel-product'){const editor=document.querySelector<HTMLElement>('#product-editor');if(editor)editor.hidden=true;}
   if(action==='change-store'){activeStore=null;view='my-store';render();}
+  if(action==='start-conversation'){if(!activeStore||!user){notify('Sign in to message this seller.','error');return;}const {data,error}=await supabase.rpc('manihub_start_seller_conversation',{p_store_id:activeStore.id});if(error){notify(error.message,'error');return;}selectedConversationId=String(data);await loadConversations();await loadMessages(selectedConversationId);view='messages';render();}
+  if(action==='inbox'){selectedConversationId=null;messages=[];view='messages';render();}
 });
 app.addEventListener('submit',async event=>{
   const form=event.target as HTMLFormElement;
@@ -229,6 +265,13 @@ app.addEventListener('submit',async event=>{
     const {data:created,error}=await supabase.from('manihub_stores').insert(payload).select('id,owner_id,store_name,description,category,province,town,logo_url,banner_url,seller_type').single();
     if(error){notify(error.message,'error');return;}
     activeStore=created as Store;stores.unshift(activeStore);render();notify('Your ManiHub store is open.');
+  }
+  if(form.id==='message-form'){
+    event.preventDefault();if(!user||!selectedConversationId)return;
+    const data=new FormData(form),body=String(data.get('body')||'').trim();if(!body)return;
+    const {error}=await supabase.from('manihub_messages').insert({conversation_id:selectedConversationId,sender_id:user.id,body});
+    if(error){notify(error.message,'error');return;}
+    await loadMessages(selectedConversationId);render();
   }
   if(form.id==='product-form'){
     event.preventDefault();if(!user||!activeStore){notify('Create or select your store first.','error');return;}
