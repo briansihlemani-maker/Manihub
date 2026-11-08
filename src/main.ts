@@ -4,7 +4,7 @@ import logoUrl from '../assets/manihub-logo-transparent.png';
 import './style.css';
 
 type Store = { id:string; owner_id:string; store_name:string; description:string; category:string; province:string; town:string; logo_url:string|null; banner_url:string|null; seller_type?:string };
-type Product = { id:string; product_name:string; description:string; category:string; price_zar:number; stock_quantity:number; media_urls:string[]; store_id:string; manihub_stores?:{store_name:string;town:string;province:string;logo_url:string|null}|null };
+type Product = { id:string; product_name:string; description:string; category:string; price_zar:number; stock_quantity:number; media_urls:string[]; store_id:string; manihub_stores?:{store_name:string;town:string;province:string;logo_url:string|null}|{store_name:string;town:string;province:string;logo_url:string|null}[]|null };
 type Listing = { id:string; title:string; description:string; price:number; category:string; seller_name:string; province:string; town:string|null; photo_url:string|null };
 type Mode = 'signin'|'signup'|'reset';
 type View = 'home'|'explore'|'my-store'|'messages';
@@ -53,8 +53,9 @@ function productCard(item:Product|Listing):string{
   const title=isStoreProduct?item.product_name:item.title;
   const price=isStoreProduct?item.price_zar:item.price;
   const image=isStoreProduct?(item.media_urls?.[0]||''):(item.photo_url||'');
-  const seller=isStoreProduct?(item.manihub_stores?.store_name||'ManiHub seller'):(item.seller_name||'Community seller');
-  const place=isStoreProduct?[item.manihub_stores?.town,item.manihub_stores?.province].filter(Boolean).join(', '):[item.town,item.province].filter(Boolean).join(', ');
+  const storeInfo=isStoreProduct?(Array.isArray(item.manihub_stores)?item.manihub_stores[0]:item.manihub_stores):null;
+  const seller=isStoreProduct?(storeInfo?.store_name||'ManiHub seller'):(item.seller_name||'Community seller');
+  const place=isStoreProduct?[storeInfo?.town,storeInfo?.province].filter(Boolean).join(', '):[item.town,item.province].filter(Boolean).join(', ');
   return '<article class="product-card">'+(image?'<img class="product-image" src="'+esc(image)+'" alt="'+esc(title)+'" loading="lazy">':'<div class="product-placeholder"><span>MH</span></div>')+'<div class="product-info"><span class="product-category">'+esc(item.category||'Marketplace')+'</span><h3>'+esc(title)+'</h3><strong class="product-price">'+money(Number(price))+'</strong><p>'+esc(seller)+'</p><small>'+esc(place||'South Africa')+'</small></div></article>';
 }
 
