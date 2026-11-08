@@ -90,7 +90,7 @@ function exploreMarkup():string{
 }
 
 function myStoreMarkup():string{
-  const store=activeStore||myStores[0]||null;
+  const store=myStores.find(item=>item.id===activeStore?.id)||myStores[0]||null;
   activeStore=store;
   if(!store)return '<section class="page-heading"><span class="eyebrow">SELL ON MANIHUB</span><h1>Open your ManiHub store</h1><p>Create your storefront and start introducing your business to South Africa.</p></section><section class="form-panel"><form id="store-form" class="stack-form"><label>Business or store name<input name="store_name" required minlength="2" maxlength="90" placeholder="e.g. Sihle Fashion"></label><label>Category<select name="category">'+categories.filter(x=>x!=='All').map(x=>'<option>'+esc(x)+'</option>').join('')+'</select></label><label>Province<select name="province" required><option value="">Choose province</option>'+provinces.map(x=>'<option>'+esc(x)+'</option>').join('')+'</select></label><label>Town or city<input name="town" placeholder="Town or city"></label><label>Short description<textarea name="description" maxlength="1200" rows="3" placeholder="Tell customers about your store"></textarea></label><button class="primary-button" type="submit">Create my store</button></form></section>';
   const mine=products.filter(p=>p.store_id===store.id);
