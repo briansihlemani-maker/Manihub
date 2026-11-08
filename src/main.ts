@@ -224,5 +224,5 @@ async function init():Promise<void>{
     document.querySelector('#retry-connect')?.addEventListener('click',()=>location.reload());
   }
 }
-if('serviceWorker' in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(e=>console.info('Offline support unavailable',e)));
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(e=>console.info('Offline support unavailable',e)));
 void init();
