@@ -327,7 +327,7 @@ async function refreshListings(){
   try{const {data,error}=await supabaseClient.from("listings").select("*").eq("status","active").order("created_at",{ascending:false});if(error)throw error;listings=(data||[]).map(mapListing);render();}
   catch(error){if(target)target.innerHTML=`<div class="empty">Could not load adverts: ${esc(error.message||error)}. Please try refreshing.</div>`;}
 }
-async async function refreshAuth(){
+async function refreshAuth(){
   if(!supabaseClient){setStatus("Connection service is not ready yet. Please refresh ManiHub; if it persists, tell us.");return;}
   try{const {data,error}=await supabaseClient.auth.getSession();if(error)throw error;currentUser=data.session?.user||null;
       document.body.classList.toggle("authenticated",!!currentUser);syncHeaderActions();setStatus(currentUser?`Signed in as ${currentUser.email}. You can publish adverts.`:"Sign in or create an account to publish adverts to the shared marketplace.");}
