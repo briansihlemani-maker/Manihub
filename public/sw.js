@@ -1,1 +1,21 @@
-const CACHE='manihub-v1-shell';self.addEventListener('install',e=>e.waitUntil((async()=>{const c=await caches.open(CACHE);await c.addAll(['/','/index.html','/manifest.webmanifest']);await self.skipWaiting()})()));self.addEventListener('activate',e=>e.waitUntil((async()=>{const keys=await caches.keys();await Promise.all(keys.filter(k=>k.startsWith('manihub-')&&k!==CACHE).map(k=>caches.delete(k)));await self.clients.claim()})()));self.addEventListener('fetch',e=>{const r=e.request,u=new URL(r.url);if(r.method!=='GET'||u.origin!==self.location.origin||/\/auth\/|\/rest\/|\/realtime\/|\/functions\//.test(u.pathname))return;if(r.mode==='navigate')e.respondWith(fetch(r).catch(()=>caches.match('/index.html')))});
+const CACHE='manihub-v1-shell';
+const ROOT=new URL('./',self.registration.scope).pathname;
+const APP_SHELL=[ROOT,ROOT+'index.html',ROOT+'manifest.webmanifest'];
+self.addEventListener('install',event=>event.waitUntil((async()=>{
+  const cache=await caches.open(CACHE);
+  await cache.addAll(APP_SHELL);
+  await self.skipWaiting();
+})()));
+self.addEventListener('activate',event=>event.waitUntil((async()=>{
+  const keys=await caches.keys();
+  await Promise.all(keys.filter(key=>key.startsWith('manihub-')&&key!==CACHE).map(key=>caches.delete(key)));
+  await self.clients.claim();
+})()));
+self.addEventListener('fetch',event=>{
+  const request=event.request;
+  const url=new URL(request.url);
+  if(request.method!=='GET'||url.origin!==self.location.origin||/\/auth\/|\/rest\/|\/realtime\/|\/functions\//.test(url.pathname))return;
+  if(request.mode==='navigate'){
+    event.respondWith(fetch(request).catch(()=>caches.match(ROOT+'index.html')));
+  }
+});
