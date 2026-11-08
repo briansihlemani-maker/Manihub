@@ -124,7 +124,7 @@ function pageMarkup():string{
 }
 
 function render():void{
-  app.innerHTML=user?shellMarkup():authMarkup();
+  app.innerHTML=user&&mode!=='new-password'?shellMarkup():authMarkup();
   if(user)bindShellInputs();
   else bindAuthForm();
 }
