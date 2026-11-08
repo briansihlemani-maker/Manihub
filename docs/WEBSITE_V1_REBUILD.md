@@ -8,6 +8,7 @@ Build one responsive ManiHub application that is the source of truth for the web
 
 - The work is isolated on `rebuild/website-v1`.
 - The existing `main` branch remains unchanged and is the rollback point.
+- The saved launch snapshot branch `manihub-launch-snapshot-2026-11-06` is also preserved.
 - No production Supabase schema or data was changed for this rebuild.
 - Native packaging is intentionally paused until the website passes its end-to-end checks.
 
@@ -36,10 +37,11 @@ The browser/mobile client uses only the Supabase publishable key. Row-level secu
 - Original ManiHub transparent logo used in the UI.
 - Bundled Supabase client with persistent session settings.
 - Explicit backend health check at startup; the UI reports connected or shows a retryable connection failure instead of staying on an indefinite loading message.
-- Email or phone/password sign-in, account registration, and email password-reset request.
+- Email or South African phone/password sign-in, account registration, SMS OTP verification for phone sign-up, email password-reset request and password update after recovery.
 - Profile bootstrap after successful authentication.
 - Marketplace reads for active listings, stores and products.
 - Seller storefront creation and product publishing against existing RLS-protected tables.
+- Private buyer/seller conversations through the existing RPC and RLS-protected messages table.
 - Relative PWA asset paths for deployment under a root domain or sub-path.
 - Automated TypeScript and Vite production build checks.
 
@@ -50,7 +52,7 @@ The browser/mobile client uses only the Supabase publishable key. Row-level secu
 3. Test phone sign-in/registration against the actual Supabase phone/SMS configuration.
 4. Test buyer search and category browsing with real records.
 5. Test seller storefront and product creation with a normal authenticated account.
-6. Integrate and test private messaging.
+6. Test private buyer/seller messaging with two separate test accounts.
 7. Integrate order creation and order history; keep payment collection disabled until payment provider and company arrangements are ready.
 8. Test on Android Chrome, desktop browsers and iOS Safari.
 9. Only then package the same `dist` output with Capacitor and prepare native store releases.
