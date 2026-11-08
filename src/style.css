@@ -13,3 +13,5 @@
 @media(max-width:700px){.product-detail-panel{grid-template-columns:1fr;gap:18px;padding:16px}.product-detail-copy h1{font-size:29px}}
 
 .shelf-tabs{display:flex;gap:8px;margin:0 0 16px;overflow:auto}.shelf-tab{border:1px solid #dce8dc;background:#fff;color:#5f7567;border-radius:999px;padding:10px 15px;font-size:12px;font-weight:800;white-space:nowrap}.shelf-tab.active{background:#e7f5df;border-color:#a4d778;color:#17643a}
+
+.field-help{font-size:11px;color:#87958a;font-weight:500;margin-top:-3px}
