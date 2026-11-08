@@ -30,15 +30,13 @@ jobs:
         with:
           node-version: 22
       - name: Install dependencies
-        run: npm install
+        # sharp is only used to regenerate optional icon artwork; skipping
+        # install scripts avoids a flaky external libvips download on CI.
+        run: npm install --ignore-scripts
       - name: Prepare website bundle
         run: npm run prepare:mobile
       - name: Add Android project
         run: npx cap add android
-      - name: Generate ManiHub native icons
-        run: |
-          npm run prepare:icons
-          npx capacitor-assets generate --android
       - name: Sync Android project
         run: npx cap sync android
       - name: Set up Java
