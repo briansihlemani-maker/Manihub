@@ -7,7 +7,7 @@ type Store = { id:string; owner_id:string; store_name:string; description:string
 type Product = { id:string; product_name:string; description:string; category:string; price_zar:number; stock_quantity:number; media_urls:string[]; store_id:string; manihub_stores?:{store_name:string;town:string;province:string;logo_url:string|null}|{store_name:string;town:string;province:string;logo_url:string|null}[]|null };
 type Listing = { id:string; title:string; description:string; price:number; category:string; seller_name:string; province:string; town:string|null; photo_url:string|null };
 type Mode = 'signin'|'signup'|'reset'|'verify'|'new-password';
-type View = 'home'|'explore'|'my-store'|'messages'|'store-detail';
+type View = 'home'|'explore'|'my-store'|'messages'|'store-detail'|'product-detail';
 type Conversation = {id:string;subject:string|null;conversation_type:string;updated_at:string};
 type Message = {id:string;sender_id:string;body:string;created_at:string};
 const app=document.querySelector<HTMLDivElement>('#app')!;
@@ -28,6 +28,7 @@ let backendStatus:'checking'|'connected'|'error'='checking';
 let activeStore:Store|null=null;
 let conversations:Conversation[]=[];
 let selectedConversationId:string|null=null;
+let selectedProduct:Product|Listing|null=null;
 let messages:Message[]=[];
 
 const categories=['All','Electronics','Clothing','Home & Living','Food & Groceries','Beauty','Automotive','Services','Property','Other'];
@@ -63,7 +64,7 @@ function productCard(item:Product|Listing):string{
   const storeInfo=isStoreProduct?(Array.isArray(item.manihub_stores)?item.manihub_stores[0]:item.manihub_stores):null;
   const seller=isStoreProduct?(storeInfo?.store_name||'ManiHub seller'):(item.seller_name||'Community seller');
   const place=isStoreProduct?[storeInfo?.town,storeInfo?.province].filter(Boolean).join(', '):[item.town,item.province].filter(Boolean).join(', ');
-  return '<article class="product-card">'+(image?'<img class="product-image" src="'+esc(image)+'" alt="'+esc(title)+'" loading="lazy">':'<div class="product-placeholder"><span>MH</span></div>')+'<div class="product-info"><span class="product-category">'+esc(item.category||'Marketplace')+'</span><h3>'+esc(title)+'</h3><strong class="product-price">'+money(Number(price))+'</strong><p>'+esc(seller)+'</p><small>'+esc(place||'South Africa')+'</small></div></article>';
+  return '<button class="product-card" data-product="'+esc(item.id)+'" data-product-kind="'+(isStoreProduct?'store':'listing')+'">'+(image?'<img class="product-image" src="'+esc(image)+'" alt="'+esc(title)+'" loading="lazy">':'<div class="product-placeholder"><span>MH</span></div>')+'<div class="product-info"><span class="product-category">'+esc(item.category||'Marketplace')+'</span><h3>'+esc(title)+'</h3><strong class="product-price">'+money(Number(price))+'</strong><p>'+esc(seller)+'</p><small>'+esc(place||'South Africa')+'</small></div></button>';
 }
 
 function storeCard(store:Store):string{
@@ -115,7 +116,21 @@ function storeDetailMarkup():string{
   return '<section class="store-detail-head"><div class="store-detail-brand">'+(activeStore.logo_url?'<img src="'+esc(activeStore.logo_url)+'" alt="">':'<span class="store-avatar large">'+esc(initials(activeStore.store_name))+'</span>')+'<div><span class="eyebrow">MANIHUB STOREFRONT</span><h1>'+esc(activeStore.store_name)+'</h1><p>'+esc([activeStore.town,activeStore.province].filter(Boolean).join(', '))+' · '+esc(activeStore.category)+'</p></div></div><p class="store-description">'+esc(activeStore.description||'Welcome to our ManiHub store.')+'</p><button class="primary-button" data-action="start-conversation">Message seller</button></section><section class="content-section"><div class="section-heading"><h2>Store catalogue</h2><span class="result-count">'+storeProducts.length+' products</span></div><div class="product-grid">'+(storeProducts.length?storeProducts.map(productCard).join(''):'<div class="empty-state compact"><p>This store has not published products yet.</p></div>')+'</div></section>';
 }
 
+function productDetailMarkup():string{
+  if(!selectedProduct)return '<section class="empty-state"><h3>Product not found</h3><button class="subtle-button" data-view="explore">Back to Explore</button></section>';
+  const isStoreProduct='product_name' in selectedProduct;
+  const title=isStoreProduct?selectedProduct.product_name:selectedProduct.title;
+  const description=selectedProduct.description||'No description has been added yet.';
+  const image=isStoreProduct?(selectedProduct.media_urls?.[0]||''):(selectedProduct.photo_url||'');
+  const price=isStoreProduct?selectedProduct.price_zar:selectedProduct.price;
+  const storeInfo=isStoreProduct?(Array.isArray(selectedProduct.manihub_stores)?selectedProduct.manihub_stores[0]:selectedProduct.manihub_stores):null;
+  const seller=isStoreProduct?(storeInfo?.store_name||'ManiHub seller'):(selectedProduct.seller_name||'Community seller');
+  if(isStoreProduct)activeStore=stores.find(store=>store.id===selectedProduct.store_id)||null;
+  return '<section class="page-heading"><button class="subtle-button" data-view="explore">← Back to Explore</button></section><section class="product-detail-panel">'+(image?'<img class="product-detail-image" src="'+esc(image)+'" alt="'+esc(title)+'">':'<div class="product-detail-placeholder">ManiHub</div>')+'<div class="product-detail-copy"><span class="eyebrow">'+esc(selectedProduct.category||'Marketplace')+'</span><h1>'+esc(title)+'</h1><strong class="detail-price">'+money(Number(price))+'</strong><p>'+esc(description)+'</p><div class="detail-seller"><span class="store-avatar">'+esc(initials(seller))+'</span><div><strong>'+esc(seller)+'</strong><small>'+esc(isStoreProduct?[storeInfo?.town,storeInfo?.province].filter(Boolean).join(', '):[selectedProduct.town,selectedProduct.province].filter(Boolean).join(', '))+'</small></div></div>'+(isStoreProduct&&activeStore?.owner_id!==user?.id?'<button class="primary-button" data-action="start-conversation">Message seller</button>':isStoreProduct?'<button class="subtle-button" data-view="my-store">Manage your product</button>':'<p class="detail-note">Contact options for community listings will be connected in the next seller tools milestone.</p>')+'</div></section>';
+}
+
 function pageMarkup():string{
+  if(view==='product-detail')return productDetailMarkup();
   if(view==='explore')return exploreMarkup();
   if(view==='my-store')return myStoreMarkup();
   if(view==='messages')return messagesMarkup();
@@ -242,6 +257,7 @@ app.addEventListener('click',async event=>{
   if(target.dataset.category){category=target.dataset.category;render();return;}
   if(target.dataset.store){activeStore=stores.find(s=>s.id===target.dataset.store)||null;view='store-detail';render();return;}
   if(target.dataset.conversation){selectedConversationId=target.dataset.conversation;await loadMessages(selectedConversationId);view='messages';render();return;}
+  if(target.dataset.product){selectedProduct=target.dataset.productKind==='store'?products.find(p=>p.id===target.dataset.product)||null:listings.find(p=>p.id===target.dataset.product)||null;view='product-detail';render();return;}
   if(action==='signup-mode'){mode='signup';render();}
   if(action==='signin-mode'){mode='signin';render();}
   if(action==='reset-mode'){mode='reset';render();}
