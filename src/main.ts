@@ -10,6 +10,7 @@ type Mode = 'signin'|'signup'|'reset'|'verify'|'new-password';
 type View = 'home'|'explore'|'my-store'|'messages'|'store-detail'|'product-detail';
 type Conversation = {id:string;subject:string|null;conversation_type:string;updated_at:string};
 type Message = {id:string;sender_id:string;body:string;created_at:string};
+type Popularity = {listing_id:string;views_30d:number;saves_30d:number;enquiries_30d:number;sales_30d:number;popularity_score:number};
 const app=document.querySelector<HTMLDivElement>('#app')!;
 const toastRoot=document.querySelector<HTMLDivElement>('#toast-root')!;
 let session:Session|null=null;
@@ -18,6 +19,8 @@ let profile:{display_name:string;account_type:'individual'|'business'}|null=null
 let stores:Store[]=[];
 let products:Product[]=[];
 let listings:Listing[]=[];
+let popularity:Popularity[]=[];
+let homeShelf:'sales'|'hot'|'frequent'='hot';
 let mode:Mode='signin';
 let pendingPhone='';
 let view:View='home';
@@ -73,7 +76,11 @@ function storeCard(store:Store):string{
 
 function homeMarkup():string{
   const all=[...products,...listings].filter(item=>category==='All'||item.category?.toLowerCase()===category.toLowerCase()).filter(item=>!searchTerm||(('product_name' in item?item.product_name:item.title)+' '+item.category+' '+('product_name' in item?((Array.isArray(item.manihub_stores)?item.manihub_stores[0]?.store_name:item.manihub_stores?.store_name)||''):(item.seller_name||''))).toLowerCase().includes(searchTerm.toLowerCase()));
-  return '<section class="welcome-strip"><div><span class="eyebrow light">SOUTH AFRICA’S COMMUNITY MARKETPLACE</span><h1>One hub. <em>Everything you need.</em></h1><p>Discover local businesses, shop from your community and grow together.</p><button class="hero-button" data-view="explore">Explore marketplace <span>→</span></button></div><div class="hero-art"><div class="hero-orbit"></div><div class="hero-letter">M</div><div class="hero-pill">LOCAL • CONNECTED • TOGETHER</div></div></section><section class="category-section"><div class="section-heading"><div><span class="eyebrow">FIND WHAT YOU NEED</span><h2>Shop by department</h2></div></div><div class="category-row">'+categories.map(c=>'<button class="category-chip '+(category===c?'selected':'')+'" data-category="'+esc(c)+'">'+esc(c)+'</button>').join('')+'</div></section><section class="content-section"><div class="section-heading"><div><span class="eyebrow">DISCOVER</span><h2>What’s happening on ManiHub</h2><p>Products and services shared by South African sellers.</p></div><button class="subtle-button" data-view="explore">Explore all →</button></div><div class="product-grid">'+(all.length?all.slice(0,8).map(productCard).join(''):'<div class="empty-state"><div class="empty-icon">⌕</div><h3>Be the first to discover something</h3><p>New products and listings will appear here as sellers join ManiHub.</p></div>')+'</div></section><section class="content-section stores-section"><div class="section-heading"><div><span class="eyebrow">SHOP LOCAL</span><h2>Stores and businesses</h2><p>Meet the businesses growing in your community.</p></div><button class="subtle-button" data-view="explore">View all →</button></div><div class="store-grid">'+(stores.length?stores.slice(0,6).map(storeCard).join(''):'<div class="empty-state compact"><p>Business storefronts will appear here when sellers open their ManiHub stores.</p></div>')+'</div></section>';
+  const popularityById=new Map(popularity.map(row=>[row.listing_id,row]));
+  const score=(item:Product|Listing)=>{const row=popularityById.get(item.id);if(!row)return 0;return homeShelf==='sales'?Number(row.sales_30d):homeShelf==='frequent'?Number(row.views_30d):Number(row.popularity_score);};
+  const ordered=[...all].sort((a,b)=>score(b)-score(a));
+  const shelfTitle=homeShelf==='sales'?'Top sellers':homeShelf==='frequent'?'Frequently used':"What’s hot";
+  return '<section class="welcome-strip"><div><span class="eyebrow light">SOUTH AFRICA’S COMMUNITY MARKETPLACE</span><h1>One hub. <em>Everything you need.</em></h1><p>Discover local businesses, shop from your community and grow together.</p><button class="hero-button" data-view="explore">Explore marketplace <span>→</span></button></div><div class="hero-art"><div class="hero-orbit"></div><div class="hero-letter">M</div><div class="hero-pill">LOCAL • CONNECTED • TOGETHER</div></div></section><section class="category-section"><div class="section-heading"><div><span class="eyebrow">FIND WHAT YOU NEED</span><h2>Shop by department</h2></div></div><div class="category-row">'+categories.map(c=>'<button class="category-chip '+(category===c?'selected':'')+'" data-category="'+esc(c)+'">'+esc(c)+'</button>').join('')+'</div></section><section class="content-section"><div class="section-heading"><div><span class="eyebrow">DISCOVER</span><h2>'+shelfTitle+'</h2><p>Popular products and services across South Africa.</p></div><button class="subtle-button" data-view="explore">More →</button></div><div class="shelf-tabs"><button class="shelf-tab '+(homeShelf==='sales'?'active':'')+'" data-shelf="sales">Top sellers</button><button class="shelf-tab '+(homeShelf==='hot'?'active':'')+'" data-shelf="hot">What’s hot</button><button class="shelf-tab '+(homeShelf==='frequent'?'active':'')+'" data-shelf="frequent">Frequently used</button></div><div class="product-grid">'+(ordered.length?ordered.slice(0,8).map(productCard).join(''):'<div class="empty-state"><div class="empty-icon">⌕</div><h3>Be the first to discover something</h3><p>New products and listings will appear here as sellers join ManiHub.</p></div>')+'</div></section><section class="content-section stores-section"><div class="section-heading"><div><span class="eyebrow">SHOP LOCAL</span><h2>Stores and businesses</h2><p>Meet the businesses growing in your community.</p></div><button class="subtle-button" data-view="explore">View all →</button></div><div class="store-grid">'+(stores.length?stores.slice(0,6).map(storeCard).join(''):'<div class="empty-state compact"><p>Business storefronts will appear here when sellers open their ManiHub stores.</p></div>')+'</div></section>';
 }
 
 function exploreMarkup():string{
@@ -165,14 +172,16 @@ async function ensureProfile(current:User):Promise<void>{
 }
 
 async function loadMarketplace():Promise<void>{
-  const [storeResult,productResult,listingResult]=await Promise.all([
+  const [storeResult,productResult,listingResult,popularityResult]=await Promise.all([
     supabase.from('manihub_stores').select('id,owner_id,store_name,description,category,province,town,logo_url,banner_url,seller_type').eq('status','active').order('created_at',{ascending:false}).limit(30),
     supabase.from('manihub_store_products').select('id,product_name,description,category,price_zar,stock_quantity,media_urls,store_id,manihub_stores(store_name,town,province,logo_url)').eq('status','active').order('created_at',{ascending:false}).limit(40),
-    supabase.from('listings').select('id,title,description,price,category,seller_name,province,town,photo_url').eq('status','active').order('created_at',{ascending:false}).limit(40)
+    supabase.from('listings').select('id,title,description,price,category,seller_name,province,town,photo_url').eq('status','active').order('created_at',{ascending:false}).limit(40),
+    supabase.rpc('manihub_get_listing_popularity')
   ]);
   stores=storeResult.error?[]:(storeResult.data as Store[]||[]);
   products=productResult.error?[]:(productResult.data as Product[]||[]);
   listings=listingResult.error?[]:(listingResult.data as Listing[]||[]);
+  popularity=popularityResult.error?[]:(popularityResult.data as Popularity[]||[]);
   if(storeResult.error)console.warn('Store catalogue could not load',storeResult.error.message);
   if(productResult.error)console.warn('Store products could not load',productResult.error.message);
   if(listingResult.error)console.warn('Community listings could not load',listingResult.error.message);
@@ -255,6 +264,7 @@ app.addEventListener('click',async event=>{
   const action=target.dataset.action;
   if(target.dataset.view){view=target.dataset.view as View;render();window.scrollTo({top:0,behavior:'smooth'});return;}
   if(target.dataset.category){category=target.dataset.category;render();return;}
+  if(target.dataset.shelf){homeShelf=target.dataset.shelf as 'sales'|'hot'|'frequent';render();return;}
   if(target.dataset.store){activeStore=stores.find(s=>s.id===target.dataset.store)||null;view='store-detail';render();return;}
   if(target.dataset.conversation){selectedConversationId=target.dataset.conversation;await loadMessages(selectedConversationId);view='messages';render();return;}
   if(target.dataset.product){selectedProduct=target.dataset.productKind==='store'?products.find(p=>p.id===target.dataset.product)||null:listings.find(p=>p.id===target.dataset.product)||null;view='product-detail';render();return;}
