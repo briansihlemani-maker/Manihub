@@ -39,12 +39,13 @@ The browser/mobile client uses only the Supabase publishable key. Row-level secu
 - Explicit backend health check at startup; the UI reports connected or shows a retryable connection failure instead of staying on an indefinite loading message.
 - Email or South African phone/password sign-in, account registration, SMS OTP verification for phone sign-up, email password-reset request and password update after recovery.
 - Profile bootstrap after successful authentication.
-- Marketplace reads for active listings, stores and products.
+- Marketplace reads for active listings, stores and products, with product detail and seller storefront pages.
+- Home discovery shelves for Top sellers, What’s hot and Frequently used, driven by the existing 30-day popularity RPC.
 - Seller storefront creation and product publishing against existing RLS-protected tables.
 - Product image upload to the existing public `listing-photos` bucket, enforcing its 15 MB limit and JPG/PNG/WEBP types; product imagery is displayed in a 16:9 frame.
 - Private buyer/seller conversations through the existing RPC and RLS-protected messages table.
 - Relative PWA asset paths for deployment under a root domain or sub-path.
-- Automated TypeScript and Vite production build checks.
+- Automated TypeScript and Vite production build checks plus Playwright browser smoke tests for backend connectivity, sign-up UI, password recovery and tablet layout.
 
 ## Release gates before merging to main
 
