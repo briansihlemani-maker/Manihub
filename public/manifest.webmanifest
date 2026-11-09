@@ -16,9 +16,9 @@
   ],
   "icons": [
     {
-      "src": "assets/manihub-logo-transparent.png",
+      "src": "assets/manihub-app-icon.svg",
       "sizes": "any",
-      "type": "image/png",
+      "type": "image/svg+xml",
       "purpose": "any maskable"
     }
   ]
