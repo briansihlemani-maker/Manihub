@@ -58,7 +58,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y imagemagick
           set -euo pipefail
-          test -s assets/manihub-app-icon.svg
+          test -s assets/manihub-logo-transparent.png
           # Use the approved ManiHub artwork as a full-bleed legacy launcher icon.
           # Remove generated adaptive XML so Android uses these verified PNG resources.
           rm -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
@@ -66,7 +66,7 @@ jobs:
             folder="${spec%%:*}"
             size="${spec##*:}"
             mkdir -p "android/app/src/main/res/$folder"
-            convert -background "#003b25" assets/manihub-app-icon.svg -resize "${size}x${size}" -alpha remove -alpha off "android/app/src/main/res/$folder/ic_launcher.png"
+            convert -size "${size}x${size}" xc:"#003b25" \( assets/manihub-logo-transparent.png -resize "${size}x${size}" \) -gravity center -composite -alpha remove -alpha off "android/app/src/main/res/$folder/ic_launcher.png"
           done
 
       - name: Assemble installable Android debug APK
