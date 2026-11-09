@@ -1,27 +1,41 @@
-name: Build ManiHub Android APK
+name: Build ManiHub Android APK (website v1)
 
 on:
   workflow_dispatch:
   push:
     branches:
       - rebuild/website-v1
+    paths:
+      - 'src/**'
+      - 'assets/**'
+      - 'public/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'capacitor.config.ts'
+      - 'vite.config.ts'
+      - '.github/workflows/android-apk.yml'
 
 permissions:
   contents: read
 
+concurrency:
+  group: manihub-android-v1-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   android-apk:
-    name: Build Android debug APK
+    name: Build Android debug APK from ManiHub website v1
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Check out ManiHub
+      - name: Check out the new ManiHub website
         uses: actions/checkout@v4
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -30,25 +44,42 @@ jobs:
           java-version: '21'
 
       - name: Install dependencies
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
 
-      - name: Build shared website
+      - name: Build the exact shared website used by the new app
         run: npm run build
 
-      - name: Generate Android project
-        run: npx cap add android
+      - name: Add Android platform and package the website
+        run: |
+          npx cap add android
+          npx cap sync android
 
-      - name: Sync shared ManiHub app into Android
-        run: npx cap sync android
+      - name: Generate ManiHub launcher icons from the original app artwork
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y imagemagick
+          set -euo pipefail
+          test -s assets/manihub-app-icon.svg
+          for spec in 'mipmap-mdpi:48' 'mipmap-hdpi:72' 'mipmap-xhdpi:96' 'mipmap-xxhdpi:144' 'mipmap-xxxhdpi:192'; do
+            folder="${spec%%:*}"
+            size="${spec##*:}"
+            mkdir -p "android/app/src/main/res/$folder"
+            convert -background none assets/manihub-app-icon.svg -resize "${size}x${size}" "android/app/src/main/res/$folder/ic_launcher.png"
+          done
 
-      - name: Build installable debug APK
+      - name: Assemble installable Android debug APK
         working-directory: android
         run: ./gradlew assembleDebug --no-daemon
 
-      - name: Upload ManiHub APK
+      - name: Verify APK output
+        run: |
+          test -s android/app/build/outputs/apk/debug/app-debug.apk
+          ls -lh android/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Upload ManiHub v1 debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: ManiHub-Android-debug
+          name: ManiHub-Android-v1-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14
