@@ -1,0 +1,77 @@
+name: ManiHub Android full-bleed icon build
+
+on:
+  push:
+    branches:
+      - fix/android-fullbleed-icon
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out ManiHub
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Build shared ManiHub website
+        run: npm run build
+
+      - name: Add and sync Android
+        run: |
+          npx cap add android
+          npx cap sync android
+
+      - name: Generate full-bleed ManiHub launcher icons
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y imagemagick
+          set -euo pipefail
+          test -s assets/file_000000004420824681cbd3dc77302cd3.png
+          # Android's generated adaptive XML adds an inset foreground layer.
+          # Remove it so the full-square ManiHub artwork is used directly.
+          rm -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+          rm -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+          for spec in 'mipmap-mdpi:48' 'mipmap-hdpi:72' 'mipmap-xhdpi:96' 'mipmap-xxhdpi:144' 'mipmap-xxxhdpi:192'; do
+            folder="${spec%%:*}"
+            size="${spec##*:}"
+            mkdir -p "android/app/src/main/res/$folder"
+            convert assets/file_000000004420824681cbd3dc77302cd3.png -resize "${size}x${size}^" -gravity center -extent "${size}x${size}" "android/app/src/main/res/$folder/ic_launcher.png"
+            cp "android/app/src/main/res/$folder/ic_launcher.png" "android/app/src/main/res/$folder/ic_launcher_round.png"
+          done
+
+      - name: Assemble Android debug APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - name: Verify APK
+        run: |
+          test -s android/app/build/outputs/apk/debug/app-debug.apk
+          ls -lh android/app/build/outputs/apk/debug/app-debug.apk
+          sha256sum android/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Upload ManiHub icon-test APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ManiHub-Android-fullbleed-icon-test
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14
