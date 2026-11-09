@@ -1,91 +1,11 @@
-name: ManiHub mobile builds
-
+name: ManiHub native builds (paused until website v1 is validated)
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "index.html"
-      - "marketplace/**"
-      - "assets/**"
-      - "manifest.webmanifest"
-      - "capacitor.config.ts"
-      - "package.json"
-      - "package-lock.json"
-      - "scripts/**"
-      - "assets/manihub-app-icon.svg"
-      - ".github/workflows/mobile-build.yml"
-
 permissions:
   contents: read
-
 jobs:
-  android:
-    name: Build Android debug APK
+  hold:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out ManiHub
-        uses: actions/checkout@v4
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - name: Install dependencies
-        # sharp is only used to regenerate optional icon artwork; skipping
-        # install scripts avoids a flaky external libvips download on CI.
-        run: npm install --ignore-scripts
-      - name: Prepare website bundle
-        run: npm run prepare:mobile
-      - name: Add Android project
-        run: npx cap add android
-      - name: Sync Android project
-        run: npx cap sync android
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: "21"
-      - name: Build debug APK
-        working-directory: android
-        run: |
-          chmod +x gradlew
-          ./gradlew assembleDebug
-      - name: Upload Android APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: manihub-android-debug
-          path: android/app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error
-          retention-days: 14
-
-  ios-simulator:
-    name: Build iOS simulator app
-    runs-on: macos-26
-    steps:
-      - name: Check out ManiHub
-        uses: actions/checkout@v4
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - name: Install dependencies
-        run: npm install
-      - name: Prepare website bundle
-        run: npm run prepare:mobile
-      - name: Add iOS project
-        run: npx cap add ios
-      - name: Generate ManiHub native icons
-        run: |
-          npm run prepare:icons
-          npx capacitor-assets generate --ios
-      - name: Sync iOS project
-        run: npx cap sync ios
-      - name: Build unsigned iOS simulator app
-        run: |
-          xcodebuild -project ios/App/App.xcodeproj -scheme App -sdk iphonesimulator -configuration Debug -derivedDataPath build/ios CODE_SIGNING_ALLOWED=NO
-      - name: Upload iOS simulator build
-        uses: actions/upload-artifact@v4
-        with:
-          name: manihub-ios-simulator
-          path: build/ios/Build/Products/Debug-iphonesimulator/App.app
-          if-no-files-found: error
-          retention-days: 14
+      - name: Explain build sequence
+        run: echo "Native Android and iOS packaging is intentionally paused until the shared website v1 passes its tests. The native apps will then package the exact same dist build." 
