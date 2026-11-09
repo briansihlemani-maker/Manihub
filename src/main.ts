@@ -7,7 +7,7 @@ type Store = { id:string; owner_id?:string; store_name:string; description:strin
 type Product = { id:string; product_name:string; description:string; category:string; price_zar:number; stock_quantity:number; media_urls:string[]; status?:'draft'|'active'|'paused'|'out_of_stock'|'archived'; store_id:string; manihub_stores?:{store_name:string;town:string;province:string;logo_url:string|null}|{store_name:string;town:string;province:string;logo_url:string|null}[]|null };
 type Listing = { id:string; title:string; description:string; price:number; category:string; seller_name:string; province:string; town:string|null; photo_url:string|null };
 type Mode = 'signin'|'signup'|'reset'|'verify'|'new-password';
-type View = 'home'|'explore'|'my-store'|'messages'|'store-detail'|'product-detail';
+type View = 'home'|'explore'|'my-store'|'messages'|'store-detail'|'product-detail'|'profile'|'activity';
 type Conversation = {id:string;subject:string|null;conversation_type:string;updated_at:string};
 type Message = {id:string;sender_id:string;body:string;created_at:string};
 type Popularity = {listing_id:string;views_30d:number;saves_30d:number;enquiries_30d:number;sales_30d:number;popularity_score:number};
@@ -34,6 +34,7 @@ let conversations:Conversation[]=[];
 let selectedConversationId:string|null=null;
 let selectedProduct:Product|Listing|null=null;
 let messages:Message[]=[];
+let accountMenuOpen=false;
 
 const categories=['All','Electronics','Clothing','Home & Living','Food & Groceries','Beauty','Automotive','Services','Property','Other'];
 const provinces=['Eastern Cape','Free State','Gauteng','KwaZulu-Natal','Limpopo','Mpumalanga','Northern Cape','North West','Western Cape'];
@@ -57,7 +58,7 @@ function authMarkup():string{
 }
 function shellMarkup():string{
   const nav=(id:View,label:string,icon:string)=>'<button class="nav-link '+(view===id?'active':'')+'" data-view="'+id+'"><span class="nav-icon">'+icon+'</span>'+label+'</button>';
-  return '<div class="site-shell"><header class="site-header"><button class="brand-button" data-view="home">'+logo('header-logo')+'<span class="brand-word">Mani<span>Hub</span><small>BUY. SELL. GROW. TOGETHER.</small></span></button><div class="header-search"><span>⌕</span><input id="global-search" value="'+esc(searchTerm)+'" placeholder="Search products, stores and services"><button data-action="search">Search</button></div><div class="header-actions"><button class="header-signup-button" data-action="signup-mode">＋ Create account</button><button class="icon-button" data-view="messages" aria-label="Messages">✉</button><button class="account-button" data-action="account">'+esc(profile?.display_name||user?.email||'My account')+' ▾</button></div></header><nav class="main-nav">'+nav('home','Home','⌂')+nav('explore','Explore','⌕')+nav('my-store','My business','▦')+nav('messages','Messages','✉')+'<button class="nav-link mobile-account" data-action="signout">Sign out</button></nav><main id="page-content">'+pageMarkup()+'</main><footer class="site-footer"><strong>ManiHub</strong><span>One Hub. Everything you need. · South Africa</span><span>Buy. Sell. Grow. Together.</span></footer></div>';
+  return '<div class="site-shell"><header class="site-header"><button class="brand-button" data-view="home">'+logo('header-logo')+'<span class="brand-word">Mani<span>Hub</span><small>BUY. SELL. GROW. TOGETHER.</small></span></button><div class="header-search"><span>⌕</span><input id="global-search" value="'+esc(searchTerm)+'" placeholder="Search products, stores and services"><button data-action="search">Search</button></div><div class="header-actions"><button class="profile-menu-trigger" data-action="account-menu" aria-label="Open personal account menu" aria-expanded="'+String(accountMenuOpen)+'"><span class="profile-icon">♙</span></button>'+(accountMenuOpen?'<div class="account-menu"><div class="account-menu-heading"><strong>'+esc(profile?.display_name||'ManiHub member')+'</strong><small>'+esc(user?.email||user?.phone||'')+'</small></div><button data-action="profile">My profile</button><button data-action="activity">My activity</button><button class="account-menu-logout" data-action="signout">Log out</button></div>':'')+'</div></header><nav class="main-nav">'+nav('home','Home','⌂')+nav('explore','Explore','⌕')+nav('my-store','My business','▦')+nav('messages','Messages','✉')+'<button class="nav-link mobile-account" data-action="signout">Sign out</button></nav><main id="page-content">'+pageMarkup()+'</main><footer class="site-footer"><strong>ManiHub</strong><span>One Hub. Everything you need. · South Africa</span><span>Buy. Sell. Grow. Together.</span></footer></div>';
 }
 
 function productCard(item:Product|Listing):string{
@@ -137,11 +138,20 @@ function productDetailMarkup():string{
   }
   return '<section class="page-heading"><button class="subtle-button" data-view="explore">← Back to Explore</button></section><section class="product-detail-panel">'+(item.photo_url?'<img class="product-detail-image" src="'+esc(item.photo_url)+'" alt="'+esc(item.title)+'">':'<div class="product-detail-placeholder">ManiHub</div>')+'<div class="product-detail-copy"><span class="eyebrow">'+esc(item.category||'Marketplace')+'</span><h1>'+esc(item.title)+'</h1><strong class="detail-price">'+money(Number(item.price))+'</strong><p>'+esc(item.description||'No description has been added yet.')+'</p><div class="detail-seller"><span class="store-avatar">'+esc(initials(item.seller_name||'Community seller'))+'</span><div><strong>'+esc(item.seller_name||'Community seller')+'</strong><small>'+esc([item.town,item.province].filter(Boolean).join(', '))+'</small></div></div><p class="detail-note">Contact options for community listings will be connected in the next seller tools milestone.</p></div></section>';
 }
+function profileMarkup():string{
+ const name=profile?.display_name||user?.user_metadata?.display_name||'ManiHub member';const type=profile?.account_type==='business'?'Registered business':'Individual';
+ return '<section class="page-heading"><span class="eyebrow">PERSONAL ACCOUNT</span><h1>My profile</h1><p>Manage your ManiHub identity and account details.</p></section><section class="profile-panel"><div class="profile-avatar">'+esc(initials(name))+'</div><div class="profile-copy"><h2>'+esc(name)+'</h2><p>'+esc(type)+'</p></div><div class="profile-details"><div><small>Email</small><strong>'+esc(user?.email||'Not provided')+'</strong></div><div><small>Cellphone</small><strong>'+esc(user?.phone||'Not provided')+'</strong></div><div><small>Account type</small><strong>'+esc(type)+'</strong></div></div><div class="profile-actions"><button class="primary-button" data-view="activity">View my activity</button><button class="subtle-button" data-view="my-store">My business</button></div></section>';
+}
+function activityMarkup():string{
+ const recent=conversations.slice(0,5);return '<section class="page-heading"><span class="eyebrow">YOUR MANIHUB JOURNEY</span><h1>My activity</h1><p>A quick view of your activity across ManiHub.</p></section><section class="activity-grid"><article class="activity-card"><span>Stores</span><strong>'+myStores.length+'</strong><small>Your storefronts</small></article><article class="activity-card"><span>Products</span><strong>'+products.filter(p=>myStores.some(s=>s.id===p.store_id)).length+'</strong><small>Products in your stores</small></article><article class="activity-card"><span>Messages</span><strong>'+conversations.length+'</strong><small>Your conversations</small></article></section><section class="content-section"><div class="section-heading"><h2>Recent conversations</h2><button class="subtle-button" data-view="messages">Open messages</button></div><div class="inbox-panel">'+(recent.length?recent.map(item=>'<div class="conversation-row"><span class="conversation-avatar">✉</span><span><strong>'+esc(item.subject||'ManiHub conversation')+'</strong><small>Last updated '+new Date(item.updated_at).toLocaleDateString('en-ZA')+'</small></span></div>').join(''):'<div class="empty-state compact"><p>Your conversations and account activity will appear here as you use ManiHub.</p></div>')+'</div></section>';
+}
 function pageMarkup():string{
   if(view==='product-detail')return productDetailMarkup();
   if(view==='explore')return exploreMarkup();
   if(view==='my-store')return myStoreMarkup();
   if(view==='messages')return messagesMarkup();
+  if(view==='profile')return profileMarkup();
+  if(view==='activity')return activityMarkup();
   if(view==='store-detail')return storeDetailMarkup();
   return homeMarkup();
 }
@@ -271,6 +281,9 @@ app.addEventListener('click',async event=>{
   if(target.dataset.conversation){selectedConversationId=target.dataset.conversation;await loadMessages(selectedConversationId);view='messages';render();return;}
   if(target.dataset.product){selectedProduct=target.dataset.productKind==='store'?products.find(p=>p.id===target.dataset.product)||null:listings.find(p=>p.id===target.dataset.product)||null;view='product-detail';render();return;}
   if(action==='signup-mode'){if(user){await supabase.auth.signOut();session=null;user=null;profile=null;}mode='signup';render();}
+  if(action==='account-menu'){accountMenuOpen=!accountMenuOpen;render();}
+  if(action==='profile'){accountMenuOpen=false;view='profile';render();}
+  if(action==='activity'){accountMenuOpen=false;view='activity';render();}
   if(action==='signin-mode'){mode='signin';render();}
   if(action==='reset-mode'){mode='reset';render();}
   if(action==='resend-otp'){if(!pendingPhone){notify('Enter your cellphone number again to request a code.','error');mode='signin';render();return;}const {error}=await supabase.auth.resend({type:'sms',phone:pendingPhone});if(error)notify(error.message,'error');else notify('A new verification code has been sent.');}
