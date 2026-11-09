@@ -1,0 +1,55 @@
+name: Build ManiHub Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - rebuild/website-v1
+
+permissions:
+  contents: read
+
+jobs:
+  android-apk:
+    name: Build Android debug APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out ManiHub
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Build shared website
+        run: npm run build
+
+      - name: Generate Android project
+        run: npx cap add android
+
+      - name: Sync shared ManiHub app into Android
+        run: npx cap sync android
+
+      - name: Build installable debug APK
+        working-directory: android
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: Upload ManiHub APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ManiHub-Android-debug
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14
