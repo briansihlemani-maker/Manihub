@@ -66,7 +66,7 @@ jobs:
             folder="${spec%%:*}"
             size="${spec##*:}"
             mkdir -p "android/app/src/main/res/$folder"
-            convert -size "${size}x${size}" xc:"#003b25" \( assets/manihub-logo-transparent.png -resize "${size}x${size}" \) -gravity center -composite -alpha remove -alpha off "android/app/src/main/res/$folder/ic_launcher.png"
+            convert assets/manihub-logo-transparent.png -trim +repage -resize "${size}x${size}" -gravity center -background "#003b25" -extent "${size}x${size}" -alpha remove -alpha off "android/app/src/main/res/$folder/ic_launcher.png"
           done
 
       - name: Assemble installable Android debug APK
