@@ -77,7 +77,7 @@ function storeCard(store:Store):string{
 }
 
 function homeMarkup():string{
-  const all=[...products.filter(p=>p.status==='active'),...listings].filter(item=>category='All'||item.category?.toLowerCase()===category.toLowerCase()).filter(item=>!searchTerm||(('product_name' in item?item.product_name:item.title)+' '+item.category+' '+('product_name' in item?((Array.isArray(item.manihub_stores)?item.manihub_stores[0]?.store_name:item.manihub_stores?.store_name)||''):(item.seller_name||''))).toLowerCase().includes(searchTerm.toLowerCase()));
+  const all=[...products.filter(p=>p.status==='active'),...listings].filter(item=>category==='All'||item.category?.toLowerCase()===category.toLowerCase()).filter(item=>!searchTerm||(('product_name' in item?item.product_name:item.title)+' '+item.category+' '+('product_name' in item?((Array.isArray(item.manihub_stores)?item.manihub_stores[0]?.store_name:item.manihub_stores?.store_name)||''):(item.seller_name||''))).toLowerCase().includes(searchTerm.toLowerCase()));
   const popularityById=new Map(popularity.map(row=>[row.listing_id,row]));
   const score=(item:Product|Listing)=>{const row=popularityById.get(item.id);if(!row)return 0;return homeShelf==='sales'?Number(row.sales_30d):homeShelf==='frequent'?Number(row.views_30d):Number(row.popularity_score);};
   const ordered=[...all].sort((a,b)=>score(b)-score(a));
