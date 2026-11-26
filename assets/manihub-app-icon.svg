@@ -19,5 +19,5 @@
 <text x="256" y="365" text-anchor="middle" font-family="Arial,sans-serif" font-weight="900" font-size="77" letter-spacing="-5"><tspan fill="#fff">Mani</tspan><tspan fill="#a7ef00">Hub</tspan></text>
 <path d="M58 397 H113 M399 397 H454" stroke="url(#gold)" stroke-width="6" stroke-linecap="round"/>
 <text x="256" y="407" text-anchor="middle" font-family="Arial,sans-serif" font-style="italic" font-weight="700" font-size="18" fill="#fff">Buy. Sell. Grow. Together.</text>
-<rect x="3" y="3" width="506" height="506" rx="97" fill="none" stroke="#d5f33c" stroke-width="3" opacity=".8"/>
+<!-- Removed the decorative perimeter stroke so the original artwork fills the app icon without an outline. -->
 </svg>
