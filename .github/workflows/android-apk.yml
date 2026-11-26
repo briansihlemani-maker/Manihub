@@ -46,8 +46,21 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
+      - name: Clean generated web and Android outputs to prevent stale app assets
+        run: rm -rf dist android
+
       - name: Build the exact shared website used by the new app
-        run: npm run build
+        run: |
+          npm run build
+          set -euo pipefail
+          bundle=$(find dist/assets -maxdepth 1 -name '*.js' -type f | head -n 1)
+          test -n "$bundle"
+          # Fail the APK job if the old duplicate login prompt is still bundled.
+          if grep -Fq 'Don’t have an account? <button class="text-button" data-action="signup-mode">Create an account</button>' "$bundle"; then
+            echo 'ERROR: stale duplicate create-account prompt found in built web bundle.'
+            exit 1
+          fi
+          echo 'Verified: duplicate create-account prompt is absent from the built web bundle.'
 
       - name: Add Android platform and package the website
         run: |
