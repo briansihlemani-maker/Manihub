@@ -271,7 +271,7 @@ async function startSession(nextSession:Session|null):Promise<void>{
 }
 
 app.addEventListener('click',async event=>{
-  const target=(event.target as HTMLElement).closest<HTMLElement>('[data-action],[data-view],[data-category],[data-store]');
+  const target=(event.target as HTMLElement).closest<HTMLElement>('[data-action],[data-view],[data-category],[data-store],[data-product],[data-conversation],[data-shelf]');
   if(!target)return;
   const action=target.dataset.action;
   if(target.dataset.view){view=target.dataset.view as View;render();window.scrollTo({top:0,behavior:'smooth'});return;}
