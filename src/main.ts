@@ -53,7 +53,7 @@ function authMarkup():string{
   const account=mode==='signup'?'<label>Account type<select name="account_type"><option value="individual">Individual</option><option value="business">Registered business</option></select></label>':'';
   const links=mode==='signin'?'<div class="auth-links"><button type="button" class="text-button" data-action="reset-mode">Forgot password?</button></div>':mode==='verify'?'<div class="auth-links"><button type="button" class="text-button" data-action="resend-otp">Resend code</button></div>':'';
   const label=busy?'Please wait…':mode==='signup'?'Create account':mode==='reset'?'Send reset link':mode==='verify'?'Verify code':mode==='new-password'?'Save new password':'Sign in';
-  const switcher=mode==='signin'?'Don’t have an account? <button class="text-button" data-action="signup-mode">Create an account</button>':mode==='signup'?'Already have an account? <button class="text-button" data-action="signin-mode">Sign in</button>':mode==='verify'?'Entered the wrong number? <button class="text-button" data-action="signin-mode">Back to sign in</button>':mode==='reset'?'Remembered your password? <button class="text-button" data-action="signin-mode">Back to sign in</button>':'';
+  const switcher=mode==='signin'?'':mode==='signup'?'Already have an account? <button class="text-button" data-action="signin-mode">Sign in</button>':mode==='verify'?'Entered the wrong number? <button class="text-button" data-action="signin-mode">Back to sign in</button>':mode==='reset'?'Remembered your password? <button class="text-button" data-action="signin-mode">Back to sign in</button>':'';
   return '<main class="auth-screen"><div class="auth-brand">'+logo('auth-logo')+'<div class="tagline">BUY. SELL. GROW. TOGETHER.</div></div><section class="auth-card"><div class="eyebrow">SOUTH AFRICA COMMUNITY MARKETPLACE</div><div class="auth-mode-switch"><button type="button" class="auth-mode-button '+(mode==='signin'?'active':'')+'" data-action="signin-mode">Login</button><button type="button" class="auth-mode-button '+(mode==='signup'?'active':'')+'" data-action="signup-mode">Create account</button></div><h1>'+title+'</h1><p class="auth-intro">'+intro+'</p><div class="backend-status '+backendStatus+'"><span></span>'+(backendStatus==='connected'?'ManiHub account service connected':backendStatus==='checking'?'Connecting to ManiHub account service…':'Connection unavailable')+'</div><div id="auth-message" class="inline-message" hidden></div><form id="auth-form">'+display+identity+password+account+links+'<button class="primary-button full-button" type="submit" '+(busy?'disabled':'')+'>'+label+'</button></form>'+(switcher?'<div class="auth-divider"><span>or</span></div><p class="auth-switch">'+switcher+'</p>':'')+'</section><p class="auth-footer">One Hub. Everything you need. · South Africa</p></main>';
 }
 function shellMarkup():string{
@@ -77,7 +77,7 @@ function storeCard(store:Store):string{
 }
 
 function homeMarkup():string{
-  const all=[...products,...listings].filter(item=>category==='All'||item.category?.toLowerCase()===category.toLowerCase()).filter(item=>!searchTerm||(('product_name' in item?item.product_name:item.title)+' '+item.category+' '+('product_name' in item?((Array.isArray(item.manihub_stores)?item.manihub_stores[0]?.store_name:item.manihub_stores?.store_name)||''):(item.seller_name||''))).toLowerCase().includes(searchTerm.toLowerCase()));
+  const all=[...products.filter(p=>p.status==='active'),...listings].filter(item=>category==='All'||item.category?.toLowerCase()===category.toLowerCase()).filter(item=>!searchTerm||(('product_name' in item?item.product_name:item.title)+' '+item.category+' '+('product_name' in item?((Array.isArray(item.manihub_stores)?item.manihub_stores[0]?.store_name:item.manihub_stores?.store_name)||''):(item.seller_name||''))).toLowerCase().includes(searchTerm.toLowerCase()));
   const popularityById=new Map(popularity.map(row=>[row.listing_id,row]));
   const score=(item:Product|Listing)=>{const row=popularityById.get(item.id);if(!row)return 0;return homeShelf==='sales'?Number(row.sales_30d):homeShelf==='frequent'?Number(row.views_30d):Number(row.popularity_score);};
   const ordered=[...all].sort((a,b)=>score(b)-score(a));
@@ -86,7 +86,7 @@ function homeMarkup():string{
 }
 
 function exploreMarkup():string{
-  const all=[...products,...listings];
+  const all=[...products.filter(p=>p.status==='active'),...listings];
   return '<section class="page-heading"><span class="eyebrow">MANIHUB DISCOVERY</span><h1>Explore the marketplace</h1><p>Find products, services and local businesses across South Africa.</p><div class="explore-search"><input id="explore-search" value="'+esc(searchTerm)+'" placeholder="What are you looking for?"><button class="primary-button" data-action="search">Search</button></div></section><div class="category-row explore-categories">'+categories.map(c=>'<button class="category-chip '+(category===c?'selected':'')+'" data-category="'+esc(c)+'">'+esc(c)+'</button>').join('')+'</div><section class="content-section"><div class="section-heading"><h2>Marketplace listings</h2><span class="result-count">'+all.length+' results loaded</span></div><div class="product-grid">'+(all.length?all.filter(item=>(category==='All'||item.category?.toLowerCase()===category.toLowerCase())&&(!searchTerm||(('product_name' in item?item.product_name:item.title)+' '+item.category).toLowerCase().includes(searchTerm.toLowerCase()))).map(productCard).join(''):'<div class="empty-state"><h3>No listings yet</h3><p>When sellers publish products, they will be shown here.</p></div>')+'</div></section><section class="content-section"><div class="section-heading"><h2>Stores and businesses</h2></div><div class="store-grid">'+(stores.length?stores.map(storeCard).join(''):'<div class="empty-state compact"><p>No public stores yet. Sellers can create the first store.</p></div>')+'</div></section>';
 }
 
@@ -121,7 +121,7 @@ function messagesMarkup():string{
 }
 function storeDetailMarkup():string{
   if(!activeStore)return '<section class="empty-state"><h3>Store not found</h3><button class="subtle-button" data-view="explore">Back to Explore</button></section>';
-  const storeProducts=products.filter(p=>p.store_id===activeStore?.id);
+  const storeProducts=products.filter(p=>p.store_id===activeStore?.id&&p.status==='active');
   const isMine=myStores.some(store=>store.id===activeStore?.id);
   return '<section class="store-detail-head"><div class="store-detail-brand">'+(activeStore.logo_url?'<img src="'+esc(activeStore.logo_url)+'" alt="">':'<span class="store-avatar large">'+esc(initials(activeStore.store_name))+'</span>')+'<div><span class="eyebrow">MANIHUB STOREFRONT</span><h1>'+esc(activeStore.store_name)+'</h1><p>'+esc([activeStore.town,activeStore.province].filter(Boolean).join(', '))+' · '+esc(activeStore.category)+'</p></div></div><p class="store-description">'+esc(activeStore.description||'Welcome to our ManiHub store.')+'</p>'+(isMine?'<button class="subtle-button" data-view="my-store">Manage store</button>':'<button class="primary-button" data-action="start-conversation">Message seller</button>')+'</section><section class="content-section"><div class="section-heading"><h2>Store catalogue</h2><span class="result-count">'+storeProducts.length+' products</span></div><div class="product-grid">'+(storeProducts.length?storeProducts.map(productCard).join(''):'<div class="empty-state compact"><p>This store has not published products yet.</p></div>')+'</div></section>';
 }
@@ -271,7 +271,7 @@ async function startSession(nextSession:Session|null):Promise<void>{
 }
 
 app.addEventListener('click',async event=>{
-  const target=(event.target as HTMLElement).closest<HTMLElement>('[data-action],[data-view],[data-category],[data-store]');
+  const target=(event.target as HTMLElement).closest<HTMLElement>('[data-action],[data-view],[data-category],[data-store],[data-product],[data-conversation],[data-shelf]');
   if(!target)return;
   const action=target.dataset.action;
   if(target.dataset.view){view=target.dataset.view as View;render();window.scrollTo({top:0,behavior:'smooth'});return;}

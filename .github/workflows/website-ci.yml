@@ -1,7 +1,7 @@
 name: ManiHub website v1 checks
 on:
   push:
-    branches: ["rebuild/website-v1"]
+    branches: ["rebuild/website-v1", "launch-week/2026-12-04"]
   pull_request:
     branches: ["main"]
 permissions:

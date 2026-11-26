@@ -11,7 +11,8 @@
     "android": "cap open android",
     "ios": "cap open ios",
     "cap:sync": "npm run build && cap sync",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "prepare:mobile": "node scripts/prepare-mobile.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.6.0",
