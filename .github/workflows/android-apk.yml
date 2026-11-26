@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - rebuild/website-v1
+      - launch-week/2026-12-04
     paths:
       - 'src/**'
       - 'assets/**'
