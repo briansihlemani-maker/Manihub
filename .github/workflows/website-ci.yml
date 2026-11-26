@@ -1,0 +1,32 @@
+name: ManiHub website v1 checks
+on:
+  push:
+    branches: ["rebuild/website-v1"]
+  pull_request:
+    branches: ["main"]
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm install
+      - name: Install Chromium for browser tests
+        run: npx playwright install --with-deps chromium
+      - name: Type-check and build website
+        run: npm run build
+      - name: Run browser smoke tests
+        run: npm run test:e2e
+      - name: Verify output files
+        run: test -s dist/index.html && test -s dist/manifest.webmanifest && test -s dist/assets/manihub-app-icon.svg
+      - name: Save website preview build
+        uses: actions/upload-artifact@v4
+        with:
+          name: manihub-website-v1-preview
+          path: dist/
+          retention-days: 7
