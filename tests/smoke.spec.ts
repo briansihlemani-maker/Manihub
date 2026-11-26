@@ -6,6 +6,11 @@ test('login screen loads and the Supabase backend responds', async ({ page }) =>
   await expect(page.locator('.backend-status.connected')).toBeVisible({ timeout: 20000 });
 });
 
+test('sign-in screen shows only one create-account action', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.getByRole('button', { name: 'Create an account', exact: true })).toHaveCount(1);
+});
+
 test('registration screen opens and exposes the required fields', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'Create an account' }).click();
