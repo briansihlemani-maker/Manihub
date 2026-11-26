@@ -77,7 +77,7 @@ function storeCard(store:Store):string{
 }
 
 function homeMarkup():string{
-  const all=[...products,...listings].filter(item=>category==='All'||item.category?.toLowerCase()===category.toLowerCase()).filter(item=>!searchTerm||(('product_name' in item?item.product_name:item.title)+' '+item.category+' '+('product_name' in item?((Array.isArray(item.manihub_stores)?item.manihub_stores[0]?.store_name:item.manihub_stores?.store_name)||''):(item.seller_name||''))).toLowerCase().includes(searchTerm.toLowerCase()));
+  const all=[...products.filter(p=>p.status==='active'),...listings].filter(item=>category='All'||item.category?.toLowerCase()===category.toLowerCase()).filter(item=>!searchTerm||(('product_name' in item?item.product_name:item.title)+' '+item.category+' '+('product_name' in item?((Array.isArray(item.manihub_stores)?item.manihub_stores[0]?.store_name:item.manihub_stores?.store_name)||''):(item.seller_name||''))).toLowerCase().includes(searchTerm.toLowerCase()));
   const popularityById=new Map(popularity.map(row=>[row.listing_id,row]));
   const score=(item:Product|Listing)=>{const row=popularityById.get(item.id);if(!row)return 0;return homeShelf==='sales'?Number(row.sales_30d):homeShelf==='frequent'?Number(row.views_30d):Number(row.popularity_score);};
   const ordered=[...all].sort((a,b)=>score(b)-score(a));
@@ -86,7 +86,7 @@ function homeMarkup():string{
 }
 
 function exploreMarkup():string{
-  const all=[...products,...listings];
+  const all=[...products.filter(p=>p.status==='active'),...listings];
   return '<section class="page-heading"><span class="eyebrow">MANIHUB DISCOVERY</span><h1>Explore the marketplace</h1><p>Find products, services and local businesses across South Africa.</p><div class="explore-search"><input id="explore-search" value="'+esc(searchTerm)+'" placeholder="What are you looking for?"><button class="primary-button" data-action="search">Search</button></div></section><div class="category-row explore-categories">'+categories.map(c=>'<button class="category-chip '+(category===c?'selected':'')+'" data-category="'+esc(c)+'">'+esc(c)+'</button>').join('')+'</div><section class="content-section"><div class="section-heading"><h2>Marketplace listings</h2><span class="result-count">'+all.length+' results loaded</span></div><div class="product-grid">'+(all.length?all.filter(item=>(category==='All'||item.category?.toLowerCase()===category.toLowerCase())&&(!searchTerm||(('product_name' in item?item.product_name:item.title)+' '+item.category).toLowerCase().includes(searchTerm.toLowerCase()))).map(productCard).join(''):'<div class="empty-state"><h3>No listings yet</h3><p>When sellers publish products, they will be shown here.</p></div>')+'</div></section><section class="content-section"><div class="section-heading"><h2>Stores and businesses</h2></div><div class="store-grid">'+(stores.length?stores.map(storeCard).join(''):'<div class="empty-state compact"><p>No public stores yet. Sellers can create the first store.</p></div>')+'</div></section>';
 }
 
@@ -121,7 +121,7 @@ function messagesMarkup():string{
 }
 function storeDetailMarkup():string{
   if(!activeStore)return '<section class="empty-state"><h3>Store not found</h3><button class="subtle-button" data-view="explore">Back to Explore</button></section>';
-  const storeProducts=products.filter(p=>p.store_id===activeStore?.id);
+  const storeProducts=products.filter(p=>p.store_id===activeStore?.id&&p.status==='active');
   const isMine=myStores.some(store=>store.id===activeStore?.id);
   return '<section class="store-detail-head"><div class="store-detail-brand">'+(activeStore.logo_url?'<img src="'+esc(activeStore.logo_url)+'" alt="">':'<span class="store-avatar large">'+esc(initials(activeStore.store_name))+'</span>')+'<div><span class="eyebrow">MANIHUB STOREFRONT</span><h1>'+esc(activeStore.store_name)+'</h1><p>'+esc([activeStore.town,activeStore.province].filter(Boolean).join(', '))+' · '+esc(activeStore.category)+'</p></div></div><p class="store-description">'+esc(activeStore.description||'Welcome to our ManiHub store.')+'</p>'+(isMine?'<button class="subtle-button" data-view="my-store">Manage store</button>':'<button class="primary-button" data-action="start-conversation">Message seller</button>')+'</section><section class="content-section"><div class="section-heading"><h2>Store catalogue</h2><span class="result-count">'+storeProducts.length+' products</span></div><div class="product-grid">'+(storeProducts.length?storeProducts.map(productCard).join(''):'<div class="empty-state compact"><p>This store has not published products yet.</p></div>')+'</div></section>';
 }
